@@ -61,10 +61,14 @@ export default function ScheduleGrid() {
     },
   });
   const updateWeeklyScheduleCall = useMutation({
-    mutationFn: (payload) =>
-      sendRequest({ url: "schdule", method: "POST", payload }),
-    onSuccess: (data: SuccessResponse<>) => {
-      const {} = data;
+    mutationFn: (payload: any) =>
+      sendRequest({ url: "schdule", method: "POST", payload }) as Promise<
+        SuccessResponse<ScheduleResponse[]>
+      >,
+    onSuccess: (data: SuccessResponse<ScheduleResponse[]>) => {
+      const { response } = data;
+      setSchedule(response.data);
+      scheduleCall.mutateAsync();
     },
   });
   React.useLayoutEffect(() => {
@@ -75,8 +79,8 @@ export default function ScheduleGrid() {
   const getOptionsForSelectedCard = () => {
     if (modalData.selectedType === "mock") {
       return [
-        { label: "Mock Test", value: "Mock Test" },
-        { label: "Official Test", value: "Official Test" },
+        { title: "Mock Test", value: "Mock Test" },
+        { title: "Official Test", value: "Official Test" },
       ];
     } else {
       return modalData.allTask;

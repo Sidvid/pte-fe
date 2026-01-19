@@ -20,8 +20,12 @@ export const QuestionMapping = {
   MC_MULTIPLE: "Multiple Choice - Multiple Answer",
 
   FIB_DRAG_AND_DROP: "FIB - Drag & Drop",
+  FIB_LISTENING: "Listening Blanks",
   SUMMARIZE_SPOKEN: "Summarize Spoken Text",
   HIGHLIGHT_SUMMARY: "Highlight Incorrect Words",
+  WRITE_FROM_DICTATION: "Write From Dictation",
+  DICTATION_PREDICTION: "Dictation Prediction",
+  WFD_PREDICTION: "WFD PREDICTION",
 };
 export type QuestionMappingType = keyof typeof QuestionMapping;
 
@@ -73,12 +77,28 @@ export const TypesOfQuestion = {
       value: QuestionMapping.FIB_DRAG_AND_DROP,
     },
     {
+      title: QuestionMapping.FIB_LISTENING,
+      value: QuestionMapping.FIB_LISTENING,
+    },
+    {
       title: QuestionMapping.SUMMARIZE_SPOKEN,
       value: QuestionMapping.SUMMARIZE_SPOKEN,
     },
     {
       title: QuestionMapping.HIGHLIGHT_SUMMARY,
       value: QuestionMapping.HIGHLIGHT_SUMMARY,
+    },
+    {
+      title: QuestionMapping.WRITE_FROM_DICTATION,
+      value: QuestionMapping.WRITE_FROM_DICTATION,
+    },
+    {
+      title: QuestionMapping.DICTATION_PREDICTION,
+      value: QuestionMapping.DICTATION_PREDICTION,
+    },
+    {
+      title: QuestionMapping.WFD_PREDICTION,
+      value: QuestionMapping.WFD_PREDICTION,
     },
   ],
 };
@@ -99,8 +119,12 @@ export const QuestionToSectionMap = {
 
   // Listening
   [QuestionMapping.FIB_DRAG_AND_DROP]: SectionType.LS,
+  [QuestionMapping.FIB_LISTENING]: SectionType.LS,
   [QuestionMapping.SUMMARIZE_SPOKEN]: SectionType.LS,
   [QuestionMapping.HIGHLIGHT_SUMMARY]: SectionType.LS,
+  [QuestionMapping.WRITE_FROM_DICTATION]: SectionType.LS,
+  [QuestionMapping.DICTATION_PREDICTION]: SectionType.LS,
+  [QuestionMapping.WFD_PREDICTION]: SectionType.LS,
 };
 export const SectionTagColor = {
   [SectionTypeTitle["ls"]]: "pink",
@@ -144,7 +168,7 @@ export const portalConfig = {
   [PortalTypes.STUDENT]: {
     payload: "student",
     heading: "Welcome to Student Portal (Riddhima PTE Coaching)",
-    url: "localhost:3000",
+    url: "http://localhost:3000",
   },
 };
 export const STORAGE_KEYS = {

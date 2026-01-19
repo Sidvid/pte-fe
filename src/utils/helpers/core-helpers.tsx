@@ -4,6 +4,10 @@ export const swapItems = <T,>(arr: T[], from: number, to: number): T[] => {
   return next;
 };
 export const parseScript = (text: string) => {
+  if (!text) {
+    return [{ type: "text", value: "" }];
+  }
+  
   const regex = /\{\{(.*?)\}\}/g;
   const parts: any[] = [];
   let lastIndex = 0;

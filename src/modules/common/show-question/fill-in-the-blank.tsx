@@ -21,7 +21,7 @@ const FillInTheBlanks: React.FC<Props> = ({ text }) => {
     <div className="space-y-6">
       {/* Question Card */}
       <Card className="rounded-2xl shadow-lg bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-        <p className="text-gray-800 text-lg leading-relaxed flex flex-wrap gap-2">
+        <div className="text-gray-800 text-lg leading-relaxed flex flex-wrap gap-2">
           {parsed.map((part, i) => {
             if (part.type === "text") {
               return <span key={i}>{part.value}</span>;
@@ -44,7 +44,7 @@ const FillInTheBlanks: React.FC<Props> = ({ text }) => {
               </Select>
             );
           })}
-        </p>
+        </div>
       </Card>
 
       {/* Selected Answers */}

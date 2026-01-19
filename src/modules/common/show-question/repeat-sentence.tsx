@@ -2,11 +2,14 @@ import { QuestionItem } from "@/utils/model/response-models";
 import { useAudioPlayer } from "react-use-audio-player";
 import React from "react";
 import CustomAudioPlayer from "@/components/organism/audio-player";
+import { Button } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 interface ReadAloudProps {
   questions: QuestionItem[];
+  onDelete?: (questionId: string) => void;
 }
 
-function RepeatSentence({ questions }: ReadAloudProps) {
+function RepeatSentence({ questions, onDelete }: ReadAloudProps) {
   const { load } = useAudioPlayer();
   const handlePlay = (link: string) => {
     load(link, { initialVolume: 0.75, autoplay: true });
@@ -15,7 +18,17 @@ function RepeatSentence({ questions }: ReadAloudProps) {
     <div className=" flex flex-col gap-[20px]">
       {questions?.map((item) => {
         return (
-          <div className="text-black border border-dashed border-green-700 bg-green-50 p-[6px] rounded-2xl f14">
+          <div key={item.id} className="text-black border border-dashed border-green-700 bg-green-50 p-[6px] rounded-2xl f14 relative">
+            {onDelete && (
+              <Button
+                type="text"
+                danger
+                icon={<DeleteOutlined />}
+                onClick={() => onDelete(item.id)}
+                style={{ position: 'absolute', top: 8, right: 8 }}
+                title="Delete question"
+              />
+            )}
             <p>{`Question ${item.sNo}`}</p>
             <p>Text:</p>
             <CustomAudioPlayer key={item.data.audio} src={item.data.audio} />

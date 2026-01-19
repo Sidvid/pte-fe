@@ -47,9 +47,10 @@ function DailyTasksCollection() {
         <p
           onClick={() =>
             navigation(`/view-single-collection-questions/${id}`, {
-              state: { ...rest, id, index },
+              state: { ...rest, id, index, title: text },
             })
           }
+          style={{ cursor: 'pointer', color: '#1890ff' }}
         >
           {`${text}-${index}`}
         </p>
