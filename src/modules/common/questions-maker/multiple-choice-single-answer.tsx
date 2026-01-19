@@ -100,15 +100,14 @@ const MultipleChoiceSingleAnswer = ({
 
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center py-10 px-4">
-      <div className="w-full">
+      <div className="w-full max-w-4xl">
         {/* Header */}
-        <div className="mb-6 text-center">
-          <Text type="secondary">
-            Create new{" "}
-            {questionType === "MC_MULTIPLE"
-              ? "multiple choice (multi-select)"
-              : "multiple choice (single-select)"}{" "}
-            question.
+        <div className="mb-8 text-center">
+          <Title level={2} className="text-2xl font-bold text-gray-800 mb-2">
+            Create {questionType === "MC_MULTIPLE" ? "Multiple Choice (Multi-Select)" : "Multiple Choice (Single-Select)"} Question
+          </Title>
+          <Text className="text-gray-600">
+            Create new {questionType === "MC_MULTIPLE" ? "multiple choice (multi-select)" : "multiple choice (single-select)"} question.
           </Text>
         </div>
 
@@ -121,22 +120,22 @@ const MultipleChoiceSingleAnswer = ({
             correctAnswerIndices: [],
           }}
         >
-          <div className="flex flex-col gap-[20px] justify-center items-center">
+          <div className="flex flex-col gap-8 justify-center items-center">
             {/* Section 1: Question */}
-            <Card className="shadow-sm w-[90%] m-auto rounded-xl mb-6 border-gray-200">
-              <Title level={4}>1. Context & Question</Title>
+            <Card className="shadow-md w-full max-w-3xl rounded-xl mb-8 border-gray-300 bg-white">
+              <Title level={4} className="text-xl font-semibold text-gray-800 mb-4">1. Context & Question</Title>
               <Divider className="my-4" />
 
-              <Form.Item label="Paragraph" name="paragraph">
+              <Form.Item label={<span className="text-base font-semibold text-gray-700">Paragraph (Optional)</span>} name="paragraph">
                 <TextArea
                   placeholder="Enter context or paragraph..."
                   rows={4}
-                  className="rounded-lg"
+                  className="rounded-lg text-base p-3"
                 />
               </Form.Item>
 
               <Form.Item
-                label="Question Text"
+                label={<span className="text-base font-semibold text-gray-700">Question Text</span>}
                 name="question"
                 rules={[
                   { required: true, message: "Please input the question" },
@@ -145,15 +144,15 @@ const MultipleChoiceSingleAnswer = ({
                 <TextArea
                   placeholder="Enter the question here..."
                   rows={4}
-                  className="text-lg font-medium rounded-lg"
+                  className="text-base font-medium rounded-lg p-3"
                 />
               </Form.Item>
             </Card>
 
             {/* Section 2: Options */}
-            <Card className="shadow-sm rounded-xl w-[90%] m-auto mb-6 border-gray-200">
-              <div className="flex gap-3 items-center mb-4">
-                <Title level={4} style={{ margin: 0 }}>
+            <Card className="shadow-md rounded-xl w-full max-w-3xl mb-8 border-gray-300 bg-white">
+              <div className="flex gap-3 items-center mb-6">
+                <Title level={4} className="text-xl font-semibold text-gray-800 mb-0">
                   2. Options & Answer
                 </Title>
                 <div className="flex flex-row gap-2 mt-2">
@@ -165,7 +164,7 @@ const MultipleChoiceSingleAnswer = ({
                     }
                   >
                     <span>
-                      <AiOutlineInfoCircle className="text-gray-400 cursor-pointer" />
+                      <AiOutlineInfoCircle className="text-gray-400 cursor-pointer text-lg" />
                     </span>
                   </Tooltip>
                 </div>
@@ -205,23 +204,24 @@ const MultipleChoiceSingleAnswer = ({
                           // Clicking the container toggles selection for better UX
                           onClick={() => handleSelection(index)}
                         >
-                          <div className="bg-white rounded-[9px] p-3 flex items-center w-full h-full">
+                          <div className="bg-white rounded-[9px] p-4 flex items-center w-full h-full">
                             {/* Render Checkbox OR Radio based on Prop */}
                             <div
-                              className="mr-3"
+                              className="mr-4"
                               onClick={(e) => e.stopPropagation()}
                             >
                               {questionType === "MC_MULTIPLE" ? (
                                 <Checkbox
                                   checked={isSelected}
                                   onChange={() => handleSelection(index)}
+                                  className="text-lg"
                                 >
                                   {isSelected ? (
                                     <span className="font-bold text-emerald-600">
                                       Correct
                                     </span>
                                   ) : (
-                                    <span className="text-gray-400">
+                                    <span className="text-gray-500">
                                       Option {index + 1}
                                     </span>
                                   )}
@@ -230,13 +230,14 @@ const MultipleChoiceSingleAnswer = ({
                                 <Radio
                                   checked={isSelected}
                                   onChange={() => handleSelection(index)}
+                                  className="text-lg"
                                 >
                                   {isSelected ? (
                                     <span className="font-bold text-emerald-600">
                                       Correct
                                     </span>
                                   ) : (
-                                    <span className="text-gray-400">
+                                    <span className="text-gray-500">
                                       Option {index + 1}
                                     </span>
                                   )}
@@ -253,13 +254,13 @@ const MultipleChoiceSingleAnswer = ({
                               <Input
                                 placeholder={`Type option ${index + 1}`}
                                 variant="borderless"
-                                className="flex-1 font-medium text-gray-700"
+                                className="flex-1 font-medium text-gray-700 text-lg"
                                 onClick={(e) => e.stopPropagation()} // Stop propagation so clicking input doesn't toggle selection
                               />
                             </Form.Item>
 
                             {isSelected && (
-                              <CheckCircleFilled className="text-emerald-500 text-xl ml-4 animate-bounce" />
+                              <CheckCircleFilled className="text-emerald-500 text-2xl ml-4 animate-bounce" />
                             )}
 
                             {fields.length > 1 && !isSelected && (
@@ -295,13 +296,13 @@ const MultipleChoiceSingleAnswer = ({
                       onClick={() => add()}
                       block
                       icon={<PlusOutlined />}
-                      className="mt-4 border-gray-300 text-gray-500 hover:text-blue-500 hover:border-blue-500"
+                      className="mt-4 border-gray-300 text-gray-500 hover:text-blue-500 hover:border-blue-500 text-lg h-12"
                     >
                       Add Another Option
                     </Button>
                     <div className="flex gap-4 my-6">
                       <Button
-                        className="flex-1"
+                        className="flex-1 h-12 text-lg"
                         type="dashed"
                         danger
                         onClick={() => {
@@ -313,7 +314,7 @@ const MultipleChoiceSingleAnswer = ({
                         Reset
                       </Button>
                       <Button
-                        className="flex-1"
+                        className="flex-1 h-12 text-lg"
                         type="primary"
                         htmlType="submit"
                       >

@@ -29,12 +29,14 @@ const useStyle = createStyles(({ prefixCls, css }) => ({
   `,
 }));
 
-const GradientButton: React.FC<{ children: any; onClick: () => void }> = ({
+const GradientButton: React.FC<{ children: any; onClick: () => void; disabled?: boolean }> = ({
   children,
   onClick,
+  disabled = false,
 }: {
   children: any;
   onClick: () => void;
+  disabled?: boolean;
 }) => {
   const { styles } = useStyle();
 
@@ -50,6 +52,7 @@ const GradientButton: React.FC<{ children: any; onClick: () => void }> = ({
           type="primary"
           size="large"
           icon={<AntDesignOutlined />}
+          disabled={disabled}
         >
           {children}
         </Button>

@@ -36,25 +36,41 @@ function RepeatSentence() {
   }, [script]);
 
   return (
-    <div className="flex flex-col gap-[10px]">
-      <Dragger {...props}>
-        <p className="ant-upload-drag-icon">
-          <InboxOutlined />
+    <div className="flex flex-col gap-4 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+      <div className="mb-2">
+        <label className="block text-base font-bold text-gray-800 mb-2">
+          Audio File
+        </label>
+        <p className="text-sm text-gray-600">
+          Upload an audio file for students to repeat the sentence they hear.
         </p>
-        <p className="ant-upload-text">
+      </div>
+      
+      <Dragger {...props} className="border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 transition-colors">
+        <p className="ant-upload-drag-icon">
+          <InboxOutlined className="text-3xl" />
+        </p>
+        <p className="ant-upload-text text-base font-medium">
           Click or drag file to this area to upload
         </p>
-        <p className="ant-upload-hint">
+        <p className="ant-upload-hint text-sm">
           Support for a single or bulk upload. Strictly prohibited from
           uploading company data or other banned files.
         </p>
       </Dragger>
-      <Input.TextArea
-        value={script}
-        onChange={(e) => setScript(e.target.value)}
-        placeholder="Enter the script..."
-        className="mt-[10px]"
-      />
+      
+      <div className="mt-4">
+        <label className="block text-base font-medium text-gray-700 mb-2">
+          Transcript
+        </label>
+        <Input.TextArea
+          value={script}
+          onChange={(e) => setScript(e.target.value)}
+          placeholder="Enter the script that students should repeat..."
+          className="text-base p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+          rows={4}
+        />
+      </div>
     </div>
   );
 }

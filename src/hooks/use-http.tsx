@@ -6,6 +6,7 @@ export const URLS = {
   schdule: "api/admin/weekly-schedules",
   allDailyTask: "api/admin/daily-tasks",
   addNewQuestion: "api/admin/questions",
+  deleteQuestion: "api/admin/questions",
 };
 type Methods = "POST" | "GET" | "PUT" | "DELETE";
 interface RequestProps {
@@ -38,17 +39,22 @@ const useHttp = ({ type }: { type: "auth" | "raw" }) => {
         },
         params,
       });
-      console.log("this is response", response);
+      console.log("API Response:", response);
+      console.log("Status:", response.status);
+      console.log("Data:", response.data);
+      
       if (response.status === 200 || response.status === 201) {
         return {
           response: response.data,
           rawResponse: response,
         };
       } else {
-        throw new Error(response.data);
+        console.error("API returned non-success status:", response.status);
+        throw new Error(JSON.stringify(response.data));
       }
     } catch (error) {
-      console.log("this is api error", error);
+      console.error("API Error:", error);
+      throw error;
     }
   };
   return {

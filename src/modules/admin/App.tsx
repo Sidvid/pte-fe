@@ -1,5 +1,5 @@
 import SideMenu from "@/components/molecules/side-menu/side-menu";
-import { BrowserRouter, Routes, Route } from "react-router";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import * as React from "react";
 import { ConfigProvider } from "antd";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -35,6 +35,7 @@ function App() {
         <div className="min-h-full">
           <BrowserRouter>
             <Routes>
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route element={<ApplicationBody />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/labVideos" element={<LabVideos />} />
