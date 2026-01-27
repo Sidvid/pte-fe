@@ -12,6 +12,7 @@ export const parseScript = (text: string) => {
   const parts: any[] = [];
   let lastIndex = 0;
   let match;
+  let blankIndex = 0;
 
   while ((match = regex.exec(text)) !== null) {
     if (match.index > lastIndex) {
@@ -28,6 +29,7 @@ export const parseScript = (text: string) => {
     parts.push({
       type: "blank",
       options,
+      index: blankIndex++,
     });
 
     lastIndex = regex.lastIndex;

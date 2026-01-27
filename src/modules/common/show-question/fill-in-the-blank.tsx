@@ -21,7 +21,7 @@ const FillInTheBlanks: React.FC<Props> = ({ text }) => {
     <div className="space-y-6">
       {/* Question Card */}
       <Card className="rounded-2xl shadow-lg bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-        <div className="text-gray-800 text-lg leading-relaxed flex flex-wrap gap-2">
+        <div className="text-gray-800 text-xl leading-relaxed flex flex-wrap items-center gap-4">
           {parsed.map((part, i) => {
             if (part.type === "text") {
               return <span key={i}>{part.value}</span>;
@@ -29,15 +29,15 @@ const FillInTheBlanks: React.FC<Props> = ({ text }) => {
 
             return (
               <Select
-                key={i}
+                key={`select-${i}`}
                 placeholder="Select"
                 value={answers[part.index]}
                 onChange={(value) => handleChange(part.index, value)}
-                className="min-w-[140px]"
+                className="min-w-[140px] ant-select-custom"
                 size="middle"
               >
                 {part.options.map((opt: string) => (
-                  <Option key={opt} value={opt}>
+                  <Option key={`${i}-${opt}`} value={opt}>
                     {opt}
                   </Option>
                 ))}

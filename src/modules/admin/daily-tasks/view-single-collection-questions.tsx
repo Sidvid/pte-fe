@@ -161,7 +161,7 @@ function ViewSingleCollectionQuestions() {
                   <div key={question.id || index}>
                     <FillInTheBlanks text={textData?.text || ""} />
                     {question.sNo && (
-                      <div className="mt-2 text-sm text-gray-500">Question #{question.sNo}</div>
+                      <div className="mt-2 text-lg text-gray-500">Question #{question.sNo}</div>
                     )}
                   </div>
                 );

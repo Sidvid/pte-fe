@@ -66,12 +66,12 @@ function FillInBlankDropdown() {
 
                 return (
                   <Select
-                    key={index}
+                    key={`preview-select-${index}`}
                     placeholder="Select"
-                    className="min-w-[140px] h-10 text-base"
+                    className="min-w-[140px] h-10 text-base ant-select-custom"
                   >
-                    {part.options.map((opt: string) => (
-                      <Option key={opt} value={opt}>
+                    {part.options.map((opt: string, optIndex: number) => (
+                      <Option key={`${index}-${optIndex}`} value={opt}>
                         {opt}
                       </Option>
                     ))}
