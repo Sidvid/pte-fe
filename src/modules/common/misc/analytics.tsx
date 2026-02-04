@@ -33,156 +33,90 @@ const ScoreReportCard = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto w-full">
-      {/* CARD CONTAINER */}
-      <div className="bg-foreground shadow-card rounded-2xl overflow-hidden border border-transparent dark:border-gray-800">
-        {/* --- HEADER --- */}
-        <div className="bg-gradient-to-r from-teal-600 to-teal-500 p-20 text-white flex flex-col md:flex-row justify-between items-center gap-10">
+    <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 mb-6 -mx-6 -mt-6 -mr-6">
+        <div className="flex justify-between items-center">
           <div>
-            <h2 className="f24 w700">Score Report</h2>
-            <p className="f14 opacity-90 flex items-center gap-6 mt-4">
-              <span className="opacity-70">Code:</span>
-              <span className="font-mono bg-white/20 px-6 py-2 rounded text-sm">
-                {reportData.reportCode}
-              </span>
-            </p>
+            <h3 className="text-2xl font-bold text-gray-800">{reportData.name}</h3>
+            <p className="text-base text-gray-600 mt-1">Registration ID: {reportData.regId}</p>
           </div>
-          <div className="f16 w600 opacity-90">Pearson | PTE Academic</div>
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-5 py-3 rounded-lg text-base font-bold shadow-md">
+            <div className="text-center">Overall</div>
+            <div className="text-center text-4xl">{reportData.overallScore}</div>
+          </div>
         </div>
+      </div>
 
-        <div className="p-20 md:p-30 flex flex-col gap-40">
-          {/* --- TOP SECTION: PROFILE & OVERALL --- */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-20 border-b border-gray-100 dark:border-gray-700 pb-30">
-            {/* Profile Info */}
-            <div className="flex items-center gap-20">
-              <div className="w-80 h-80 rounded-full bg-gray-200 overflow-hidden border-4 border-white shadow-sm">
-                {/* Placeholder for user image */}
-                <img
-                  src="https://api.dicebear.com/7.x/avataaars/svg?seed=Amitoj"
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex flex-col gap-4">
-                <h3 className="f24 w700 text-primary">{reportData.name}</h3>
-                <div className="flex flex-col gap-2 opacity-70 f14 text-primary">
-                  <span className="flex items-center gap-6">
-                    <AiOutlineUser /> ID: {reportData.regId}
-                  </span>
-                  <span className="flex items-center gap-6">
-                    <AiOutlineIdcard /> Test Taker ID: {reportData.testTakerId}
-                  </span>
-                </div>
-              </div>
-            </div>
 
-            {/* Overall Score Badge */}
-            <div className="flex flex-col items-center bg-link/5 rounded-2xl p-10 min-w-[120px]">
-              <span className="f14 w600 text-link mb-4">Overall Score</span>
-              <div className="w-60 h-60 rounded-full bg-link text-white flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                <span className="f24 w800">{reportData.overallScore}</span>
-              </div>
-            </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+        <div className="flex items-start space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-colors">
+          <div className="bg-blue-100 p-3 rounded-lg">
+            <AiOutlineUser className="text-blue-600 text-xl" />
           </div>
-
-          {/* --- MIDDLE SECTION: COMMUNICATIVE SKILLS (RINGS) --- */}
           <div>
-            <h4 className="f18 w700 text-primary mb-20 border-l-4 border-link pl-10">
-              Communicative Skills
-            </h4>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-20 justify-items-center">
-              <CircularScore
-                score={reportData.scores.reading.val}
-                label="Reading"
-                color={reportData.scores.reading.color}
-              />
-              <CircularScore
-                score={reportData.scores.writing.val}
-                label="Writing"
-                color={reportData.scores.writing.color}
-              />
-              <CircularScore
-                score={reportData.scores.speaking.val}
-                label="Speaking"
-                color={reportData.scores.speaking.color}
-              />
-              <CircularScore
-                score={reportData.scores.listening.val}
-                label="Listening"
-                color={reportData.scores.listening.color}
-              />
-            </div>
+            <p className="text-sm text-gray-500 uppercase tracking-wide font-semibold">Test Taker ID</p>
+            <p className="text-lg font-medium text-gray-800">{reportData.testTakerId}</p>
           </div>
+        </div>
+        <div className="flex items-start space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-colors">
+          <div className="bg-green-100 p-3 rounded-lg">
+            <AiOutlineIdcard className="text-green-600 text-xl" />
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 uppercase tracking-wide font-semibold">Report Code</p>
+            <p className="text-lg font-medium text-gray-800">{reportData.reportCode}</p>
+          </div>
+        </div>
+        <div className="flex items-start space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-colors">
+          <div className="bg-yellow-100 p-3 rounded-lg">
+            <AiOutlineCalendar className="text-yellow-600 text-xl" />
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 uppercase tracking-wide font-semibold">Date of Birth</p>
+            <p className="text-lg font-medium text-gray-800">{reportData.candidate.dob}</p>
+          </div>
+        </div>
+        <div className="flex items-start space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-colors">
+          <div className="bg-pink-100 p-3 rounded-lg">
+            <AiOutlineMan className="text-pink-600 text-xl" />
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 uppercase tracking-wide font-semibold">Gender</p>
+            <p className="text-lg font-medium text-gray-800">{reportData.candidate.gender}</p>
+          </div>
+        </div>
+        <div className="flex items-start space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-colors sm:col-span-2">
+          <div className="bg-indigo-100 p-3 rounded-lg">
+            <AiOutlineGlobal className="text-indigo-600 text-xl" />
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 uppercase tracking-wide font-semibold">Citizenship & Residence</p>
+            <p className="text-lg font-medium text-gray-800">{reportData.candidate.citizenship} / {reportData.candidate.residence}</p>
+          </div>
+        </div>
+      </div>
 
-          {/* --- BOTTOM SECTION: BREAKDOWN & CANDIDATE INFO --- */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-40 pt-20 border-t border-gray-100 dark:border-gray-700">
-            {/* Skills Breakdown (Bars) */}
-            <div className="flex flex-col gap-16">
-              <h4 className="f18 w700 text-primary mb-4">Skills Breakdown</h4>
-              <SkillBar
-                label="Reading"
-                score={reportData.scores.reading.val}
-                color={reportData.scores.reading.color}
-              />
-              <SkillBar
-                label="Writing"
-                score={reportData.scores.writing.val}
-                color={reportData.scores.writing.color}
-              />
-              <SkillBar
-                label="Speaking"
-                score={reportData.scores.speaking.val}
-                color={reportData.scores.speaking.color}
-              />
-              <SkillBar
-                label="Listening"
-                score={reportData.scores.listening.val}
-                color={reportData.scores.listening.color}
-              />
-            </div>
 
-            {/* Candidate Info */}
-            <div className="bg-background rounded-xl p-20 h-full">
-              <h4 className="f18 w700 text-primary mb-16">
-                Candidate Information
-              </h4>
-              <div className="flex flex-col gap-12 text-primary">
-                <div className="flex justify-between items-center pb-8 border-b border-gray-200 dark:border-gray-700">
-                  <span className="f14 w500 opacity-70 flex items-center gap-8">
-                    <AiOutlineCalendar /> Date of Birth
-                  </span>
-                  <span className="f14 w600">{reportData.candidate.dob}</span>
-                </div>
+      <div className="flex justify-center mb-6 py-4 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl -mx-6 -mb-6">
+        <div className="relative">
+          <CircularScore score={reportData.overallScore} label="Overall Score" color="#4F46E5" />
+        </div>
+      </div>
 
-                <div className="flex justify-between items-center pb-8 border-b border-gray-200 dark:border-gray-700">
-                  <span className="f14 w500 opacity-70 flex items-center gap-8">
-                    <AiOutlineMan /> Gender
-                  </span>
-                  <span className="f14 w600">
-                    {reportData.candidate.gender}
-                  </span>
-                </div>
 
-                <div className="flex justify-between items-center pb-8 border-b border-gray-200 dark:border-gray-700">
-                  <span className="f14 w500 opacity-70 flex items-center gap-8">
-                    <AiOutlineGlobal /> Citizenship
-                  </span>
-                  <span className="f14 w600">
-                    {reportData.candidate.citizenship}
-                  </span>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <span className="f14 w500 opacity-70 flex items-center gap-8">
-                    <AiOutlineGlobal /> Residence
-                  </span>
-                  <span className="f14 w600">
-                    {reportData.candidate.residence}
-                  </span>
-                </div>
+      <div className="space-y-5 pt-4">
+        <h4 className="font-bold text-gray-800 text-center text-xl mb-4">Individual Skills Performance</h4>
+        <div className="space-y-4 max-w-2xl mx-auto">
+          {Object.entries(reportData.scores).map(([skill, scoreData]: [string, any]) => (
+            <div key={skill} className="flex items-center justify-center space-x-3">
+              <div className="w-32 text-base font-bold capitalize text-gray-700 bg-gray-100 py-3 px-4 rounded-lg text-center">
+                {skill}
+              </div>
+              <div className="flex-1 max-w-md">
+                <SkillBar score={scoreData.val} color={scoreData.color} label="" />
               </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>

@@ -26,6 +26,7 @@ function SideMenu({ data, selected, onClick }: SideMenuProps) {
 
       {data.map(({ title, value, icon }) => (
         <div
+          key={value}
           className={`${
             activeMenu === value ? "bg-link" : ""
           } cursor-pointer py-10 px-10 rounded-xl flex flex-row items-center gap-10 mb-4 `}
@@ -33,8 +34,8 @@ function SideMenu({ data, selected, onClick }: SideMenuProps) {
         >
           {icon &&
             React.isValidElement(icon) &&
-            React.cloneElement(icon, {
-              className: `w-20 h-20 ${"text-sidemenu-text"}`,
+            React.cloneElement(icon as React.ReactElement<any>, {
+              className: `w-20 h-20 text-sidemenu-text`
             })}
           <p className="f12 w400 text-app-white">{title}</p>
         </div>

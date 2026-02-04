@@ -19,43 +19,75 @@ import { useNavigate } from "react-router";
 
 import { Outlet, useParams, useLocation } from "react-router";
 
-const sideMenuData = [
-  {
-    value: "dashboard",
-    title: "Dashboard",
-    icon: <AiOutlineHome />,
-  },
-  {
-    value: "schedule",
-    title: "Schedule",
-    icon: <AiOutlineSchedule />,
-  },
-  {
-    value: "mocktest",
-    title: "Mock Test",
-    icon: <AiOutlineFileText />,
-  },
-  {
-    value: "dailyTasks",
-    title: "Daily Tasks",
-    icon: <AiOutlineUnorderedList />,
-  },
-  {
-    value: "theoryVideos",
-    title: "Theory Videos",
-    icon: <AiOutlineVideoCamera />,
-  },
-  {
-    value: "labVideos",
-    title: "Lab Videos",
-    icon: <AiOutlineVideoCameraAdd />,
-  },
-];
-
 function ApplicationBody() {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  
+  // Determine app type by checking the VITE_APP_TYPE environment variable
+  // This is more reliable than pathname detection
+  const appType = typeof window !== 'undefined' && import.meta.env?.VITE_APP_TYPE;
+  const isStudentApp = appType === 'STUDENT';
+  
+  // Define menu data based on app type
+  const sideMenuData = isStudentApp ? [
+    {
+      value: "dashboard",
+      title: "Dashboard",
+      icon: <AiOutlineHome />,
+    },
+    {
+      value: "schedule",
+      title: "Schedule",
+      icon: <AiOutlineSchedule />,
+    },
+    {
+      value: "mock-tests",
+      title: "Mock Test",
+      icon: <AiOutlineFileText />,
+    },
+    {
+      value: "daily-tasks",
+      title: "Daily Tasks",
+      icon: <AiOutlineUnorderedList />,
+    },
+    {
+      value: "videos",
+      title: "Learning Videos",
+      icon: <AiOutlineVideoCamera />,
+    },
+  ] : [
+    {
+      value: "dashboard",
+      title: "Dashboard",
+      icon: <AiOutlineHome />,
+    },
+    {
+      value: "schedule",
+      title: "Schedule",
+      icon: <AiOutlineSchedule />,
+    },
+    {
+      value: "mocktest",
+      title: "Mock Test",
+      icon: <AiOutlineFileText />,
+    },
+    {
+      value: "dailyTasks",
+      title: "Daily Tasks",
+      icon: <AiOutlineUnorderedList />,
+    },
+    {
+      value: "theoryVideos",
+      title: "Theory Videos",
+      icon: <AiOutlineVideoCamera />,
+    },
+    {
+      value: "labVideos",
+      title: "Lab Videos",
+      icon: <AiOutlineVideoCameraAdd />,
+    },
+  ];
 
   return (
     <div className="flex flex-col h-screen w-screen">
