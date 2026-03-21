@@ -1,7 +1,16 @@
+import useHttp from "@/hooks/use-http";
 import MockTestCard from "@/modules/common/cards/mock-test-card";
+import { SuccessResponse } from "@/utils/model/model";
+import {
+  DailyTasksResponse,
+  MockTestInterface,
+  MockTestResponse,
+} from "@/utils/model/response-models";
+import { useMutation } from "@tanstack/react-query";
 import { Card } from "antd";
 import { div } from "motion/react-client";
 import * as React from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 const data = [
   {
@@ -271,15 +280,33 @@ const data = [
 ];
 function MockTest() {
   const navigate = useNavigate();
+  const [mockTests, setMockTests] = useState<MockTestInterface[]>();
+  const { sendRequest } = useHttp({ type: "auth" });
+  // const navigation = useNavigate();
+  const allMockTests = useMutation({
+    mutationFn: () =>
+      sendRequest({ url: "allMockTests", method: "GET" }) as Promise<
+        SuccessResponse<MockTestResponse>
+      >,
+    onSuccess: (data: SuccessResponse<MockTestResponse>) => {
+      const { response } = data;
+      setMockTests(response?.data?.tests);
+    },
+  });
+  React.useEffect(() => {
+    allMockTests.mutateAsync();
+  }, []);
+  console.log("mockTests", mockTests);
   return (
     <div className="flex flex-row gap-10 flex-wrap justify-around items-center">
-      {data.map((data) => {
+      {mockTests?.map((data) => {
         return (
           <div className="w-[45%]">
             <MockTestCard
-              title={data.title}
-              isPublished={data.isPublished}
-              sections={data.sections}
+              title={data?.title}
+              isPublished={data?.published}
+              sections={data?.sections}
+              totalTime={data?.total_duration}
               onExplore={() => navigate(`/mockTest/${data.id}`)}
             />
           </div>

@@ -9,7 +9,7 @@ export interface ScheduleResponse {
     {
       id: string;
       name: string;
-    }
+    },
   ];
 }
 
@@ -81,4 +81,38 @@ export interface QuestionItem {
 
   created_at: string;
   sNo?: number;
+}
+
+export interface MockTestResponse {
+  page: number;
+  limit: number;
+  total: number;
+  total_pages: number;
+  tests: MockTestInterface[];
+}
+
+export interface MockTestInterface {
+  id: string;
+  title: string;
+  index: number;
+  published: boolean;
+  created_at: string;
+  total_sections: number;
+  total_questions: number;
+  total_duration: number;
+  sections: Section[];
+}
+
+export interface Section {
+  id: string;
+  title: string;
+  type: string;
+  questions_count: number;
+  duration: number;
+}
+
+export interface RequestAssignmentResponse {
+  type: string;
+  collection: string;
+  assigned_task_id: string;
 }

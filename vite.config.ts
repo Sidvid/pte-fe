@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react(), tailwindcss()],
     server: {
       port: Number(env.VITE_PORT) || 3000,
+      open: true,
     },
     resolve: {
       alias: {
