@@ -11,9 +11,16 @@ import {
 interface MockTestCardProps {
   title?: string;
   isPublished?: boolean;
+  totalTime?: number;
   onTogglePublish?: () => void;
   onExplore?: () => void;
-  sections?: { type: string; q: number; time: number }[];
+  sections?: {
+    id: string;
+    title: string;
+    type: string;
+    questions_count: number;
+    duration: number;
+  }[];
 }
 const MockTestCard = ({
   title = "Mock Test 01",
@@ -25,6 +32,7 @@ const MockTestCard = ({
     { type: "rd", q: 16, time: 25 },
     { type: "ls", q: 16, time: 27 },
   ],
+  totalTime = 135,
 }: MockTestCardProps) => {
   const getSectionDetails = (type: any) => {
     switch (type) {
@@ -64,7 +72,7 @@ const MockTestCard = ({
     }
   };
 
-  const totalTime = sections.reduce((acc, curr) => acc + curr.time, 0);
+  // const totalTime = sections.reduce((acc, curr) => acc + curr.time, 0);
 
   return (
     <Card

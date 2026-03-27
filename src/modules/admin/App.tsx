@@ -14,6 +14,7 @@ import { PortalTypes } from "@/utils/model/common-enums";
 import DailyTasks from "./daily-tasks/daily-tasks";
 import DailyTasksCollection from "./daily-tasks/daily-task-collection";
 import ViewSingleCollectionQuestions from "./daily-tasks/view-single-collection-questions";
+import StudentList from "./students-feature/Student-list";
 const queryClient = new QueryClient();
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
                 <Route path="/mockTest/:id" element={<ViewSingleMockTest />} />
                 <Route path="/schedule" element={<Schedule />} />
                 <Route path="/dailyTasks" element={<DailyTasks />} />
+                <Route path="/students" element={<StudentList />} />
                 <Route
                   path="/dailyTasks/:id"
                   element={<DailyTasksCollection />}

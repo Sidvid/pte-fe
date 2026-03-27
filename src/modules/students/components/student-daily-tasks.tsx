@@ -2,6 +2,7 @@ import useHttp from "@/hooks/use-http";
 import { useMutation } from "@tanstack/react-query";
 import { Table, TableProps, Tag, Button, Space } from "antd";
 import React, { useEffect, useState } from "react";
+import { GiProgression } from "react-icons/gi";
 import { useNavigate } from "react-router";
 
 interface Task {
@@ -21,23 +22,29 @@ function StudentDailyTasks() {
 
   // Fetch assigned tasks for the student
   const fetchAssignedTasks = useMutation({
-    mutationFn: () => 
+    mutationFn: () =>
       sendRequest({ url: "allDailyTask", method: "GET" }) as Promise<any>,
     onSuccess: (data) => {
       // For demo purposes, we'll transform the response or use sample data
       if (data?.response?.data && Array.isArray(data.response.data)) {
         // Check if the data has the expected structure for tasks
-        if (data.response.data.length > 0 && (data.response.data[0].title || data.response.data[0].name)) {
+        if (
+          data.response.data.length > 0 &&
+          (data.response.data[0].title || data.response.data[0].name)
+        ) {
           // Transform the actual data if available
-          const transformedTasks = data.response.data.map((task: any, index: number) => ({
-            id: task.id || `task${index}`,
-            title: task.title || task.name || `Sample Task ${index + 1}`,
-            question_type: task.question_type || task.type || "FIB_RW",
-            length: task.length || task.duration || 10,
-            duration: task.duration || task.time || 20,
-            count: task.count || task.questions || 5,
-            created_at: task.created_at || task.date || new Date().toISOString()
-          }));
+          const transformedTasks = data.response.data.map(
+            (task: any, index: number) => ({
+              id: task.id || `task${index}`,
+              title: task.title || task.name || `Sample Task ${index + 1}`,
+              question_type: task.question_type || task.type || "FIB_RW",
+              length: task.length || task.duration || 10,
+              duration: task.duration || task.time || 20,
+              count: task.count || task.questions || 5,
+              created_at:
+                task.created_at || task.date || new Date().toISOString(),
+            }),
+          );
           setAssignedTasks(transformedTasks);
         } else {
           // Sample data in case the API doesn't return expected format
@@ -49,7 +56,7 @@ function StudentDailyTasks() {
               length: 10,
               duration: 20,
               count: 5,
-              created_at: "2023-01-15T10:30:00Z"
+              created_at: "2023-01-15T10:30:00Z",
             },
             {
               id: "task2",
@@ -58,7 +65,7 @@ function StudentDailyTasks() {
               length: 15,
               duration: 25,
               count: 8,
-              created_at: "2023-01-16T14:20:00Z"
+              created_at: "2023-01-16T14:20:00Z",
             },
             {
               id: "task3",
@@ -67,8 +74,8 @@ function StudentDailyTasks() {
               length: 12,
               duration: 18,
               count: 6,
-              created_at: "2023-01-17T09:15:00Z"
-            }
+              created_at: "2023-01-17T09:15:00Z",
+            },
           ]);
         }
       } else {
@@ -81,7 +88,7 @@ function StudentDailyTasks() {
             length: 10,
             duration: 20,
             count: 5,
-            created_at: "2023-01-15T10:30:00Z"
+            created_at: "2023-01-15T10:30:00Z",
           },
           {
             id: "task2",
@@ -90,7 +97,7 @@ function StudentDailyTasks() {
             length: 15,
             duration: 25,
             count: 8,
-            created_at: "2023-01-16T14:20:00Z"
+            created_at: "2023-01-16T14:20:00Z",
           },
           {
             id: "task3",
@@ -99,8 +106,8 @@ function StudentDailyTasks() {
             length: 12,
             duration: 18,
             count: 6,
-            created_at: "2023-01-17T09:15:00Z"
-          }
+            created_at: "2023-01-17T09:15:00Z",
+          },
         ]);
       }
     },
@@ -115,7 +122,7 @@ function StudentDailyTasks() {
           length: 10,
           duration: 20,
           count: 5,
-          created_at: "2023-01-15T10:30:00Z"
+          created_at: "2023-01-15T10:30:00Z",
         },
         {
           id: "task2",
@@ -124,7 +131,7 @@ function StudentDailyTasks() {
           length: 15,
           duration: 25,
           count: 8,
-          created_at: "2023-01-16T14:20:00Z"
+          created_at: "2023-01-16T14:20:00Z",
         },
         {
           id: "task3",
@@ -133,18 +140,19 @@ function StudentDailyTasks() {
           length: 12,
           duration: 18,
           count: 6,
-          created_at: "2023-01-17T09:15:00Z"
-        }
+          created_at: "2023-01-17T09:15:00Z",
+        },
       ]);
-    }
+    },
   });
 
   useEffect(() => {
     fetchAssignedTasks.mutate();
   }, []);
 
-  const handleTakeTest = (taskId: string) => {
-    navigate(`/take-task/${taskId}`);
+  const handleTakeTest = (task: Task) => {
+    navigate(`/take-task/${task.id}`);
+    console.log("Taking task:", task);
   };
 
   const columns: TableProps<Task>["columns"] = [
@@ -181,9 +189,10 @@ function StudentDailyTasks() {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <Button 
-            type="primary" 
-            onClick={() => handleTakeTest(record.id)}
+          <Button
+            type="primary"
+            icon={<GiProgression />}
+            onClick={() => handleTakeTest(record)}
           >
             Take Task
           </Button>
@@ -198,12 +207,14 @@ function StudentDailyTasks() {
         <h1 className="text-2xl font-bold">Daily Tasks</h1>
         <p className="opacity-90">Here are your assigned daily tasks.</p>
       </div>
-      
+
       <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Assigned Tasks</h2>
-        <Table 
-          dataSource={assignedTasks} 
-          columns={columns} 
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">
+          Assigned Tasks
+        </h2>
+        <Table
+          dataSource={assignedTasks}
+          columns={columns}
           rowKey="id"
           pagination={{ pageSize: 5 }}
         />

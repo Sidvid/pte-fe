@@ -18,28 +18,65 @@ function StudentSchedule() {
 
   // Fetch schedule for the student
   const fetchSchedule = useMutation({
-    mutationFn: () => 
+    mutationFn: () =>
       sendRequest({ url: "schdule", method: "GET" }) as Promise<any>,
     onSuccess: (data) => {
       if (data?.response?.data && Array.isArray(data.response.data)) {
         // Transform the actual data if available
-        const transformedData = data.response.data.map((item: any, index: number) => ({
-          id: item.id || `sched${index + 1}`,
-          weekday: item.weekday || item.day || `Day ${index + 1}`,
-          task: item.task || item.activity || `Sample Activity ${index + 1}`,
-          type: item.type || "task"
-        }));
+        const transformedData = data.response.data.map(
+          (item: any, index: number) => ({
+            id: item.id || `sched${index + 1}`,
+            weekday: item.weekday || item.day || `Day ${index + 1}`,
+            task: item.task || item.activity || `Sample Activity ${index + 1}`,
+            type: item.type || "task",
+          }),
+        );
         setSchedule(transformedData);
       } else {
         // Sample schedule data
         setSchedule([
-          { id: "sched1", weekday: "Monday", task: "FIB - Drop Down Practice", type: "task" },
-          { id: "sched2", weekday: "Tuesday", task: "Mock Test 1", type: "mock" },
-          { id: "sched3", weekday: "Wednesday", task: "Theory Video: Reading", type: "video" },
-          { id: "sched4", weekday: "Thursday", task: "Lab Video: Speaking", type: "video" },
-          { id: "sched5", weekday: "Friday", task: "Listening Comprehension", type: "task" },
-          { id: "sched6", weekday: "Saturday", task: "Writing Practice", type: "task" },
-          { id: "sched7", weekday: "Sunday", task: "Review Week Progress", type: "task" },
+          {
+            id: "sched1",
+            weekday: "Monday",
+            task: "FIB - Drop Down Practice",
+            type: "task",
+          },
+          {
+            id: "sched2",
+            weekday: "Tuesday",
+            task: "Mock Test 1",
+            type: "mock",
+          },
+          {
+            id: "sched3",
+            weekday: "Wednesday",
+            task: "Theory Video: Reading",
+            type: "video",
+          },
+          {
+            id: "sched4",
+            weekday: "Thursday",
+            task: "Lab Video: Speaking",
+            type: "video",
+          },
+          {
+            id: "sched5",
+            weekday: "Friday",
+            task: "Listening Comprehension",
+            type: "task",
+          },
+          {
+            id: "sched6",
+            weekday: "Saturday",
+            task: "Writing Practice",
+            type: "task",
+          },
+          {
+            id: "sched7",
+            weekday: "Sunday",
+            task: "Review Week Progress",
+            type: "task",
+          },
         ]);
       }
     },
@@ -47,15 +84,45 @@ function StudentSchedule() {
       console.error("Error fetching schedule:", error);
       // Sample schedule data
       setSchedule([
-        { id: "sched1", weekday: "Monday", task: "FIB - Drop Down Practice", type: "task" },
+        {
+          id: "sched1",
+          weekday: "Monday",
+          task: "FIB - Drop Down Practice",
+          type: "task",
+        },
         { id: "sched2", weekday: "Tuesday", task: "Mock Test 1", type: "mock" },
-        { id: "sched3", weekday: "Wednesday", task: "Theory Video: Reading", type: "video" },
-        { id: "sched4", weekday: "Thursday", task: "Lab Video: Speaking", type: "video" },
-        { id: "sched5", weekday: "Friday", task: "Listening Comprehension", type: "task" },
-        { id: "sched6", weekday: "Saturday", task: "Writing Practice", type: "task" },
-        { id: "sched7", weekday: "Sunday", task: "Review Week Progress", type: "task" },
+        {
+          id: "sched3",
+          weekday: "Wednesday",
+          task: "Theory Video: Reading",
+          type: "video",
+        },
+        {
+          id: "sched4",
+          weekday: "Thursday",
+          task: "Lab Video: Speaking",
+          type: "video",
+        },
+        {
+          id: "sched5",
+          weekday: "Friday",
+          task: "Listening Comprehension",
+          type: "task",
+        },
+        {
+          id: "sched6",
+          weekday: "Saturday",
+          task: "Writing Practice",
+          type: "task",
+        },
+        {
+          id: "sched7",
+          weekday: "Sunday",
+          task: "Review Week Progress",
+          type: "task",
+        },
       ]);
-    }
+    },
   });
 
   useEffect(() => {
@@ -90,7 +157,11 @@ function StudentSchedule() {
       dataIndex: "type",
       key: "type",
       render: (type) => (
-        <Tag color={type === "mock" ? "green" : type === "video" ? "orange" : "blue"}>
+        <Tag
+          color={
+            type === "mock" ? "green" : type === "video" ? "orange" : "blue"
+          }
+        >
           {type === "mock" ? "Mock Test" : type === "video" ? "Video" : "Task"}
         </Tag>
       ),
@@ -101,13 +172,22 @@ function StudentSchedule() {
       render: (_, record) => (
         <Space size="middle">
           {record.type === "mock" && (
-            <Button type="primary" onClick={() => handleTakeMockTest(record.id)}>Take</Button>
+            <Button
+              type="primary"
+              onClick={() => handleTakeMockTest(record.id)}
+            >
+              Take
+            </Button>
           )}
           {record.type === "task" && (
-            <Button type="primary" onClick={() => handleTakeTask(record.id)}>Start</Button>
+            <Button type="primary" onClick={() => handleTakeTask(record.id)}>
+              Start
+            </Button>
           )}
           {record.type === "video" && (
-            <Button type="primary" onClick={() => handleWatchVideo(record.id)}>Watch</Button>
+            <Button type="primary" onClick={() => handleWatchVideo(record.id)}>
+              Watch
+            </Button>
           )}
         </Space>
       ),
@@ -118,14 +198,18 @@ function StudentSchedule() {
     <div className="p-6">
       <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-xl shadow-lg mb-6">
         <h1 className="text-2xl font-bold">Weekly Schedule</h1>
-        <p className="opacity-90">Here is your scheduled activities for the week.</p>
+        <p className="opacity-90">
+          Here is your scheduled activities for the week.
+        </p>
       </div>
-      
+
       <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Scheduled Activities</h2>
-        <Table 
-          dataSource={schedule} 
-          columns={columns} 
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">
+          Scheduled Activities
+        </h2>
+        <Table
+          dataSource={schedule}
+          columns={columns}
           rowKey="id"
           pagination={{ pageSize: 10 }}
         />

@@ -174,3 +174,277 @@ export const portalConfig = {
 export const STORAGE_KEYS = {
   ACCESS_TOKEN: "accessToken",
 };
+
+export const allSampleQuestions = {
+  // Speaking
+  ra: {
+    id: "q-ra-001",
+    type: "ra",
+    index: 1,
+    data: {
+      text: "Climate change is one of the most pressing issues of our time. Scientists around the world have documented rising temperatures, melting ice caps, and increasingly severe weather events.",
+    },
+    extra: {},
+  },
+
+  // rs: {
+  //   id: "q-rs-001",
+  //   type: "rs",
+  //   index: 1,
+  //   data: {
+  //     audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  //   },
+  //   extra: {
+  //     script:
+  //       "The university library will be closed for renovations next month.",
+  //   },
+  // },
+
+  // di: {
+  //   id: "q-di-001",
+  //   type: "di",
+  //   index: 1,
+  //   data: {
+  //     image:
+  //       "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/1200px-Cat03.jpg",
+  //   },
+  //   extra: {},
+  // },
+
+  // rl: {
+  //   id: "q-rl-001",
+  //   type: "rl",
+  //   index: 1,
+  //   data: {
+  //     audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+  //     image: "https://via.placeholder.com/400x300?text=Lecture+Slide",
+  //   },
+  //   extra: {},
+  // },
+
+  // asq: {
+  //   id: "q-asq-001",
+  //   type: "asq",
+  //   index: 1,
+  //   data: {
+  //     audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+  //   },
+  //   extra: {
+  //     answers: ["author", "writer"],
+  //   },
+  // },
+
+  // // Writing
+  // we: {
+  //   id: "q-we-001",
+  //   type: "we",
+  //   index: 1,
+  //   data: {
+  //     prompt:
+  //       "Do you agree or disagree with the following statement? Technology has made our lives easier.",
+  //   },
+  //   extra: {},
+  // },
+
+  // swt: {
+  //   id: "q-swt-001",
+  //   type: "swt",
+  //   index: 1,
+  //   data: {
+  //     text: "The Great Barrier Reef is the world's largest coral reef system, stretching over 2,300 kilometers off the coast of Australia. It faces threats from climate change and pollution.",
+  //   },
+  //   extra: {},
+  // },
+
+  // sst: {
+  //   id: "q-sst-001",
+  //   type: "sst",
+  //   index: 1,
+  //   data: {
+  //     audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+  //   },
+  //   extra: {},
+  // },
+
+  // // Reading
+  // ro: {
+  //   id: "q-ro-001",
+  //   type: "ro",
+  //   index: 1,
+  //   data: {
+  //     sentences: [
+  //       "Finally, the water reaches the ocean.",
+  //       "The water cycle begins when the sun heats water.",
+  //       "This water vapor rises and forms clouds.",
+  //       "Precipitation occurs as rain or snow.",
+  //       "The precipitation flows into rivers.",
+  //     ],
+  //   },
+  //   extra: {},
+  // },
+
+  // rfib: {
+  //   id: "q-rfib-001",
+  //   type: "rfib",
+  //   index: 1,
+  //   data: {
+  //     text: "The human brain is a remarkable _____. It controls all of our _____ functions.",
+  //     options: [
+  //       ["organ", "muscle", "bone"],
+  //       ["bodily", "mental", "physical"],
+  //     ],
+  //   },
+  //   extra: {
+  //     answers: ["organ", "bodily"],
+  //   },
+  // },
+
+  // rwfib: {
+  //   id: "q-rwfib-001",
+  //   type: "rwfib",
+  //   index: 1,
+  //   data: {
+  //     text: "Climate change is having a profound _____ on ecosystems worldwide.",
+  //     blanks: [{ index: 0, options: ["impact", "effect", "affect"] }],
+  //   },
+  //   extra: {
+  //     answers: ["impact"],
+  //   },
+  // },
+
+  // rmcsa: {
+  //   id: "q-rmcsa-001",
+  //   type: "rmcsa",
+  //   index: 1,
+  //   data: {
+  //     text: "The Industrial Revolution transformed agricultural economies into industrial ones.",
+  //     question: "What was the main impact of the Industrial Revolution?",
+  //     options: [
+  //       "Decline in agriculture",
+  //       "Transformation to industrial economy",
+  //       "Reduced efficiency",
+  //       "Eliminated factory workers",
+  //     ],
+  //   },
+  //   extra: {
+  //     answer: 1,
+  //   },
+  // },
+
+  // rmcma: {
+  //   id: "q-rmcma-001",
+  //   type: "rmcma",
+  //   index: 1,
+  //   data: {
+  //     text: "Renewable energy sources include solar, wind, and hydroelectric power.",
+  //     question: "Which are characteristics of renewable energy?",
+  //     options: [
+  //       "Do not deplete resources",
+  //       "More expensive",
+  //       "Minimal emissions",
+  //       "Require lots of water",
+  //     ],
+  //   },
+  //   extra: {
+  //     answers: [0, 2],
+  //   },
+  // },
+
+  // // Listening
+  // lfib: {
+  //   id: "q-lfib-001",
+  //   type: "lfib",
+  //   index: 1,
+  //   data: {
+  //     audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+  //     text: "The professor explained that _____ is essential for understanding scientific _____.",
+  //   },
+  //   extra: {
+  //     answers: ["critical analysis", "concepts"],
+  //   },
+  // },
+
+  // lmcsa: {
+  //   id: "q-lmcsa-001",
+  //   type: "lmcsa",
+  //   index: 1,
+  //   data: {
+  //     audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
+  //     question: "What is the main topic?",
+  //     options: [
+  //       "Ancient history",
+  //       "Agriculture",
+  //       "Technology in education",
+  //       "Conservation",
+  //     ],
+  //   },
+  //   extra: {
+  //     answer: 2,
+  //   },
+  // },
+
+  // lmcma: {
+  //   id: "q-lmcma-001",
+  //   type: "lmcma",
+  //   index: 1,
+  //   data: {
+  //     audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
+  //     question: "Which factors contribute to climate change?",
+  //     options: [
+  //       "Deforestation",
+  //       "Renewable energy",
+  //       "Industrial emissions",
+  //       "Organic farming",
+  //     ],
+  //   },
+  //   extra: {
+  //     answers: [0, 2],
+  //   },
+  // },
+
+  // hcs: {
+  //   id: "q-hcs-001",
+  //   type: "hcs",
+  //   index: 1,
+  //   data: {
+  //     audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
+  //     options: [
+  //       "Exercise benefits mental health",
+  //       "Sedentary lifestyles harm cardiovascular health",
+  //       "Diet plans for weight loss",
+  //       "Mental health unrelated to exercise",
+  //     ],
+  //   },
+  //   extra: {
+  //     answer: 0,
+  //   },
+  // },
+
+  // hiw: {
+  //   id: "q-hiw-001",
+  //   type: "hiw",
+  //   index: 1,
+  //   data: {
+  //     audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3",
+  //     text: "The university library will be closed for maintenance next week. Students can access online resources.",
+  //   },
+  //   extra: {
+  //     incorrectWords: [7, 9],
+  //   },
+  // },
+
+  // wfd: {
+  //   id: "q-wfd-001",
+  //   type: "wfd",
+  //   index: 1,
+  //   data: {
+  //     audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3",
+  //   },
+  //   extra: {
+  //     script: "The assignment must be submitted by the end of this week.",
+  //   },
+  // },
+};
+
+// Usage: Pick any question type to test
+const questionToTest = allSampleQuestions.ra; // Change to rs, di, we, ro, etc.

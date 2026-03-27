@@ -2,11 +2,21 @@ import { STORAGE_KEYS } from "@/utils/constants/app-constants";
 import apiClient from "@/utils/helpers/interceptor";
 
 export const URLS = {
+  // Admin routes
   adminLogin: "api/auth/login",
   schdule: "api/admin/weekly-schedules",
   allDailyTask: "api/admin/daily-tasks",
+  allMockTests: "api/admin/mock-tests",
   addNewQuestion: "api/admin/questions",
   deleteQuestion: "api/admin/questions",
+  getAllStudents: "api/admin/students",
+  getQuestionsFromTask: "api/admin/daily-tasks/:taskId",
+  // Student routes
+  requestAssignments: "api/student/request-assignment",
+  theoryVideosCompletionStatus: "api/student/videos/theory/status",
+  getAllTheoryVideos: "api/student/videos/theory",
+  saveQuestionResponse: "api/student/question-responses",
+  submitDailyTask: "/api/student/daily-tasks/submit",
 };
 type Methods = "POST" | "GET" | "PUT" | "DELETE";
 interface RequestProps {
@@ -25,7 +35,10 @@ const useHttp = ({ type }: { type: "auth" | "raw" }) => {
     endURL,
   }: RequestProps) => {
     const authTokenCookie = await cookieStore.get(STORAGE_KEYS.ACCESS_TOKEN);
-    const authToken = authTokenCookie?.value;
+    // const authToken = authTokenCookie?.value;
+    const authToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMxNzRmODFkLWU2YmQtNGU5MS1iOTkyLTcwOTVjYzk2ZDQ3MSIsInVzZXJuYW1lIjoidmlrYXMiLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTc3NDQ2NzI4NywiZXhwIjoxNzc0NTUzNjg3fQ.vw0vqSZKwKzyeocrItKXvMjjnyM9eVbePlFFeDdmYB4";
+
     try {
       const response = await apiClient({
         method,
@@ -42,7 +55,7 @@ const useHttp = ({ type }: { type: "auth" | "raw" }) => {
       console.log("API Response:", response);
       console.log("Status:", response.status);
       console.log("Data:", response.data);
-      
+
       if (response.status === 200 || response.status === 201) {
         return {
           response: response.data,
