@@ -19,6 +19,9 @@ export const URLS = {
   saveQuestionResponse: "api/student/question-responses",
   submitDailyTask: "/api/student/daily-tasks/submit",
   studentDashboard: "/api/student/dashboard",
+  startMockTest: "/api/student/mock-tests/:test_id/start",
+  startMockTestSection: "/api/student/mock-tests",
+  submitMockTestSection: "/api/student/mock-tests",
 };
 type Methods = "POST" | "GET" | "PUT" | "DELETE";
 interface RequestProps {

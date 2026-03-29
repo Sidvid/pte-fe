@@ -18,6 +18,7 @@ import { mockTestSample } from "../../../../mock-test-sample";
 import MockTestPlayer from "../../../../MockTestPlayer";
 import DailyTaskPlayer from "../../../../DailyTaskPlayer";
 import StudentCompleteDashboard from "./StudentCompleteDashboard";
+import MockTestPreviewPage from "../../../../TestMockPlayer";
 
 function Dashboard() {
   const [requestedAssignment, setRequestedAssignment] = useState<any[]>();
@@ -1152,7 +1153,8 @@ function Dashboard() {
       {/* <MockTestPlayer mockTestResponse={mockTaskResponse} /> */}
 
       {/* <DailyTaskPlayer questions={dailyTaskResponse?.data || []} /> */}
-      <StudentCompleteDashboard />
+      {/* <StudentCompleteDashboard /> */}
+      <MockTestPreviewPage />
     </>
   );
 }
