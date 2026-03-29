@@ -63,13 +63,9 @@ const ReadingWritingFillBlanks = ({
     const updated = [...answers];
     updated[blankIndex] = value;
     setAnswers(updated);
-    onResponse?({
-      question_id: question?.id,
-      dts_id: localStorage.getItem("current_dts_id"),
-      response: {
-        type: "inputs",
-        inputs: updated,
-      },
+    onResponse?.({
+      type: "inputs",
+      inputs: updated,
     });
   };
 

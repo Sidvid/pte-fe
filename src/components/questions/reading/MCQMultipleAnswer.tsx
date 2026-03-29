@@ -29,13 +29,9 @@ const MCQMultipleAnswer = ({
       : [...selected, index];
 
     setSelected(newSelected);
-    onResponse?({
-      question_id: question?.id,
-      dts_id: localStorage.getItem("current_dts_id"),
-      response: {
-        type: "selected",
-        selected: newSelected,
-      },
+    onResponse?.({
+      type: "selected",
+      selected: newSelected,
     });
   };
 

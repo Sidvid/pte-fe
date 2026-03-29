@@ -26,13 +26,9 @@ const ListeningMCQMultiple = ({
       : [...selected, index];
 
     setSelected(updated);
-    onResponse?({
-      question_id: question?.id,
-      dts_id: localStorage.getItem("current_dts_id"),
-      response: {
-        type: "selected",
-        selected: updated,
-      },
+    onResponse?.({
+      type: "selected",
+      selected: updated,
     });
   };
 

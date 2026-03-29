@@ -7,7 +7,7 @@ export const parseScript = (text: string) => {
   if (!text) {
     return [{ type: "text", value: "" }];
   }
-  
+
   const regex = /\{\{(.*?)\}\}/g;
   const parts: any[] = [];
   let lastIndex = 0;
@@ -41,4 +41,22 @@ export const parseScript = (text: string) => {
   }
 
   return parts;
+};
+
+export const formatDate = (date?: string | Date | null) => {
+  if (!date) return "-";
+  return new Date(date).toLocaleDateString();
+};
+
+export const formatDateTime = (date?: string | Date | null) => {
+  if (!date) return "-";
+  return new Date(date).toLocaleString();
+};
+
+export const formatTime = (date?: string | Date | null) => {
+  if (!date) return "-";
+  return new Date(date).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 };

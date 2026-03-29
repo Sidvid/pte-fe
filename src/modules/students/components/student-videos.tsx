@@ -163,11 +163,11 @@ function StudentVideos() {
 
   return (
     <div className="p-6">
-      {/* <VideoPlayer
+      <VideoPlayer
         videoUrl="https://www.w3schools.com/html/mov_bbb.mp4"
         title="Theory Video 1"
         onComplete={null}
-      /> */}
+      />
       <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-xl shadow-lg mb-6">
         <h1 className="text-2xl font-bold">Learning Videos</h1>
         <p className="opacity-90">

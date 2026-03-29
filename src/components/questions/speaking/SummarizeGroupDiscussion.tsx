@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Space, Alert, Card, Image, Typography, message } from "antd";
+import { Space, Alert, Card, Typography, message } from "antd";
 import QuestionLayout from "../QuestionLayout";
 import AudioPlayer from "../AudioPlayer";
 import AudioRecorder from "../AudioRecorder";
@@ -7,9 +7,9 @@ import { useQuestionTimer } from "../../../hooks/useQuestionTimer";
 import { useMutation } from "@tanstack/react-query";
 import useHttp from "@/hooks/use-http";
 
-const { Text } = Typography;
+const { Paragraph, Text } = Typography;
 
-const RetellLecture = ({
+const SummarizeGroupDiscussion = ({
   question,
   questionNumber,
   totalQuestions,
@@ -72,69 +72,69 @@ const RetellLecture = ({
   });
 
   const handleAudioComplete = () => {
-    setTimeout(() => setPhase("recording"), 1000);
+    setTimeout(() => setPhase("recording"), 800);
   };
 
-  const handleRecordingComplete = (blob, url) => {
+  const handleRecordingComplete = (blob, recordingPathOrUrl) => {
     setAudioBlob(blob);
-    setRecordedAudioUrl(url);
+    setRecordedAudioUrl(recordingPathOrUrl);
     setPhase("done");
 
     const formData = new FormData();
-    formData.append("file", blob, `retell-lecture-${Date.now()}.webm`);
-    formData.append("question_type", "rl");
+    formData.append(
+      "file",
+      blob,
+      `summarize-group-discussion-${Date.now()}.webm`,
+    );
+    formData.append("question_type", "sgd");
 
     uploadAudioCall.mutate(formData);
   };
 
-  const instructions =
-    phase === "listen"
-      ? "You will hear a lecture. After listening to the lecture, please retell what you have just heard in your own words."
-      : "Begin speaking now.";
-
   return (
     <QuestionLayout
-      type="rl"
+      type="sgd"
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
       timeRemaining={phase === "recording" ? recordTimer.formatTime() : null}
-      instructions={instructions}
+      instructions="You will hear a group discussion or discussion prompt. Listen carefully and then summarize the discussion in your own words."
     >
       <Space direction="vertical" style={{ width: "100%" }} size="large">
-        {question.data?.image && (
-          <Card style={{ textAlign: "center" }}>
-            <Image
-              src={question.data.image}
-              alt="Lecture visual"
-              style={{ maxHeight: "280px", objectFit: "contain" }}
-              preview={false}
-            />
+        {question?.data?.text && (
+          <Card style={{ background: "#fafafa" }}>
+            <Paragraph
+              style={{ margin: 0, fontSize: "16px", lineHeight: "1.8" }}
+            >
+              {question.data.text}
+            </Paragraph>
           </Card>
         )}
 
-        <AudioPlayer
-          src={question.data?.audio}
-          autoPlay={true}
-          maxPlays={1}
-          onPlayComplete={handleAudioComplete}
-          disabled={phase !== "listen"}
-        />
+        {question?.data?.audio && (
+          <AudioPlayer
+            src={question.data.audio}
+            autoPlay={true}
+            maxPlays={1}
+            onPlayComplete={handleAudioComplete}
+            disabled={phase !== "listen"}
+          />
+        )}
 
         {phase === "listen" && (
           <Alert
-            message="Listen Carefully"
-            description="The audio will play automatically. Listen and prepare to retell the lecture."
             type="info"
             showIcon
+            message="Listen Carefully"
+            description="After the discussion ends, summarize the key points by speaking."
           />
         )}
 
         {phase === "recording" && (
           <Alert
-            message="Retell the Lecture"
-            description="Speak clearly and summarize the main points."
             type="warning"
             showIcon
+            message="Summarize the Discussion"
+            description="Speak clearly and summarize the important points from the discussion."
           />
         )}
 
@@ -149,10 +149,10 @@ const RetellLecture = ({
         {phase === "done" && (
           <>
             <Alert
-              message="Recording Complete"
-              description="Your retell response has been recorded. You can now listen to your recording."
               type="success"
               showIcon
+              message="Recording Complete"
+              description="Your summary has been recorded. You can now listen to your recording."
             />
 
             {recordedAudioUrl && (
@@ -183,7 +183,7 @@ const RetellLecture = ({
             {audioBlob &&
               !uploadedRecordingKey &&
               !uploadAudioCall.isPending && (
-                <Text type="secondary">Response captured locally.</Text>
+                <Text type="secondary">Recording captured locally.</Text>
               )}
           </>
         )}
@@ -192,4 +192,4 @@ const RetellLecture = ({
   );
 };
 
-export default RetellLecture;
+export default SummarizeGroupDiscussion;

@@ -1,5 +1,15 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { Button, Card, Progress, Space, Typography, Alert, Modal } from "antd";
+import {
+  Button,
+  Card,
+  Progress,
+  Space,
+  Typography,
+  Alert,
+  Modal,
+  message,
+  notification,
+} from "antd";
 import {
   PlayCircleOutlined,
   PauseCircleOutlined,
@@ -112,6 +122,9 @@ const VideoPlayer = ({
     if (percent >= minCompletionPercent) {
       setIsCompleted(true);
       setIsPlaying(false);
+      notification.success({
+        title: "You have successfully watched the video. You may proceed.",
+      });
       onComplete?.({
         completed: true,
         watchedSeconds: maxWatchedTime,
@@ -194,7 +207,7 @@ const VideoPlayer = ({
             </Space>
           </div>
 
-          {!isCompleted && (
+          {/* {!isCompleted && (
             <Alert
               type="warning"
               showIcon
@@ -202,37 +215,39 @@ const VideoPlayer = ({
               message="Restrictions Enabled. Do not skip, exit fullscreen, or switch tabs while watching."
               //   description="Do not skip, exit fullscreen, or switch tabs while watching."
             />
-          )}
+          )} */}
 
-          <div
+          {/* <div
             style={{
               background: "#000",
               borderRadius: 12,
-              overflow: "hidden",
+              //   overflow: "hidden",
               position: "relative",
             }}
-          >
-            <video
-              ref={videoRef}
-              src={videoUrl}
-              onLoadedMetadata={handleLoadedMetadata}
-              onTimeUpdate={handleTimeUpdate}
-              onSeeking={handleSeeking}
-              onEnded={handleEnded}
-              onPlay={() => setIsPlaying(true)}
-              onPause={() => setIsPlaying(false)}
-              controls={false}
-              style={{
-                width: "100%",
-                maxHeight: "75vh",
-                background: "#000",
-              }}
-            />
-          </div>
+          > */}
+          <video
+            ref={videoRef}
+            src={videoUrl}
+            onLoadedMetadata={handleLoadedMetadata}
+            onTimeUpdate={handleTimeUpdate}
+            onSeeking={handleSeeking}
+            onEnded={handleEnded}
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+            // onClick={handlePlayPause}
+            controls={false}
+            style={{
+              width: "100%",
+              maxHeight: "75vh",
+              background: "#000",
+            }}
+          />
+          {/* </div> */}
 
           <Progress
             percent={Math.round(completionPercent)}
             status={isCompleted ? "success" : "active"}
+            size="small"
           />
 
           <div
@@ -268,14 +283,14 @@ const VideoPlayer = ({
             </Text>
           </div>
 
-          {isCompleted && (
+          {/* {isCompleted && (
             <Alert
               type="success"
               showIcon
-              message="Video Completed"
+              title="Video Completed"
               description="You have successfully watched the video. You may proceed."
             />
-          )}
+          )} */}
         </Space>
       </Card>
 

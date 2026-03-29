@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Select, Space, Typography, Card } from "antd";
+import { Card, Select } from "antd";
 import QuestionLayout from "../QuestionLayout";
 import { useQuestionTimer } from "../../../hooks/useQuestionTimer";
 
-const { Text } = Typography;
 const { Option } = Select;
 
 const ReadingFillBlanks = ({
@@ -14,61 +13,67 @@ const ReadingFillBlanks = ({
   timeLimit = 120,
 }) => {
   const timer = useQuestionTimer(timeLimit, () => {
-    onResponse?.({ inputs: answers });
+    onResponse?.({
+      type: "inputs",
+      inputs: answers,
+    });
   });
 
   useEffect(() => {
     timer.start();
   }, []);
 
-  const text = question.data?.text || "";
-  const blanks = question.data?.blanks || [];
-  const options = question.data?.options || [];
+  const text = question?.data?.text || "";
+  const choices = question?.data?.choices || [];
 
-  const [answers, setAnswers] = useState(Array(blanks.length).fill(""));
-
+  // split text by backend placeholder format: {{}}
   const segments = useMemo(() => {
-    // If backend uses _____ placeholders
-    return text.split("_____");
+    return text.split("{{}}");
   }, [text]);
+
+  const blankCount = Math.max(segments.length - 1, 0);
+
+  const [answers, setAnswers] = useState(Array(blankCount).fill(""));
 
   const handleSelect = (blankIndex, value) => {
     const updated = [...answers];
     updated[blankIndex] = value;
     setAnswers(updated);
-    onResponse?({
-      question_id: question?.id,
-      dts_id: localStorage.getItem("current_dts_id"),
-      response: {
-        type: "inputs",
-        inputs: updated,
-      },
+
+    onResponse?.({
+      type: "inputs",
+      inputs: updated,
     });
   };
 
   return (
     <QuestionLayout
-      type="rfib"
+      type="fib_r"
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
       timeRemaining={timer.formatTime()}
-      instructions="Fill in the blanks in the text below."
+      instructions="In the text below some words are missing. Drag words from the box below to the appropriate place in the text."
     >
       <Card style={{ background: "#fafafa" }}>
-        <div style={{ fontSize: 16, lineHeight: "2.4" }}>
+        <div style={{ fontSize: 16, lineHeight: "2.6" }}>
           {segments.map((segment, index) => (
             <React.Fragment key={index}>
               <span>{segment}</span>
-              {index < blanks.length && (
+
+              {index < blankCount && (
                 <Select
                   value={answers[index] || undefined}
                   placeholder="Select"
-                  style={{ minWidth: 140, margin: "0 8px" }}
+                  style={{
+                    minWidth: 160,
+                    margin: "0 8px",
+                    display: "inline-block",
+                  }}
                   onChange={(value) => handleSelect(index, value)}
                 >
-                  {(options[index] || []).map((option) => (
-                    <Option key={option} value={option}>
-                      {option}
+                  {choices.map((choice) => (
+                    <Option key={choice} value={choice}>
+                      {choice}
                     </Option>
                   ))}
                 </Select>

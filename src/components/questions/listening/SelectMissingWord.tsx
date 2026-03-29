@@ -1,18 +1,20 @@
 import React, { useState } from "react";
-import { Radio, Space, Typography, Card, Alert } from "antd";
+import { Radio, Space, Card, Alert, Typography } from "antd";
 import QuestionLayout from "../QuestionLayout";
 import AudioPlayer from "../AudioPlayer";
 
-const { Paragraph } = Typography;
+const { Text } = Typography;
 
-const ListeningMCQSingle = ({
+const SelectMissingWord = ({
   question,
   questionNumber,
   totalQuestions,
   onResponse,
 }) => {
+  const [phase, setPhase] = useState("listen"); // listen | answer
   const [selected, setSelected] = useState(null);
-  const [phase, setPhase] = useState("listen");
+
+  const choices = question?.data?.choices || question?.data?.options || [];
 
   const handleAudioComplete = () => {
     setPhase("answer");
@@ -21,24 +23,23 @@ const ListeningMCQSingle = ({
   const handleChange = (e) => {
     const value = e.target.value;
     setSelected(value);
+
     onResponse?.({
       type: "selected",
       selected: value,
     });
   };
 
-  const options = question.data?.options || question.data?.choices || [];
-
   return (
     <QuestionLayout
-      type="lmcsa"
+      type="smw"
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
-      instructions="Listen to the recording and answer the multiple-choice question by selecting the correct response."
+      instructions="You will hear a recording about an academic subject. At the end of the recording, the last word or group of words has been replaced by a beep. Select the correct option to complete the recording."
     >
       <Space direction="vertical" style={{ width: "100%" }} size="large">
         <AudioPlayer
-          src={question.data?.audio}
+          src={question?.data?.audio}
           autoPlay={true}
           maxPlays={1}
           onPlayComplete={handleAudioComplete}
@@ -46,17 +47,20 @@ const ListeningMCQSingle = ({
 
         {phase === "listen" && (
           <Alert
-            message="Listen First"
-            description="The options will be available after the audio ends."
             type="info"
             showIcon
+            message="Listen carefully"
+            description="The options will be available after the audio finishes."
           />
         )}
 
-        {question.data?.question && (
-          <Paragraph strong style={{ fontSize: "16px" }}>
-            {question.data.question}
-          </Paragraph>
+        {phase === "answer" && (
+          <Alert
+            type="warning"
+            showIcon
+            message="Select the missing word"
+            description="Choose the option that best completes the recording."
+          />
         )}
 
         <Radio.Group
@@ -66,10 +70,14 @@ const ListeningMCQSingle = ({
           disabled={phase !== "answer"}
         >
           <Space direction="vertical" style={{ width: "100%" }}>
-            {options.map((option, index) => (
+            {choices.map((choice, index) => (
               <Card
                 key={index}
                 size="small"
+                onClick={() =>
+                  phase === "answer" &&
+                  handleChange({ target: { value: index } })
+                }
                 style={{
                   cursor: phase === "answer" ? "pointer" : "not-allowed",
                   border:
@@ -79,21 +87,21 @@ const ListeningMCQSingle = ({
                   background: selected === index ? "#e6f7ff" : "#fff",
                   opacity: phase === "answer" ? 1 : 0.7,
                 }}
-                onClick={() =>
-                  phase === "answer" &&
-                  handleChange({ target: { value: index } })
-                }
               >
                 <Radio value={index}>
-                  <span style={{ fontSize: "15px" }}>{option}</span>
+                  <span style={{ fontSize: "15px" }}>{choice}</span>
                 </Radio>
               </Card>
             ))}
           </Space>
         </Radio.Group>
+
+        {selected !== null && (
+          <Text type="secondary">Selected option index: {selected}</Text>
+        )}
       </Space>
     </QuestionLayout>
   );
 };
 
-export default ListeningMCQSingle;
+export default SelectMissingWord;

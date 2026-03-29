@@ -28,6 +28,10 @@ import ListeningMCQMultiple from "./listening/ListeningMCQMultiple";
 import HighlightCorrectSummary from "./listening/HighlightCorrectSummary";
 // import HighlightIncorrectWords from "./listening/HighlightIncorrectWords";
 import WriteFromDictation from "./listening/WriteFromDictation";
+import { normalizeQuestionType } from "@/utils/constants/questtionTypes";
+import SelectMissingWord from "./listening/SelectMissingWord";
+import RespondToSituation from "./speaking/RespondToSituation";
+import SummarizeGroupDiscussion from "./speaking/SummarizeGroupDiscussion";
 
 const componentMap = {
   // Speaking
@@ -36,6 +40,8 @@ const componentMap = {
   di: DescribeImage,
   rl: RetellLecture,
   asq: AnswerShortQuestion,
+  rts: RespondToSituation,
+  sgd: SummarizeGroupDiscussion,
 
   // Writing
   we: WriteEssay,
@@ -44,18 +50,19 @@ const componentMap = {
 
   // Reading
   ro: ReorderParagraphs,
-  rfib: ReadingFillBlanks,
+  fib_r: ReadingFillBlanks,
   rwfib: ReadingWritingFillBlanks,
   rmcsa: MCQSingleAnswer,
   rmcma: MCQMultipleAnswer,
   hiw: HighlightIncorrectWords,
 
   // Listening
-  lfib: ListeningFillBlanks,
+  fib_l: ListeningFillBlanks,
   lmcsa: ListeningMCQSingle,
   lmcma: ListeningMCQMultiple,
   hcs: HighlightCorrectSummary,
   // hiw: HighlightIncorrectWords,
+  smw: SelectMissingWord,
   wfd: WriteFromDictation,
 };
 
@@ -65,6 +72,7 @@ const QuestionRenderer = ({
   totalQuestions,
   onResponse,
   loading = false,
+  isPaused = false,
 }) => {
   if (loading) {
     return (
@@ -83,8 +91,9 @@ const QuestionRenderer = ({
       />
     );
   }
+  const normalizedType = normalizeQuestionType(question.type);
 
-  const QuestionComponent = componentMap[question.type];
+  const QuestionComponent = componentMap[normalizedType];
 
   if (!QuestionComponent) {
     return (

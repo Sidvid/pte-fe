@@ -8,7 +8,7 @@ import FillInTheBlanks from "@/modules/common/show-question/fill-in-the-blank";
 import FibDragDrop from "@/modules/common/show-question/fib-drag-drop";
 import QuestionRenderer from "@/components/questions/QuestionRenderer";
 import { allSampleQuestions } from "@/utils/constants/app-constants";
-import TestHIW from "../../../../TestQuestion";
+import TestHIW from "../../../../MockTestPlayer";
 
 interface TaskDetails {
   id: string;

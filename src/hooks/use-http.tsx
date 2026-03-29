@@ -4,6 +4,7 @@ import apiClient from "@/utils/helpers/interceptor";
 export const URLS = {
   // Admin routes
   adminLogin: "api/auth/login",
+  uploadAudio: "/api/auth/audio-upload",
   schdule: "api/admin/weekly-schedules",
   allDailyTask: "api/admin/daily-tasks",
   allMockTests: "api/admin/mock-tests",
@@ -17,6 +18,7 @@ export const URLS = {
   getAllTheoryVideos: "api/student/videos/theory",
   saveQuestionResponse: "api/student/question-responses",
   submitDailyTask: "/api/student/daily-tasks/submit",
+  studentDashboard: "/api/student/dashboard",
 };
 type Methods = "POST" | "GET" | "PUT" | "DELETE";
 interface RequestProps {
@@ -37,7 +39,7 @@ const useHttp = ({ type }: { type: "auth" | "raw" }) => {
     const authTokenCookie = await cookieStore.get(STORAGE_KEYS.ACCESS_TOKEN);
     // const authToken = authTokenCookie?.value;
     const authToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMxNzRmODFkLWU2YmQtNGU5MS1iOTkyLTcwOTVjYzk2ZDQ3MSIsInVzZXJuYW1lIjoidmlrYXMiLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTc3NDQ2NzI4NywiZXhwIjoxNzc0NTUzNjg3fQ.vw0vqSZKwKzyeocrItKXvMjjnyM9eVbePlFFeDdmYB4";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMxNzRmODFkLWU2YmQtNGU5MS1iOTkyLTcwOTVjYzk2ZDQ3MSIsInVzZXJuYW1lIjoidmlrYXMiLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTc3NDc5OTAxMywiZXhwIjoxNzc0ODg1NDEzfQ.hvq3KoyUvmkjiUjPjf2Gc0SHXtNgcFffhbGyVcOYf2U";
 
     try {
       const response = await apiClient({

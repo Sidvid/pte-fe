@@ -29,13 +29,9 @@ const WriteFromDictation = ({
   const handleChange = (e) => {
     const newText = e.target.value;
     setText(newText);
-    onResponse?({
-      question_id: question?.id,
-      dts_id: localStorage.getItem("current_dts_id"),
-      response: {
-        type: "input",
-        input: newText,
-      },
+    onResponse?.({
+      type: "input",
+      input: newText,
     });
   };
 

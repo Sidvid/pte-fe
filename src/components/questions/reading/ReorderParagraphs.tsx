@@ -40,13 +40,9 @@ const ReorderParagraphs = ({
     updated.splice(result.destination.index, 0, moved);
 
     setItems(updated);
-    onResponse?({
-      question_id: question?.id,
-      dts_id: localStorage.getItem("current_dts_id"),
-      response: {
-        type: "inputs",
-        inputs: updated.map((item) => item.text),
-      },
+    onResponse?.({
+      type: "inputs",
+      inputs: updated.map((item) => item.text),
     });
   };
 

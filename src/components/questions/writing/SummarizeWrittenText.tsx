@@ -27,12 +27,8 @@ const SummarizeWrittenText = ({
     const value = e.target.value;
     setText(value);
     onResponse?.({
-      question_id: question?.id,
-      dts_id: localStorage.getItem("current_dts_id"),
-      response: {
-        type: "input",
-        input: value,
-      },
+      type: "input",
+      input: value,
     });
   };
 

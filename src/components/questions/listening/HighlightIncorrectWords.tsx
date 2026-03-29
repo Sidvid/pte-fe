@@ -29,12 +29,8 @@ const HighlightIncorrectWords = ({
 
     setSelectedWords(updated);
     onResponse?.({
-      question_id: question?.id,
-      dts_id: localStorage.getItem("current_dts_id"),
-      response: {
-        type: "inputs",
-        inputs: updated.map((i) => i.toString()),
-      },
+      type: "inputs",
+      inputs: updated.map((i) => i.toString()),
     });
   };
 

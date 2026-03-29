@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Space, Alert, Typography } from "antd";
+import { Space, Alert, Typography, Card, message } from "antd";
 import QuestionLayout from "../QuestionLayout";
 import AudioPlayer from "../AudioPlayer";
 import AudioRecorder from "../AudioRecorder";
 import { useQuestionTimer } from "../../../hooks/useQuestionTimer";
+import { useMutation } from "@tanstack/react-query";
+import useHttp from "@/hooks/use-http";
 
 const { Text } = Typography;
 
@@ -13,19 +15,61 @@ const AnswerShortQuestion = ({
   totalQuestions,
   onResponse,
   recordTime = 10,
+  isPaused = false,
 }) => {
   const [phase, setPhase] = useState("listen"); // listen | recording | done
   const [audioBlob, setAudioBlob] = useState(null);
+  const [recordedAudioUrl, setRecordedAudioUrl] = useState("");
+  const [uploadedRecordingKey, setUploadedRecordingKey] = useState("");
+
+  const { sendRequest } = useHttp({ type: "auth" });
 
   const recordTimer = useQuestionTimer(recordTime, () => {
     setPhase("done");
   });
 
   useEffect(() => {
-    if (phase === "recording") {
+    if (isPaused) {
+      recordTimer.pause();
+    } else if (phase === "recording") {
       recordTimer.start();
     }
-  }, [phase]);
+  }, [phase, isPaused]);
+
+  const uploadAudioCall = useMutation({
+    mutationFn: (payload) =>
+      sendRequest({
+        url: "uploadAudio",
+        method: "POST",
+        payload,
+      }),
+    onSuccess: (data) => {
+      const uploadedKey =
+        data?.response?.data?.data?.key ||
+        data?.response?.data?.key ||
+        data?.data?.data?.key ||
+        data?.data?.key ||
+        data?.key;
+
+      if (!uploadedKey) {
+        message.error("Audio uploaded but no file key returned");
+        return;
+      }
+
+      setUploadedRecordingKey(uploadedKey);
+
+      onResponse?.({
+        type: "recording",
+        recording: uploadedKey,
+      });
+
+      message.success("Audio uploaded successfully");
+    },
+    onError: (err) => {
+      console.error(err);
+      message.error(err?.message || "Failed to upload audio");
+    },
+  });
 
   const handleAudioComplete = () => {
     setTimeout(() => setPhase("recording"), 500);
@@ -33,15 +77,14 @@ const AnswerShortQuestion = ({
 
   const handleRecordingComplete = (blob, url) => {
     setAudioBlob(blob);
+    setRecordedAudioUrl(url);
     setPhase("done");
-    onResponse?.({
-      question_id: question?.id,
-      dts_id: localStorage.getItem("current_dts_id"),
-      response: {
-        type: "recording",
-        recording: url,
-      },
-    });
+
+    const formData = new FormData();
+    formData.append("file", blob, `answer-short-question-${Date.now()}.webm`);
+    formData.append("question_type", "asq");
+
+    uploadAudioCall.mutate(formData);
   };
 
   const instructions =
@@ -93,16 +136,45 @@ const AnswerShortQuestion = ({
         )}
 
         {phase === "done" && (
-          <Alert
-            message="Recording Complete"
-            description="Your short answer has been recorded."
-            type="success"
-            showIcon
-          />
-        )}
+          <>
+            <Alert
+              message="Recording Complete"
+              description="Your short answer has been recorded. You can now listen to your recording."
+              type="success"
+              showIcon
+            />
 
-        {audioBlob && (
-          <Text type="secondary">Response captured successfully.</Text>
+            {recordedAudioUrl && (
+              <Card size="small" title="Your Recorded Response">
+                <audio
+                  controls
+                  src={recordedAudioUrl}
+                  style={{ width: "100%" }}
+                />
+              </Card>
+            )}
+
+            {uploadAudioCall.isPending && (
+              <Alert
+                message="Uploading Audio"
+                description="Please wait while your recording is being uploaded."
+                type="warning"
+                showIcon
+              />
+            )}
+
+            {uploadedRecordingKey && (
+              <Text type="secondary">
+                Uploaded successfully: {uploadedRecordingKey}
+              </Text>
+            )}
+
+            {audioBlob &&
+              !uploadedRecordingKey &&
+              !uploadAudioCall.isPending && (
+                <Text type="secondary">Recording captured locally.</Text>
+              )}
+          </>
         )}
       </Space>
     </QuestionLayout>

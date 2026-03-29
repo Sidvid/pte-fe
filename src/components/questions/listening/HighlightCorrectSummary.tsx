@@ -19,13 +19,9 @@ const HighlightCorrectSummary = ({
   const handleChange = (e) => {
     const value = e.target.value;
     setSelected(value);
-    onResponse?({
-      question_id: question?.id,
-      dts_id: localStorage.getItem("current_dts_id"),
-      response: {
-        type: "selected",
-        selected: value,
-      },
+    onResponse?.({
+      type: "selected",
+      selected: value,
     });
   };
 

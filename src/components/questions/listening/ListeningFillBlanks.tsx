@@ -44,19 +44,15 @@ const ListeningFillBlanks = ({
     const updated = [...answers];
     updated[index] = value;
     setAnswers(updated);
-    onResponse?({
-      question_id: question?.id,
-      dts_id: localStorage.getItem("current_dts_id"),
-      response: {
-        type: "inputs",
-        inputs: updated,
-      },
+    onResponse?.({
+      type: "inputs",
+      inputs: updated,
     });
   };
 
   return (
     <QuestionLayout
-      type="lfib"
+      type="fib_l"
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
       timeRemaining={phase === "write" ? timer.formatTime() : null}
