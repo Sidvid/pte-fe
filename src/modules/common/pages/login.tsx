@@ -42,14 +42,14 @@ function Login({ portal }: LoginProps) {
       console.log("oooo");
     },
   });
-  const onFinish: FormProps<FieldType>["onFinish"] = (data) => {
-    console.log("this is data of form", data);
-
+  const onFinish: FormProps<FieldType>["onFinish"] = async (data) => {
     try {
-      loginCall.mutateAsync({
+      await loginCall.mutateAsync({
         username: data.username!,
         password: data.password!,
       });
+
+      navigate("/dashboard");
     } catch (error) {
       console.log("oopss!!", error);
     }
@@ -94,7 +94,7 @@ function Login({ portal }: LoginProps) {
         >
           <Form.Item<FieldType>
             name="username"
-            label={<span className="text-white font-semibold">Username</span>}
+            label={<span className="text-sky-950 font-semibold">Username</span>}
             rules={[{ required: true, message: "Please input your username!" }]}
           >
             <Input
@@ -105,13 +105,10 @@ function Login({ portal }: LoginProps) {
 
           <Form.Item<FieldType>
             name="password"
-            label={<span className="text-white font-semibold">Password</span>}
+            label={<span className="text-sky-950 font-semibold">Password</span>}
             rules={[{ required: true, message: "Please input your password!" }]}
           >
-            <Input.Password
-              placeholder="Enter your password..."
-              className="rounded-xl"
-            />
+            <Input.Password placeholder="Enter your password..." />
           </Form.Item>
 
           <Form.Item>

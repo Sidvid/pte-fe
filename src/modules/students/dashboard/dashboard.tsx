@@ -19,6 +19,8 @@ import MockTestPlayer from "../../../../MockTestPlayer";
 import DailyTaskPlayer from "../../../../DailyTaskPlayer";
 import StudentCompleteDashboard from "./StudentCompleteDashboard";
 import MockTestPreviewPage from "../../../../TestMockPlayer";
+import Login from "@/modules/common/pages/login";
+import { PortalTypes } from "@/utils/model/common-enums";
 
 function Dashboard() {
   const [requestedAssignment, setRequestedAssignment] = useState<any[]>();
@@ -1153,8 +1155,9 @@ function Dashboard() {
       {/* <MockTestPlayer mockTestResponse={mockTaskResponse} /> */}
 
       {/* <DailyTaskPlayer questions={dailyTaskResponse?.data || []} /> */}
-      {/* <StudentCompleteDashboard /> */}
-      <MockTestPreviewPage />
+      <StudentCompleteDashboard />
+      {/* <Login portal={PortalTypes.STUDENT} /> */}
+      {/* <MockTestPreviewPage /> */}
     </>
   );
 }

@@ -14,7 +14,7 @@ interface SideMenuProps {
 }
 function SideMenu({ data, selected, onClick }: SideMenuProps) {
   const [activeMenu, setActiveMenu] = useState<string>(
-    selected ?? data[0].value
+    selected ?? data[0].value,
   );
   const itemClickHandle = (value: string) => {
     setActiveMenu(value);
@@ -35,7 +35,7 @@ function SideMenu({ data, selected, onClick }: SideMenuProps) {
           {icon &&
             React.isValidElement(icon) &&
             React.cloneElement(icon as React.ReactElement<any>, {
-              className: `w-20 h-20 text-sidemenu-text`
+              className: `w-20 h-20 text-sidemenu-text`,
             })}
           <p className="f12 w400 text-app-white">{title}</p>
         </div>

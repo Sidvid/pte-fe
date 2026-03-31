@@ -1,156 +1,87 @@
 import useHttp from "@/hooks/use-http";
+import { SuccessResponse } from "@/utils/model/model";
+import { RequestAssignmentResponse } from "@/utils/model/response-models";
 import { useMutation } from "@tanstack/react-query";
 import { Table, TableProps, Tag, Button, Space } from "antd";
 import React, { useEffect, useState } from "react";
+import { FaHourglassStart } from "react-icons/fa";
+import { GiProgression } from "react-icons/gi";
 import { useNavigate } from "react-router";
 
 interface ScheduleItem {
-  id: string;
-  weekday: string;
-  task: string;
-  type: "mock" | "task" | "video";
+  collection: string;
+  assigned_task_id: string;
+  duration: number;
+  length: number;
+  type: "Mock Test" | "Daily Task" | "Video";
 }
 
 function StudentSchedule() {
-  const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
+  const [requestedAssignment, setRequestedAssignment] = useState<any[]>();
   const { sendRequest } = useHttp({ type: "auth" });
   const navigate = useNavigate();
 
   // Fetch schedule for the student
-  const fetchSchedule = useMutation({
+  const allAssignedTasks = useMutation({
     mutationFn: () =>
-      sendRequest({ url: "schdule", method: "GET" }) as Promise<any>,
-    onSuccess: (data) => {
-      if (data?.response?.data && Array.isArray(data.response.data)) {
-        // Transform the actual data if available
-        const transformedData = data.response.data.map(
-          (item: any, index: number) => ({
-            id: item.id || `sched${index + 1}`,
-            weekday: item.weekday || item.day || `Day ${index + 1}`,
-            task: item.task || item.activity || `Sample Activity ${index + 1}`,
-            type: item.type || "task",
-          }),
-        );
-        setSchedule(transformedData);
-      } else {
-        // Sample schedule data
-        setSchedule([
-          {
-            id: "sched1",
-            weekday: "Monday",
-            task: "FIB - Drop Down Practice",
-            type: "task",
-          },
-          {
-            id: "sched2",
-            weekday: "Tuesday",
-            task: "Mock Test 1",
-            type: "mock",
-          },
-          {
-            id: "sched3",
-            weekday: "Wednesday",
-            task: "Theory Video: Reading",
-            type: "video",
-          },
-          {
-            id: "sched4",
-            weekday: "Thursday",
-            task: "Lab Video: Speaking",
-            type: "video",
-          },
-          {
-            id: "sched5",
-            weekday: "Friday",
-            task: "Listening Comprehension",
-            type: "task",
-          },
-          {
-            id: "sched6",
-            weekday: "Saturday",
-            task: "Writing Practice",
-            type: "task",
-          },
-          {
-            id: "sched7",
-            weekday: "Sunday",
-            task: "Review Week Progress",
-            type: "task",
-          },
-        ]);
-      }
-    },
-    onError: (error) => {
-      console.error("Error fetching schedule:", error);
-      // Sample schedule data
-      setSchedule([
-        {
-          id: "sched1",
-          weekday: "Monday",
-          task: "FIB - Drop Down Practice",
-          type: "task",
-        },
-        { id: "sched2", weekday: "Tuesday", task: "Mock Test 1", type: "mock" },
-        {
-          id: "sched3",
-          weekday: "Wednesday",
-          task: "Theory Video: Reading",
-          type: "video",
-        },
-        {
-          id: "sched4",
-          weekday: "Thursday",
-          task: "Lab Video: Speaking",
-          type: "video",
-        },
-        {
-          id: "sched5",
-          weekday: "Friday",
-          task: "Listening Comprehension",
-          type: "task",
-        },
-        {
-          id: "sched6",
-          weekday: "Saturday",
-          task: "Writing Practice",
-          type: "task",
-        },
-        {
-          id: "sched7",
-          weekday: "Sunday",
-          task: "Review Week Progress",
-          type: "task",
-        },
-      ]);
+      sendRequest({ url: "requestAssignments", method: "GET" }) as Promise<
+        SuccessResponse<RequestAssignmentResponse>
+      >,
+    onSuccess: (data: SuccessResponse<RequestAssignmentResponse>) => {
+      const { response } = data;
+      console.log("assigned tasks", response);
+      setRequestedAssignment(response?.data);
     },
   });
-
-  useEffect(() => {
-    fetchSchedule.mutate();
+  React.useEffect(() => {
+    allAssignedTasks.mutateAsync();
   }, []);
 
   const handleTakeMockTest = (taskId: string) => {
-    navigate(`/mock-test/${taskId}`);
+    navigate(`/mock-test/${taskId}`, {
+      state: {
+        fromSchedule: true,
+        isMockTest: true,
+        isDailyTask: false,
+        taskId,
+      },
+    });
   };
 
-  const handleTakeTask = (taskId: string) => {
-    navigate(`/take-task/${taskId}`);
+  const handleTakeTask = (task: ScheduleItem) => {
+    console.log("Taking task:", task);
+    navigate(`/take-task/${task?.assigned_task_id}`, {
+      state: {
+        fromSchedule: true,
+        isDailyTask: task.type === "Daily Task" ? true : false,
+        isMockTest: task.type === "Mock Test" ? true : false,
+        taskId: task?.assigned_task_id,
+      },
+    });
   };
 
   const handleWatchVideo = (videoId: string) => {
-    navigate(`/video/${videoId}`);
+    navigate(`/video/${videoId}`, {
+      state: { fromSchedule: true, taskId: videoId },
+    });
   };
 
   const columns: TableProps<ScheduleItem>["columns"] = [
     {
-      title: "Day",
-      dataIndex: "weekday",
-      key: "weekday",
+      title: "Title",
+      dataIndex: "collection",
+      key: "collection",
     },
     {
-      title: "Activity",
-      dataIndex: "task",
-      key: "task",
+      title: "Duration",
+      dataIndex: "duration",
+      key: "duration",
+      render: (duration) => <Tag color="volcano">{duration} mins</Tag>,
+    },
+    {
+      title: "Length",
+      dataIndex: "length",
+      key: "length",
     },
     {
       title: "Type",
@@ -159,33 +90,41 @@ function StudentSchedule() {
       render: (type) => (
         <Tag
           color={
-            type === "mock" ? "green" : type === "video" ? "orange" : "blue"
+            type === "Mock Test"
+              ? "green"
+              : type === "Daily Task"
+                ? "blue"
+                : "orange"
           }
         >
-          {type === "mock" ? "Mock Test" : type === "video" ? "Video" : "Task"}
+          {type === "Mock Test"
+            ? "Mock Test"
+            : type === "Daily Task"
+              ? "Daily Task"
+              : "Video"}
         </Tag>
       ),
     },
     {
       title: "Action",
       key: "schedule_action",
-      render: (_, record) => (
+      render: (_, record: ScheduleItem) => (
         <Space size="middle">
-          {record.type === "mock" && (
+          {["Daily Task", "Mock Test"].includes(record.type) && (
             <Button
               type="primary"
-              onClick={() => handleTakeMockTest(record.id)}
+              icon={<GiProgression />}
+              onClick={() => handleTakeTask(record)}
             >
-              Take
-            </Button>
-          )}
-          {record.type === "task" && (
-            <Button type="primary" onClick={() => handleTakeTask(record.id)}>
               Start
             </Button>
           )}
-          {record.type === "video" && (
-            <Button type="primary" onClick={() => handleWatchVideo(record.id)}>
+          {record.type === "Video" && (
+            <Button
+              type="primary"
+              icon={<GiProgression />}
+              onClick={() => handleWatchVideo(record.assigned_task_id)}
+            >
               Watch
             </Button>
           )}
@@ -208,7 +147,7 @@ function StudentSchedule() {
           Scheduled Activities
         </h2>
         <Table
-          dataSource={schedule}
+          dataSource={requestedAssignment}
           columns={columns}
           rowKey="id"
           pagination={{ pageSize: 10 }}

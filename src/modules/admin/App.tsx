@@ -36,7 +36,7 @@ function App() {
         <div className="min-h-full">
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/" element={<Login portal={PortalTypes.ADMIN} />} />{" "}
               <Route element={<ApplicationBody />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/labVideos" element={<LabVideos />} />

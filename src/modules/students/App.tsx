@@ -12,6 +12,8 @@ import StudentDailyTasks from "./components/student-daily-tasks";
 import StudentSchedule from "./components/student-schedule";
 import StudentMockTests from "./components/student-mock-tests";
 import StudentVideos from "./components/student-videos";
+import Login from "../common/pages/login";
+import { PortalTypes } from "@/utils/model/common-enums";
 
 const queryClient = new QueryClient();
 
@@ -35,37 +37,22 @@ function App() {
         <div className="min-h-full">
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route
+                path="/"
+                element={<Login portal={PortalTypes.STUDENT} />}
+              />
               <Route element={<ApplicationBody />}>
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route 
-                  path="/take-task/:id" 
-                  element={<StudentTaskView />} 
+                <Route path="/take-task/:id" element={<StudentTaskView />} />
+                <Route
+                  path="/mock-test/:id"
+                  element={<StudentMockTestView />}
                 />
-                <Route 
-                  path="/mock-test/:id" 
-                  element={<StudentMockTestView />} 
-                />
-                <Route 
-                  path="/video/:id" 
-                  element={<LabVideos />} 
-                />
-                <Route 
-                  path="/daily-tasks" 
-                  element={<StudentDailyTasks />} 
-                />
-                <Route 
-                  path="/schedule" 
-                  element={<StudentSchedule />} 
-                />
-                <Route 
-                  path="/mock-tests" 
-                  element={<StudentMockTests />} 
-                />
-                <Route 
-                  path="/videos" 
-                  element={<StudentVideos />} 
-                />
+                <Route path="/video/:id" element={<LabVideos />} />
+                <Route path="/daily-tasks" element={<StudentDailyTasks />} />
+                <Route path="/schedule" element={<StudentSchedule />} />
+                <Route path="/mock-tests" element={<StudentMockTests />} />
+                <Route path="/videos" element={<StudentVideos />} />
               </Route>
             </Routes>
           </BrowserRouter>

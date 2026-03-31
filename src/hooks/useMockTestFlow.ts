@@ -142,7 +142,7 @@ export const useMockTestFlow = ({
       sendRequest({
         url: "submitMockTestSection",
         method: "POST",
-        endURL: `/${payload.mts_id}/sections/${payload.mtss_id}/submit`,
+        endURL: `${payload.mts_id}/sections/${payload.mtss_id}/submit`,
       }),
     onSuccess: () => {
       if (currentSection?.id) {

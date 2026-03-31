@@ -66,8 +66,7 @@ const MockTestIntroPage = ({
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#dbeafe,_#eff6ff_35%,_#f8fafc_100%)] px-4 py-8 md:px-6 md:py-10">
-      <div className="mx-auto max-w-6xl">
-        {/* Hero */}
+      <div className="w-full max-w-[1700px] mx-auto">
         <Card
           className="mb-6 overflow-hidden rounded-[32px] border-none shadow-[0_24px_60px_rgba(37,99,235,0.16)]"
           styles={{ body: { padding: 32 } }}
@@ -102,7 +101,7 @@ const MockTestIntroPage = ({
               </Space>
             </div>
 
-            <div className="rounded-[24px] bg-gradient-to-br from-blue-600 to-cyan-500 p-6 text-white shadow-lg">
+            <div className="rounded-[10px] bg-gradient-to-br from-blue-600 to-cyan-500 p-6 text-white shadow-lg">
               <div className="mb-4 text-sm uppercase tracking-[0.2em] text-white/80">
                 Quick Overview
               </div>
@@ -209,7 +208,6 @@ const MockTestIntroPage = ({
               icon={<PlayCircleOutlined />}
               loading={loading}
               onClick={onProceed}
-              className="!h-12 !rounded-2xl !px-8"
             >
               Proceed
             </Button>

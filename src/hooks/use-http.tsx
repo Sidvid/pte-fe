@@ -11,7 +11,7 @@ export const URLS = {
   addNewQuestion: "api/admin/questions",
   deleteQuestion: "api/admin/questions",
   getAllStudents: "api/admin/students",
-  getQuestionsFromTask: "api/admin/daily-tasks/:taskId",
+  getQuestionsFromTask: "api/admin",
   // Student routes
   requestAssignments: "api/student/request-assignment",
   theoryVideosCompletionStatus: "api/student/videos/theory/status",
@@ -22,6 +22,7 @@ export const URLS = {
   startMockTest: "/api/student/mock-tests/:test_id/start",
   startMockTestSection: "/api/student/mock-tests",
   submitMockTestSection: "/api/student/mock-tests",
+  getMockTestQuestions: "/api/student/mock-tests",
 };
 type Methods = "POST" | "GET" | "PUT" | "DELETE";
 interface RequestProps {
@@ -40,9 +41,9 @@ const useHttp = ({ type }: { type: "auth" | "raw" }) => {
     endURL,
   }: RequestProps) => {
     const authTokenCookie = await cookieStore.get(STORAGE_KEYS.ACCESS_TOKEN);
-    // const authToken = authTokenCookie?.value;
-    const authToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMxNzRmODFkLWU2YmQtNGU5MS1iOTkyLTcwOTVjYzk2ZDQ3MSIsInVzZXJuYW1lIjoidmlrYXMiLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTc3NDc5OTAxMywiZXhwIjoxNzc0ODg1NDEzfQ.hvq3KoyUvmkjiUjPjf2Gc0SHXtNgcFffhbGyVcOYf2U";
+    const authToken = authTokenCookie?.value;
+    // const authToken =
+    //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMxNzRmODFkLWU2YmQtNGU5MS1iOTkyLTcwOTVjYzk2ZDQ3MSIsInVzZXJuYW1lIjoidmlrYXMiLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTc3NDg5NTcwMCwiZXhwIjoxNzc0OTgyMTAwfQ.pLOGSOOKw0eTrXlDIZ3AHBgsGuqJ9LUVRvHdQnvO2oM";
 
     try {
       const response = await apiClient({

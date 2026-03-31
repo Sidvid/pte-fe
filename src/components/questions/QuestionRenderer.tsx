@@ -106,12 +106,14 @@ const QuestionRenderer = ({
   }
 
   return (
-    <QuestionComponent
-      question={question}
-      questionNumber={questionNumber}
-      totalQuestions={totalQuestions}
-      onResponse={onResponse}
-    />
+    <div className="w-full max-w-[1700px] mx-auto">
+      <QuestionComponent
+        question={question}
+        questionNumber={questionNumber}
+        totalQuestions={totalQuestions}
+        onResponse={onResponse}
+      />
+    </div>
   );
 };
 

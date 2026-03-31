@@ -33,7 +33,7 @@ const MockTestShell = ({
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#eff6ff,_#f8fafc_40%,_#f8fafc_100%)] p-4 md:p-6">
-      <div className="mx-auto max-w-6xl">
+      <div className="w-full max-w-[1700px] mx-auto">
         <Card
           className="mb-5 rounded-[24px] border-none shadow-[0_16px_40px_rgba(15,23,42,0.08)]"
           styles={{ body: { padding: 24 } }}
