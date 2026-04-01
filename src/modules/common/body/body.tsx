@@ -19,17 +19,12 @@ import { PiStudentFill } from "react-icons/pi";
 import { useNavigate } from "react-router";
 
 import { Outlet, useParams, useLocation } from "react-router";
+import { isStudentApp } from "@/utils/helpers/core-helpers";
 
 function ApplicationBody() {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-
-  // Determine app type by checking the VITE_APP_TYPE environment variable
-  // This is more reliable than pathname detection
-  const appType =
-    typeof window !== "undefined" && import.meta.env?.VITE_APP_TYPE;
-  const isStudentApp = appType === "STUDENT";
 
   // Define menu data based on app type
   const sideMenuData = isStudentApp
@@ -49,11 +44,11 @@ function ApplicationBody() {
           title: "Mock Test",
           icon: <AiOutlineFileText />,
         },
-        {
-          value: "daily-tasks",
-          title: "Daily Tasks",
-          icon: <AiOutlineUnorderedList />,
-        },
+        // {
+        //   value: "daily-tasks",
+        //   title: "Daily Tasks",
+        //   icon: <AiOutlineUnorderedList />,
+        // },
         {
           value: "videos",
           title: "Learning Videos",

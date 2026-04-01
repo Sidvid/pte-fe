@@ -12,6 +12,7 @@ export const URLS = {
   deleteQuestion: "api/admin/questions",
   getAllStudents: "api/admin/students",
   getQuestionsFromTask: "api/admin",
+  adminDashboard: "api/admin/dashboard",
   // Student routes
   requestAssignments: "api/student/request-assignment",
   theoryVideosCompletionStatus: "api/student/videos/theory/status",

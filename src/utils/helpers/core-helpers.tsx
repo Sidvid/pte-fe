@@ -60,3 +60,20 @@ export const formatTime = (date?: string | Date | null) => {
     minute: "2-digit",
   });
 };
+
+const appType = typeof window !== "undefined" && import.meta.env?.VITE_APP_TYPE;
+export const isStudentApp = appType === "STUDENT";
+
+// helper for section type label
+export const getSectionLabel = (type: string) => {
+  switch (type) {
+    case "sw":
+      return "Speaking & Writing";
+    case "rd":
+      return "Reading";
+    case "ls":
+      return "Listening";
+    default:
+      return type;
+  }
+};

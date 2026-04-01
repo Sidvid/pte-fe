@@ -11,6 +11,7 @@ import { allSampleQuestions } from "@/utils/constants/app-constants";
 import MockTestPlayer from "../../../../MockTestPlayer";
 import DailyTaskPlayer from "../../../../DailyTaskPlayer";
 import MockTestPreviewPage from "../../../../TestMockPlayer";
+import MockTestIntroPage from "@/pte-test-players/mock-test-components/MockTestIntroPage";
 
 interface TaskDetails {
   id: string;
@@ -198,10 +199,23 @@ const StudentTaskView: React.FC = () => {
     // </div>
     <>
       {/* <DailyTaskPlayer questions={questionsFromTask} /> */}
-      {taskState?.isDailyTask ? (
+      {/* {taskState?.isDailyTask ? (
         <DailyTaskPlayer questions={questionsFromTask} />
       ) : (
         <MockTestPreviewPage />
+      )} */}
+      {taskState?.isDailyTask ? (
+        <DailyTaskPlayer
+          questions={questionsFromTask}
+          // title="Daily Task"
+          // dtsId={localStorage.getItem("current_dts_id")}
+        />
+      ) : (
+        <MockTestIntroPage
+          testData={questionsFromTask?.data}
+          onProceed={() => null}
+          loading={false}
+        />
       )}
     </>
   );

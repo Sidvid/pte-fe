@@ -1,14 +1,24 @@
 import useHttp from "@/hooks/use-http";
 import { useMutation } from "@tanstack/react-query";
-import { Table, TableProps, Tag, Button, Space } from "antd";
+import {
+  Table,
+  TableProps,
+  Tag,
+  Button,
+  Space,
+  notification,
+  Typography,
+  Card,
+} from "antd";
 import { GiProgression } from "react-icons/gi";
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
+import { getSectionLabel } from "@/utils/helpers/core-helpers";
 
 interface MockTest {
   id: string;
   title: string;
-  isPublished: boolean;
+  published: boolean;
   sections: Array<{
     type: string;
     q: number;
@@ -24,106 +34,19 @@ function StudentMockTests() {
   // Fetch mock tests for the student
   const fetchMockTests = useMutation({
     mutationFn: () =>
-      sendRequest({ url: "allDailyTask", method: "GET" }) as Promise<any>,
+      sendRequest({ url: "allMockTests", method: "GET" }) as Promise<any>,
     onSuccess: (data) => {
-      if (data?.response?.data && Array.isArray(data.response.data)) {
-        // Check if the data has the expected structure for mock tests
-        // If not, transform it or use sample data
-        if (
-          data.response.data.length > 0 &&
-          data.response.data[0].title &&
-          data.response.data[0].sections
-        ) {
-          // Data already has the expected structure
-          setMockTests(data.response.data);
-        } else {
-          // Transform the data to match MockTest interface
-          const transformedData = data.response.data.map(
-            (item: any, index: number) => ({
-              id: item.id || `test-${index}`,
-              title: item.title || `Mock Test ${index + 1}`,
-              isPublished:
-                item.isPublished !== undefined ? item.isPublished : true,
-              sections: item.sections || [
-                { type: "sw", q: 10, time: 10 },
-                { type: "rd", q: 5, time: 5 },
-                { type: "ls", q: 5, time: 5 },
-              ],
-            }),
-          );
-          setMockTests(transformedData);
-        }
-      } else {
-        // Sample mock tests data
-        setMockTests([
-          {
-            id: "test-1",
-            title: "PTE Full Mock Test 01",
-            isPublished: true,
-            sections: [
-              { type: "sw", q: 40, time: 80 },
-              { type: "rd", q: 18, time: 30 },
-              { type: "ls", q: 20, time: 35 },
-            ],
-          },
-          {
-            id: "test-2",
-            title: "PTE Full Mock Test 02",
-            isPublished: true,
-            sections: [
-              { type: "sw", q: 35, time: 75 },
-              { type: "rd", q: 16, time: 25 },
-              { type: "ls", q: 16, time: 27 },
-            ],
-          },
-          {
-            id: "test-3",
-            title: "PTE Full Mock Test 03",
-            isPublished: false,
-            sections: [
-              { type: "sw", q: 40, time: 80 },
-              { type: "rd", q: 18, time: 30 },
-              { type: "ls", q: 20, time: 35 },
-            ],
-          },
-        ]);
+      console.log("Fetched Mock Tests:", data);
+      if (data?.response?.data && Array.isArray(data.response.data?.tests)) {
+        const { response } = data;
+        setMockTests(response.data.tests);
       }
     },
     onError: (error) => {
       console.error("Error fetching mock tests:", error);
-      // Sample mock tests data
-      setMockTests([
-        {
-          id: "test-1",
-          title: "PTE Full Mock Test 01",
-          isPublished: true,
-          sections: [
-            { type: "sw", q: 40, time: 80 },
-            { type: "rd", q: 18, time: 30 },
-            { type: "ls", q: 20, time: 35 },
-          ],
-        },
-        {
-          id: "test-2",
-          title: "PTE Full Mock Test 02",
-          isPublished: true,
-          sections: [
-            { type: "sw", q: 35, time: 75 },
-            { type: "rd", q: 16, time: 25 },
-            { type: "ls", q: 16, time: 27 },
-          ],
-        },
-        {
-          id: "test-3",
-          title: "PTE Full Mock Test 03",
-          isPublished: false,
-          sections: [
-            { type: "sw", q: 40, time: 80 },
-            { type: "rd", q: 18, time: 30 },
-            { type: "ls", q: 20, time: 35 },
-          ],
-        },
-      ]);
+      notification.error({
+        title: error?.message || "Failed to load mock tests",
+      });
     },
   });
 
@@ -141,6 +64,36 @@ function StudentMockTests() {
       dataIndex: "title",
       key: "title",
     },
+    // {
+    //   title: "Sections",
+    //   key: "sections",
+    //   render: (_, record) => (
+    //     <div className="flex flex-col gap-2 min-w-[260px]">
+    //       {record.sections.map((section: any) => (
+    //         <div
+    //           key={section.id}
+    //           className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2"
+    //         >
+    //           <div className="flex items-center justify-between gap-2">
+    //             <Typography.Text strong className="text-sm">
+    //               {section.title || getSectionLabel(section.type)}
+    //             </Typography.Text>
+    //             <Tag color="blue">{getSectionLabel(section.type)}</Tag>
+    //           </div>
+
+    //           <div className="mt-1 flex items-center gap-4 text-xs text-gray-500">
+    //             <span>
+    //               Questions: <b>{section.questions_count}</b>
+    //             </span>
+    //             <span>
+    //               Duration: <b>{section.duration} min</b>
+    //             </span>
+    //           </div>
+    //         </div>
+    //       ))}
+    //     </div>
+    //   ),
+    // },
     {
       title: "Sections",
       key: "sections",
@@ -149,28 +102,21 @@ function StudentMockTests() {
     {
       title: "Questions",
       key: "questions",
-      render: (_, record) => (
-        <span>
-          {record.sections.reduce((sum, sec) => sum + sec.q, 0)} total
-        </span>
-      ),
+      dataIndex: "total_questions",
     },
     {
       title: "Duration",
       key: "duration",
-      render: (_, record) => (
-        <span>
-          {record.sections.reduce((sum, sec) => sum + sec.time, 0)} min
-        </span>
-      ),
+      dataIndex: "total_duration",
+      render: (val) => `${val} min`,
     },
     {
       title: "Status",
-      dataIndex: "isPublished",
-      key: "isPublished",
-      render: (isPublished) => (
-        <Tag color={isPublished ? "green" : "red"}>
-          {isPublished ? "Published" : "Draft"}
+      dataIndex: "published",
+      key: "published",
+      render: (published) => (
+        <Tag color={published ? "green" : "red"}>
+          {published ? "Published" : "Draft"}
         </Tag>
       ),
     },
@@ -182,7 +128,7 @@ function StudentMockTests() {
           <Button
             type="primary"
             onClick={() => handleTakeMockTest(record.id)}
-            disabled={!record.isPublished}
+            disabled={!record.published}
             icon={<GiProgression />}
           >
             Take Test
@@ -192,10 +138,38 @@ function StudentMockTests() {
     },
   ];
 
+  const renderExpandedRow = (record: any) => {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-2">
+        {record.sections.map((section: any) => (
+          <Card
+            key={section.id}
+            size="small"
+            className="rounded-xl border border-gray-200 shadow-sm"
+          >
+            <Space orientation="vertical" size={6} style={{ width: "100%" }}>
+              <Typography.Text strong>
+                {section.title || getSectionLabel(section.type)}
+              </Typography.Text>
+              <Tag color="blue">{getSectionLabel(section.type)}</Tag>
+              <Typography.Text type="secondary">
+                Questions: <b>{section.questions_count}</b>
+              </Typography.Text>
+              <Typography.Text type="secondary">
+                Duration: <b>{section.duration} min</b>
+              </Typography.Text>
+            </Space>
+          </Card>
+        ))}
+      </div>
+    );
+  };
+
   const onlyPublishedTests = useMemo(
-    () => mockTests.filter((test) => test.isPublished),
+    () => mockTests.filter((test) => test.published),
     [mockTests],
   );
+  console.log("Only Published Mock Tests:", onlyPublishedTests);
 
   return (
     <div className="p-6">
@@ -215,6 +189,10 @@ function StudentMockTests() {
           columns={columns}
           rowKey="id"
           pagination={{ pageSize: 5 }}
+          expandable={{
+            expandedRowRender: renderExpandedRow,
+            rowExpandable: (record) => record.sections?.length > 0,
+          }}
         />
       </div>
     </div>
