@@ -14,6 +14,7 @@ import StudentMockTests from "./components/student-mock-tests";
 import StudentVideos from "./components/student-videos";
 import Login from "../common/pages/login";
 import { PortalTypes } from "@/utils/model/common-enums";
+import StudentDailyTaskReview from "@/pte-test-players/student-response-components/StudentDailyTaskReview";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,10 @@ function App() {
                 <Route path="/schedule" element={<StudentSchedule />} />
                 <Route path="/mock-tests" element={<StudentMockTests />} />
                 <Route path="/videos" element={<StudentVideos />} />
+                <Route
+                  path="/daily-task-review/:dts_id"
+                  element={<StudentDailyTaskReview />}
+                />
               </Route>
             </Routes>
           </BrowserRouter>

@@ -13,6 +13,10 @@ export const URLS = {
   getAllStudents: "api/admin/students",
   getQuestionsFromTask: "api/admin",
   adminDashboard: "api/admin/dashboard",
+  getStudentById: "api/admin/student",
+  updateStudent: "api/admin/student",
+  studentAttendanceHistory: "api/admin/attendance/student",
+  studentPerformance: "api/admin/student",
   // Student routes
   requestAssignments: "api/student/request-assignment",
   theoryVideosCompletionStatus: "api/student/videos/theory/status",
@@ -24,6 +28,7 @@ export const URLS = {
   startMockTestSection: "/api/student/mock-tests",
   submitMockTestSection: "/api/student/mock-tests",
   getMockTestQuestions: "/api/student/mock-tests",
+  dailyTaskReview: "/api/student/daily-tasks",
 };
 type Methods = "POST" | "GET" | "PUT" | "DELETE";
 interface RequestProps {

@@ -5,10 +5,13 @@ import { useMutation } from "@tanstack/react-query";
 import { Button, Card, Table, TableProps, Tag } from "antd";
 import React from "react";
 import { FaUserEdit } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const StudentList = () => {
   const { sendRequest } = useHttp({ type: "auth" });
   const [studentData, setStudentsData] = React.useState<Student[]>();
+  const navigate = useNavigate();
+
   const allStudents = useMutation({
     mutationFn: () =>
       sendRequest({ url: "getAllStudents", method: "GET" }) as Promise<
@@ -16,13 +19,17 @@ const StudentList = () => {
       >,
     onSuccess: (data: SuccessResponse<any>) => {
       const { response } = data;
-      console.log("student data", response);
       setStudentsData(response?.data?.students);
     },
   });
+
   React.useEffect(() => {
     allStudents.mutateAsync();
   }, []);
+
+  const handleEditStudent = (studentId: string) => {
+    navigate(`/admin/student/${studentId}/edit`);
+  };
 
   const columns: TableProps<Student>["columns"] = [
     {
@@ -72,7 +79,7 @@ const StudentList = () => {
             icon={<FaUserEdit />}
             size="large"
             type="link"
-            onClick={undefined}
+            onClick={() => handleEditStudent(record.id)}
           />
         );
       },
@@ -81,9 +88,8 @@ const StudentList = () => {
 
   return (
     <Card title="Student List">
-      <Table bordered columns={columns} dataSource={studentData} />
+      <Table bordered rowKey="id" columns={columns} dataSource={studentData} />
     </Card>
   );
 };
-
 export default StudentList;
