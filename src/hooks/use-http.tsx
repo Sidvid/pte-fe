@@ -17,6 +17,7 @@ export const URLS = {
   updateStudent: "api/admin/student",
   studentAttendanceHistory: "api/admin/attendance/student",
   studentPerformance: "api/admin/student",
+  changePassword: "api/auth/change-password",
   // Student routes
   requestAssignments: "api/student/request-assignment",
   theoryVideosCompletionStatus: "api/student/videos/theory/status",

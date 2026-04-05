@@ -1,3 +1,4 @@
+import RibbonCard from "@/components/molecules/card/RibbonCard";
 import useHttp from "@/hooks/use-http";
 import { SuccessResponse } from "@/utils/model/model";
 import { Student } from "@/utils/model/response-models";
@@ -87,9 +88,9 @@ const StudentList = () => {
   ];
 
   return (
-    <Card title="Student List">
+    <RibbonCard title="Student List">
       <Table bordered rowKey="id" columns={columns} dataSource={studentData} />
-    </Card>
+    </RibbonCard>
   );
 };
 export default StudentList;

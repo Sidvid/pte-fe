@@ -28,6 +28,7 @@ import {
   ReadOutlined,
 } from "@ant-design/icons";
 import useHttp from "./use-http";
+import RibbonCard from "@/components/molecules/card/RibbonCard";
 // import { useHttp } from "../hooks/useHttp";
 
 const { Title, Text } = Typography;
@@ -350,22 +351,9 @@ const AdminDashboard = () => {
 
         <Row gutter={[20, 20]}>
           {/* Theory/lab activity */}
-          <Col xs={24} lg={10}>
-            <Card
-              variant="borderless"
-              className="h-full rounded-[26px] shadow-[0_12px_30px_rgba(15,23,42,0.06)]"
-              styles={{ body: { padding: 24 } }}
-            >
-              <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
-                  <ReadOutlined />
-                </div>
-                <Title level={5} style={{ margin: 0 }}>
-                  Theory / Lab Activity
-                </Title>
-              </div>
-
-              <div className="space-y-4">
+          <Col xs={24} lg={12}>
+            <RibbonCard title="Theory/Lab Activity Summary">
+              <div className="space-y-4 ">
                 <div className="rounded-2xl bg-slate-50 p-4">
                   <Text type="secondary">Total Students</Text>
                   <Title level={3} style={{ margin: "6px 0 0" }}>
@@ -411,25 +399,12 @@ const AdminDashboard = () => {
                   }
                 />
               </div>
-            </Card>
+            </RibbonCard>
           </Col>
 
           {/* Average score by skill */}
-          <Col xs={24} lg={14}>
-            <Card
-              variant="borderless"
-              className="h-full rounded-[26px] shadow-[0_12px_30px_rgba(15,23,42,0.06)]"
-              styles={{ body: { padding: 24 } }}
-            >
-              <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-50 text-cyan-600">
-                  <BarChartOutlined />
-                </div>
-                <Title level={5} style={{ margin: 0 }}>
-                  Average Score by Skill
-                </Title>
-              </div>
-
+          <Col xs={24} lg={12}>
+            <RibbonCard title="Average Score by Skill">
               <Row gutter={[16, 16]}>
                 <Col xs={12} md={6}>
                   <SkillCard
@@ -460,25 +435,40 @@ const AdminDashboard = () => {
                   />
                 </Col>
               </Row>
-            </Card>
+            </RibbonCard>
+            <RibbonCard
+              title="Daily Task Completion Stats"
+              bodyStyle={{ padding: 24 }}
+            >
+              <Row className="space-y-3">
+                <Col xl={8} className="rounded-2xl bg-slate-50 p-4">
+                  <Text type="secondary">Started Today</Text>
+                  <Title level={3} style={{ margin: "6px 0 0" }}>
+                    {performance.daily_task_completion_stats?.started_today ||
+                      0}
+                  </Title>
+                </Col>
+                <Col xl={8} className="rounded-2xl bg-green-50 p-4">
+                  <Text type="secondary">Submitted Today</Text>
+                  <Title level={3} style={{ margin: "6px 0 0" }}>
+                    {performance.daily_task_completion_stats?.submitted_today ||
+                      0}
+                  </Title>
+                </Col>
+                <Col xl={8} className="rounded-2xl bg-orange-50 p-4">
+                  <Text type="secondary">Pending Today</Text>
+                  <Title level={3} style={{ margin: "6px 0 0" }}>
+                    {performance.daily_task_completion_stats?.pending_today ||
+                      0}
+                  </Title>
+                </Col>
+              </Row>
+            </RibbonCard>
           </Col>
 
           {/* Top performers */}
           <Col xs={24} lg={12}>
-            <Card
-              variant="borderless"
-              className="rounded-[26px] shadow-[0_12px_30px_rgba(15,23,42,0.06)]"
-              styles={{ body: { padding: 24 } }}
-            >
-              <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-600">
-                  <RiseOutlined />
-                </div>
-                <Title level={5} style={{ margin: 0 }}>
-                  Top Performing Students
-                </Title>
-              </div>
-
+            <RibbonCard title="Top Performing Students">
               {!performance.top_performing_students?.length ? (
                 <Empty
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -509,25 +499,12 @@ const AdminDashboard = () => {
                   )}
                 />
               )}
-            </Card>
+            </RibbonCard>
           </Col>
 
           {/* Weak performers */}
           <Col xs={24} lg={12}>
-            <Card
-              variant="borderless"
-              className="rounded-[26px] shadow-[0_12px_30px_rgba(15,23,42,0.06)]"
-              styles={{ body: { padding: 24 } }}
-            >
-              <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-500">
-                  <FallOutlined />
-                </div>
-                <Title level={5} style={{ margin: 0 }}>
-                  Weak Performing Students
-                </Title>
-              </div>
-
+            <RibbonCard title="Weak Performing Students">
               {!performance.weak_performing_students?.length ? (
                 <Empty
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -558,65 +535,14 @@ const AdminDashboard = () => {
                   )}
                 />
               )}
-            </Card>
-          </Col>
-
-          {/* Daily task completion stats */}
-          <Col xs={24} lg={8}>
-            <Card
-              variant="borderless"
-              className="rounded-[26px] shadow-[0_12px_30px_rgba(15,23,42,0.06)]"
-              styles={{ body: { padding: 24 } }}
-            >
-              <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                  <FileDoneOutlined />
-                </div>
-                <Title level={5} style={{ margin: 0 }}>
-                  Daily Task Stats
-                </Title>
-              </div>
-
-              <div className="space-y-3">
-                <div className="rounded-2xl bg-slate-50 p-4">
-                  <Text type="secondary">Started Today</Text>
-                  <Title level={3} style={{ margin: "6px 0 0" }}>
-                    {performance.daily_task_completion_stats?.started_today ||
-                      0}
-                  </Title>
-                </div>
-
-                <div className="rounded-2xl bg-green-50 p-4">
-                  <Text className="text-green-700">Submitted Today</Text>
-                  <Title
-                    level={3}
-                    style={{ margin: "6px 0 0", color: "#52c41a" }}
-                  >
-                    {performance.daily_task_completion_stats?.submitted_today ||
-                      0}
-                  </Title>
-                </div>
-
-                <div className="rounded-2xl bg-orange-50 p-4">
-                  <Text className="text-orange-700">Pending Today</Text>
-                  <Title
-                    level={3}
-                    style={{ margin: "6px 0 0", color: "#fa8c16" }}
-                  >
-                    {performance.daily_task_completion_stats?.pending_today ||
-                      0}
-                  </Title>
-                </div>
-              </div>
-            </Card>
+            </RibbonCard>
           </Col>
 
           {/* Latest mock test summary */}
-          <Col xs={24} lg={16}>
-            <Card
-              variant="borderless"
-              className="rounded-[26px] shadow-[0_12px_30px_rgba(15,23,42,0.06)]"
-              styles={{ body: { padding: 24 } }}
+          <Col xs={24} lg={24}>
+            <RibbonCard
+              title="Latest Mock Test Summary Across Institute"
+              bodyStyle={{ padding: 24 }}
             >
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
@@ -635,32 +561,22 @@ const AdminDashboard = () => {
                 columns={latestMockColumns}
                 pagination={{ pageSize: 5 }}
               />
-            </Card>
+            </RibbonCard>
           </Col>
 
           {/* Recently completed mock tests */}
-          <Col span={24}>
-            <Card
-              variant="borderless"
-              className="rounded-[26px] shadow-[0_12px_30px_rgba(15,23,42,0.06)]"
-              styles={{ body: { padding: 24 } }}
+          <Col xl={24}>
+            <RibbonCard
+              title="Recently Completed Mock Tests"
+              bodyStyle={{ padding: 24 }}
             >
-              <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-50 text-yellow-600">
-                  <ClockCircleOutlined />
-                </div>
-                <Title level={5} style={{ margin: 0 }}>
-                  Recently Completed Mock Tests
-                </Title>
-              </div>
-
               <Table
                 rowKey="mts_id"
                 dataSource={performance.recently_completed_mock_tests || []}
                 columns={recentMockColumns}
                 pagination={{ pageSize: 5 }}
               />
-            </Card>
+            </RibbonCard>
           </Col>
         </Row>
       </div>

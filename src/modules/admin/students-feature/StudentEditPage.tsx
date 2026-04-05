@@ -7,7 +7,6 @@ import {
   Col,
   DatePicker,
   Divider,
-  Empty,
   Form,
   Input,
   List,
@@ -21,6 +20,7 @@ import {
 } from "antd";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
+import { GrUpdate } from "react-icons/gr";
 import dayjs from "dayjs";
 import {
   ArrowLeftOutlined,
@@ -28,10 +28,8 @@ import {
   ClockCircleOutlined,
   EditOutlined,
   IdcardOutlined,
-  PhoneOutlined,
   TrophyOutlined,
   UserOutlined,
-  CheckCircleOutlined,
   FundOutlined,
 } from "@ant-design/icons";
 import useHttp from "@/hooks/use-http";
@@ -413,12 +411,22 @@ const StudentEditPage = () => {
                             <Row gutter={16}>
                               <Col xs={24}>
                                 <Form.Item name="phone1" label="Phone 1">
-                                  <Input size="large" className="rounded-xl" />
+                                  <Input
+                                    size="large"
+                                    className="rounded-xl"
+                                    minLength={10}
+                                    maxLength={10}
+                                  />
                                 </Form.Item>
                               </Col>
                               <Col xs={24}>
                                 <Form.Item name="phone2" label="Phone 2">
-                                  <Input size="large" className="rounded-xl" />
+                                  <Input
+                                    minLength={10}
+                                    maxLength={10}
+                                    size="large"
+                                    className="rounded-xl"
+                                  />
                                 </Form.Item>
                               </Col>
                             </Row>
@@ -516,6 +524,7 @@ const StudentEditPage = () => {
                           htmlType="submit"
                           loading={updateStudentCall.isPending}
                           className="rounded-xl"
+                          icon={<GrUpdate />}
                         >
                           Update Student
                         </Button>

@@ -1,26 +1,11 @@
 // import Card from "@/modules/common/cards/take-a-test";
 import React, { useState } from "react";
 import useHttp from "@/hooks/use-http";
-import ScoreReportCard from "@/modules/common/misc/analytics";
 import { SuccessResponse } from "@/utils/model/model";
-import {
-  MockTest,
-  MockTestResponse,
-  RequestAssignmentResponse,
-} from "@/utils/model/response-models";
+import { RequestAssignmentResponse } from "@/utils/model/response-models";
 import { useMutation } from "@tanstack/react-query";
-import { Button, Card, Col, Row, Typography } from "antd";
 import { useNavigate } from "react-router";
-import dashboard from "@/modules/admin/dashboard/dashboard";
-import { FaPlay } from "react-icons/fa";
-import QuestionRenderer from "@/components/questions/QuestionRenderer";
-import { mockTestSample } from "../../../../mock-test-sample";
-import MockTestPlayer from "../../../../MockTestPlayer";
-import DailyTaskPlayer from "../../../../DailyTaskPlayer";
 import StudentCompleteDashboard from "./StudentCompleteDashboard";
-import MockTestPreviewPage from "../../../../TestMockPlayer";
-import Login from "@/modules/common/pages/login";
-import { PortalTypes } from "@/utils/model/common-enums";
 
 function Dashboard() {
   const [requestedAssignment, setRequestedAssignment] = useState<any[]>();

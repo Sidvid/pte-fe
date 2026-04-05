@@ -15,6 +15,7 @@ import {
   Typography,
   List,
   Divider,
+  Table,
 } from "antd";
 import { useMutation } from "@tanstack/react-query";
 import {
@@ -28,12 +29,16 @@ import {
   BookOutlined,
   IdcardOutlined,
 } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import useHttp from "@/hooks/use-http";
 import {
   formatDate,
   formatDateTime,
   formatTime,
 } from "@/utils/helpers/core-helpers";
+import { FaEye } from "react-icons/fa";
+import RibbonCard from "@/components/molecules/card/RibbonCard";
+import { R } from "node_modules/react-router/dist/development/index-react-server-client-BcrVT7Dd.mjs";
 // import { useHttp } from "../hooks/useHttp";
 
 const { Title, Text } = Typography;
@@ -79,10 +84,11 @@ const ScoreMiniCard = ({ label, value }: { label: string; value?: number }) => (
 );
 
 const ProfileSummaryCard = ({ profile }: any) => (
-  <Card
-    variant="outlined"
-    style={{ borderRadius: 20, height: "100%" }}
-    styles={{ body: { padding: 20 } }}
+  <RibbonCard
+    title="Profile Summary"
+    // variant="outlined"
+    // style={{ borderRadius: 20, height: "100%" }}
+    // styles={{ body: { padding: 20 } }}
   >
     <Space align="start" size={16}>
       <div style={{ marginTop: 8 }}>
@@ -108,7 +114,7 @@ const ProfileSummaryCard = ({ profile }: any) => (
         <b>Joined:</b> {formatDate(profile?.joined_at)}
       </Text>
     </Space>
-  </Card>
+  </RibbonCard>
 );
 
 const SubscriptionCard = ({ subscription }: any) => {
@@ -125,19 +131,8 @@ const SubscriptionCard = ({ subscription }: any) => {
   );
 
   return (
-    <Card
-      variant="outlined"
-      style={{ borderRadius: 20, height: "100%" }}
-      styles={{ body: { padding: 20 } }}
-    >
-      <Space direction="vertical" style={{ width: "100%" }} size={14}>
-        <Space>
-          <CalendarOutlined style={{ color }} />
-          <Title level={5} style={{ margin: 0 }}>
-            Subscription Status
-          </Title>
-        </Space>
-
+    <RibbonCard title="Subscription Status">
+      <Space orientation="vertical" style={{ width: "100%" }} size={14}>
         <Tag color={subscription?.is_active ? "green" : "red"}>
           {subscription?.is_active ? "ACTIVE" : "EXPIRED"}
         </Tag>
@@ -157,24 +152,13 @@ const SubscriptionCard = ({ subscription }: any) => {
           <b>End:</b> {formatDate(subscription?.sub_end)}
         </Text>
       </Space>
-    </Card>
+    </RibbonCard>
   );
 };
 
 const AttendanceTodayCard = ({ attendance }: any) => (
-  <Card
-    variant="outlined"
-    style={{ borderRadius: 20, height: "100%" }}
-    styles={{ body: { padding: 20 } }}
-  >
-    <Space direction="vertical" style={{ width: "100%" }} size={14}>
-      <Space>
-        <CheckCircleOutlined />
-        <Title level={5} style={{ margin: 0 }}>
-          Today's Attendance
-        </Title>
-      </Space>
-
+  <RibbonCard title="Today's Attendance">
+    <Space orientation="vertical" style={{ width: "100%" }} size={14}>
       <Tag color={getAttendanceColor(attendance?.status)}>
         {attendance?.status || "ABSENT"}
       </Tag>
@@ -198,23 +182,12 @@ const AttendanceTodayCard = ({ attendance }: any) => (
         <b>Date:</b> {formatDate(attendance?.date)}
       </Text>
     </Space>
-  </Card>
+  </RibbonCard>
 );
 
 const WeeklyAttendanceCard = ({ weekly }: any) => (
-  <Card
-    variant="outlined"
-    style={{ borderRadius: 20, height: "100%" }}
-    styles={{ body: { padding: 20 } }}
-  >
-    <Space direction="vertical" style={{ width: "100%" }} size={14}>
-      <Space>
-        <ClockCircleOutlined />
-        <Title level={5} style={{ margin: 0 }}>
-          Weekly Attendance
-        </Title>
-      </Space>
-
+  <RibbonCard title="Weekly Attendance Summary">
+    <Space orientation="vertical" style={{ width: "100%" }} size={14}>
       <Row gutter={12}>
         <Col span={8}>
           <Statistic
@@ -251,23 +224,12 @@ const WeeklyAttendanceCard = ({ weekly }: any) => (
         )}
       />
     </Space>
-  </Card>
+  </RibbonCard>
 );
 
 const OngoingMockTestCard = ({ mockTest, onContinue }: any) => (
-  <Card
-    variant="outlined"
-    style={{ borderRadius: 20, height: "100%" }}
-    styles={{ body: { padding: 20 } }}
-  >
-    <Space direction="vertical" style={{ width: "100%" }} size={14}>
-      <Space>
-        <PlayCircleOutlined />
-        <Title level={5} style={{ margin: 0 }}>
-          Ongoing Mock Test
-        </Title>
-      </Space>
-
+  <RibbonCard title="Ongoing Mock Test">
+    <Space orientation="vertical" style={{ width: "100%" }} size={14}>
       {!mockTest ? (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -323,23 +285,12 @@ const OngoingMockTestCard = ({ mockTest, onContinue }: any) => (
         </>
       )}
     </Space>
-  </Card>
+  </RibbonCard>
 );
 
 const LastMockTestsCard = ({ tests }: any) => (
-  <Card
-    variant="outlined"
-    style={{ borderRadius: 20 }}
-    styles={{ body: { padding: 20 } }}
-  >
-    <Space direction="vertical" style={{ width: "100%" }} size={16}>
-      <Space>
-        <TrophyOutlined />
-        <Title level={5} style={{ margin: 0 }}>
-          Last 5 Mock Tests
-        </Title>
-      </Space>
-
+  <RibbonCard title="Last 5 Mock Tests">
+    <Space orientation="vertical" style={{ width: "100%" }} size={16}>
       {!tests?.length ? (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -405,7 +356,7 @@ const LastMockTestsCard = ({ tests }: any) => (
         />
       )}
     </Space>
-  </Card>
+  </RibbonCard>
 );
 
 const DashboardHeader = ({ profile }: any) => (
@@ -620,8 +571,36 @@ const DashboardHeader = ({ profile }: any) => (
   </Card>
 );
 
+const Last10SubmittedDailyTaskCard = ({
+  dashboardData,
+  dailyTaskColumns,
+}: any) => {
+  console.log("dashboardData", dashboardData);
+  return (
+    //Last 10 Submitted Daily Tasks
+    <Col span={24}>
+      <RibbonCard title="Last 10 Submitted Daily Tasks">
+        {!dashboardData?.last_10_submitted_daily_tasks?.length ? (
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description="No submitted daily tasks yet"
+          />
+        ) : (
+          <Table
+            rowKey="dts_id"
+            dataSource={dashboardData.last_10_submitted_daily_tasks}
+            columns={dailyTaskColumns}
+            pagination={{ pageSize: 5 }}
+          />
+        )}
+      </RibbonCard>
+    </Col>
+  );
+};
+
 const StudentCompleteDashboard = () => {
   const { sendRequest } = useHttp({ type: "auth" });
+  const navigate = useNavigate();
 
   const studentDashboardCall = useMutation({
     mutationFn: () =>
@@ -635,10 +614,51 @@ const StudentCompleteDashboard = () => {
     studentDashboardCall.mutate();
   }, []);
 
+  const dailyTaskColumns = [
+    {
+      title: "Task Title",
+      dataIndex: "title",
+      key: "title",
+      render: (val: string) => <Text strong>{val}</Text>,
+    },
+    {
+      title: "Question Type",
+      dataIndex: "question_type",
+      key: "question_type",
+      render: (val: string) => <Tag color="blue">{val}</Tag>,
+    },
+    {
+      title: "Length",
+      dataIndex: "length",
+      key: "length",
+      render: (val: number) => `${val} Q`,
+    },
+    {
+      title: "Submitted At",
+      dataIndex: "submitted_at",
+      key: "submitted_at",
+      render: (val: string) => formatDateTime(val),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_: any, record: any) => (
+        <Button
+          type="primary"
+          onClick={() => navigate(`/daily-task-review/${record.dts_id}`)}
+          icon={<FaEye />}
+        >
+          View Response
+        </Button>
+      ),
+    },
+  ];
+
   const dashboardData =
     studentDashboardCall.data?.response?.data ||
     studentDashboardCall.data?.data ||
     studentDashboardCall.data;
+  console.log("dashboardDatadashboardData", dashboardData);
 
   if (studentDashboardCall.isPending) {
     return (
@@ -695,10 +715,17 @@ const StudentCompleteDashboard = () => {
         <Col xs={24} lg={12}>
           <OngoingMockTestCard
             mockTest={dashboardData.current_ongoing_mock_test}
-            onContinue={(mockTest) => {
+            onContinue={(mockTest: any) => {
               console.log("Continue mock test:", mockTest);
               // navigate(`/student/mock-tests/continue/${mockTest.mts_id}`)
             }}
+          />
+        </Col>
+
+        <Col span={24}>
+          <Last10SubmittedDailyTaskCard
+            dashboardData={dashboardData}
+            dailyTaskColumns={dailyTaskColumns}
           />
         </Col>
 
