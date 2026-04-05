@@ -9,6 +9,8 @@ import {
   notification,
   Typography,
   Card,
+  Tabs,
+  TabsProps,
 } from "antd";
 import { GiProgression } from "react-icons/gi";
 import React, { useEffect, useMemo, useState } from "react";
@@ -19,30 +21,36 @@ interface MockTest {
   id: string;
   title: string;
   published: boolean;
+  collection_id: number;
+  total_questions: number;
+  total_duration: number;
   sections: Array<{
+    id: string;
+    title: string;
     type: string;
-    q: number;
-    time: number;
+    questions_count: number;
+    duration: number;
   }>;
 }
 
 function StudentMockTests() {
   const [mockTests, setMockTests] = useState<MockTest[]>([]);
+  const [isLabStudent, setIsLabStudent] = useState(false);
+
   const { sendRequest } = useHttp({ type: "auth" });
   const navigate = useNavigate();
 
-  // Fetch mock tests for the student
+  // Fetch mock tests
   const fetchMockTests = useMutation({
     mutationFn: () =>
       sendRequest({ url: "allMockTests", method: "GET" }) as Promise<any>,
     onSuccess: (data) => {
-      console.log("Fetched Mock Tests:", data);
       if (data?.response?.data && Array.isArray(data.response.data?.tests)) {
         const { response } = data;
         setMockTests(response.data.tests);
       }
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Error fetching mock tests:", error);
       notification.error({
         title: error?.message || "Failed to load mock tests",
@@ -52,6 +60,12 @@ function StudentMockTests() {
 
   useEffect(() => {
     fetchMockTests.mutate();
+    if (
+      JSON.parse(localStorage.getItem("studentProfile_modes") || "{}")
+        ?.exam_mode
+    ) {
+      setIsLabStudent(true);
+    }
   }, []);
 
   const handleTakeMockTest = (testId: string) => {
@@ -64,36 +78,6 @@ function StudentMockTests() {
       dataIndex: "title",
       key: "title",
     },
-    // {
-    //   title: "Sections",
-    //   key: "sections",
-    //   render: (_, record) => (
-    //     <div className="flex flex-col gap-2 min-w-[260px]">
-    //       {record.sections.map((section: any) => (
-    //         <div
-    //           key={section.id}
-    //           className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2"
-    //         >
-    //           <div className="flex items-center justify-between gap-2">
-    //             <Typography.Text strong className="text-sm">
-    //               {section.title || getSectionLabel(section.type)}
-    //             </Typography.Text>
-    //             <Tag color="blue">{getSectionLabel(section.type)}</Tag>
-    //           </div>
-
-    //           <div className="mt-1 flex items-center gap-4 text-xs text-gray-500">
-    //             <span>
-    //               Questions: <b>{section.questions_count}</b>
-    //             </span>
-    //             <span>
-    //               Duration: <b>{section.duration} min</b>
-    //             </span>
-    //           </div>
-    //         </div>
-    //       ))}
-    //     </div>
-    //   ),
-    // },
     {
       title: "Sections",
       key: "sections",
@@ -138,16 +122,16 @@ function StudentMockTests() {
     },
   ];
 
-  const renderExpandedRow = (record: any) => {
+  const renderExpandedRow = (record: MockTest) => {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-2">
-        {record.sections.map((section: any) => (
+      <div className="grid grid-cols-1 gap-4 py-2 md:grid-cols-3">
+        {record.sections.map((section) => (
           <Card
             key={section.id}
             size="small"
             className="rounded-xl border border-gray-200 shadow-sm"
           >
-            <Space orientation="vertical" size={6} style={{ width: "100%" }}>
+            <Space direction="vertical" size={6} style={{ width: "100%" }}>
               <Typography.Text strong>
                 {section.title || getSectionLabel(section.type)}
               </Typography.Text>
@@ -165,27 +149,28 @@ function StudentMockTests() {
     );
   };
 
-  const onlyPublishedTests = useMemo(
+  const publishedTests = useMemo(
     () => mockTests.filter((test) => test.published),
     [mockTests],
   );
-  console.log("Only Published Mock Tests:", onlyPublishedTests);
 
-  return (
-    <div className="p-6">
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-xl shadow-lg mb-6">
-        <h1 className="text-2xl font-bold">Mock Tests</h1>
-        <p className="opacity-90">
-          Here are the available mock tests for practice.
-        </p>
-      </div>
+  const mockTestsData = useMemo(
+    () => publishedTests.filter((test) => test.collection_id === 1),
+    [publishedTests],
+  );
 
-      <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">
-          Available Mock Tests
-        </h2>
+  const officialTestsData = useMemo(
+    () => publishedTests.filter((test) => test.collection_id === 2),
+    [publishedTests],
+  );
+
+  const tabItems: TabsProps["items"] = [
+    {
+      key: "mock-tests",
+      label: "Mock Tests",
+      children: (
         <Table
-          dataSource={onlyPublishedTests}
+          dataSource={mockTestsData}
           columns={columns}
           rowKey="id"
           pagination={{ pageSize: 5 }}
@@ -194,6 +179,46 @@ function StudentMockTests() {
             rowExpandable: (record) => record.sections?.length > 0,
           }}
         />
+      ),
+    },
+    {
+      key: "official-tests",
+      label: (
+        <Space size={6}>
+          <span>Official Test</span>
+        </Space>
+      ),
+      disabled: !isLabStudent,
+      children: (
+        <Table
+          dataSource={officialTestsData}
+          columns={columns}
+          rowKey="id"
+          pagination={{ pageSize: 5 }}
+          expandable={{
+            expandedRowRender: renderExpandedRow,
+            rowExpandable: (record) => record.sections?.length > 0,
+          }}
+        />
+      ),
+    },
+  ];
+
+  return (
+    <div className="p-6">
+      <div className="mb-6 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white shadow-lg">
+        <h1 className="text-2xl font-bold">Mock Tests</h1>
+        <p className="opacity-90">
+          Practice from mock tests and official tests based on your access.
+        </p>
+      </div>
+
+      <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-md">
+        <h2 className="mb-4 text-xl font-semibold text-gray-800">
+          Available Tests
+        </h2>
+
+        <Tabs defaultActiveKey="mock-tests" items={tabItems} />
       </div>
     </div>
   );

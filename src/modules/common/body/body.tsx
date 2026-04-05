@@ -20,6 +20,8 @@ import { useNavigate } from "react-router";
 
 import { Outlet, useParams, useLocation } from "react-router";
 import { isStudentApp } from "@/utils/helpers/core-helpers";
+import TheoryVideoConfigPage from "@/modules/admin/lab-videos/TheoryVideoConfigPage";
+import { GrConfigure } from "react-icons/gr";
 
 function ApplicationBody() {
   const { theme, toggleTheme } = useTheme();
@@ -41,7 +43,7 @@ function ApplicationBody() {
         },
         {
           value: "mock-tests",
-          title: "Mock Test",
+          title: "Mock & Official Tests",
           icon: <AiOutlineFileText />,
         },
         // {
@@ -76,11 +78,11 @@ function ApplicationBody() {
           title: "Daily Tasks",
           icon: <AiOutlineUnorderedList />,
         },
-        {
-          value: "theoryVideos",
-          title: "Theory Videos",
-          icon: <AiOutlineVideoCamera />,
-        },
+        // {
+        //   value: "theoryVideos",
+        //   title: "Theory Videos",
+        //   icon: <AiOutlineVideoCamera />,
+        // },
         {
           value: "labVideos",
           title: "Lab Videos",
@@ -90,6 +92,11 @@ function ApplicationBody() {
           value: "students",
           title: "Students",
           icon: <PiStudentFill />,
+        },
+        {
+          value: "theory-videos-config",
+          title: "Theory Video Config",
+          icon: <GrConfigure />,
         },
       ];
 

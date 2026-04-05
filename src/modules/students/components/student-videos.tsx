@@ -7,6 +7,7 @@ import { SiGoogledisplayandvideo360 } from "react-icons/si";
 import { GiProgression } from "react-icons/gi";
 import { useNavigate } from "react-router";
 import VideoPlayer from "@/modules/common/videoPlayer/VideoPlayer";
+import LabVideos from "./StudentLabVideos";
 
 interface Video {
   id: string;
@@ -98,8 +99,15 @@ function StudentVideos() {
     fetchVideos.mutate();
   }, []);
 
-  const handleWatchVideo = (videoId: string) => {
-    navigate(`/video/${videoId}`);
+  const handleWatchVideo = (record: any) => {
+    console.log("Watch video clicked for record:", record);
+    navigate(`/watch-video/${record?.videoId}`, {
+      state: {
+        title: record?.title,
+        video_url: record?.video_url,
+        onComplete: null,
+      },
+    });
   };
 
   const theoryVideos = videos.filter((video) => video.type === "theory");
@@ -134,7 +142,7 @@ function StudentVideos() {
       dataIndex: "status",
       key: "status",
       render: (status) => {
-        const text = status.replace("_", " ");
+        const text = status?.replace("_", " ");
         return <Tag color="blue">{text}</Tag>;
       },
     },
@@ -147,7 +155,7 @@ function StudentVideos() {
             type="primary"
             icon={<SiGoogledisplayandvideo360 />}
             disabled={!record.is_video_unlocked}
-            onClick={() => handleWatchVideo(record.task_id)}
+            onClick={() => handleWatchVideo(record)}
           >
             Watch
           </Button>
@@ -163,11 +171,11 @@ function StudentVideos() {
 
   return (
     <div className="p-6">
-      <VideoPlayer
+      {/* <VideoPlayer
         videoUrl="https://www.w3schools.com/html/mov_bbb.mp4"
         title="Theory Video 1"
         onComplete={null}
-      />
+      /> */}
       <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-xl shadow-lg mb-6">
         <h1 className="text-2xl font-bold">Learning Videos</h1>
         <p className="opacity-90">
@@ -207,15 +215,9 @@ function StudentVideos() {
             {
               label: "Lab Videos",
               disabled: !isTheoryVideosCompleted?.theory_completed,
+              // disabled: false,
               key: "lab",
-              children: (
-                <Table
-                  dataSource={labVideos}
-                  columns={videoColumns}
-                  rowKey="id"
-                  pagination={{ pageSize: 5 }}
-                />
-              ),
+              children: <LabVideos />,
             },
           ]}
         />

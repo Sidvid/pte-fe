@@ -10,20 +10,23 @@ interface DescribeImageProps {
 
 function DescribeImage({ questions, onDelete }: DescribeImageProps) {
   const getImageUrl = (imagePath: string) => {
-    const baseUrl = 'http://localhost:3000';
+    const baseUrl = "http://localhost:3000";
     const fullUrl = `${baseUrl}/${imagePath}`;
     return fullUrl;
   };
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>, imagePath: string) => {
+  const handleImageError = (
+    e: React.SyntheticEvent<HTMLImageElement>,
+    imagePath: string,
+  ) => {
     const img = e.currentTarget;
-    const baseUrl = 'http://localhost:3000';
-    
-    console.error('Image failed to load:', img.src);
-    console.error('Original path:', imagePath);
-    
-    const currentAttempt = parseInt(img.dataset.attempt || '0');
-    
+    const baseUrl = "http://localhost:3000";
+
+    console.error("Image failed to load:", img.src);
+    console.error("Original path:", imagePath);
+
+    const currentAttempt = parseInt(img.dataset.attempt || "0");
+
     const attempts = [
       `${baseUrl}/${imagePath}.jpg`,
       `${baseUrl}/${imagePath}.png`,
@@ -36,29 +39,38 @@ function DescribeImage({ questions, onDelete }: DescribeImageProps) {
 
       `${baseUrl}/media/${imagePath}`,
       `${baseUrl}/media/${imagePath}.jpg`,
- 
-      `${baseUrl}/${imagePath.split('/').pop()}`,
-      `${baseUrl}/${imagePath.split('/').pop()}.jpg`,
+
+      `${baseUrl}/${imagePath.split("/").pop()}`,
+      `${baseUrl}/${imagePath.split("/").pop()}.jpg`,
     ];
-    
+
     if (currentAttempt < attempts.length) {
       const nextUrl = attempts[currentAttempt];
-      console.log(`Attempt ${currentAttempt + 1}/${attempts.length}: Trying`, nextUrl);
+      console.log(
+        `Attempt ${currentAttempt + 1}/${attempts.length}: Trying`,
+        nextUrl,
+      );
       img.src = nextUrl;
       img.dataset.attempt = String(currentAttempt + 1);
       return;
     }
-    
-    console.error('All attempts failed for:', imagePath);
-    console.error('Tried', attempts.length, 'different URLs');
-    console.error('Backend needs to configure static file serving for mock-tests-media directory');
-    console.error('Backend also needs to add CORS headers to allow frontend access');
-    
+
+    console.error("All attempts failed for:", imagePath);
+    console.error("Tried", attempts.length, "different URLs");
+    console.error(
+      "Backend needs to configure static file serving for mock-tests-media directory",
+    );
+    console.error(
+      "Backend also needs to add CORS headers to allow frontend access",
+    );
+
     img.src = "https://via.placeholder.com/400x300?text=Image+Not+Found";
-    
-    const errorMsg = img.parentElement?.querySelector(`#error-${img.alt.split(' ')[2]}`);
+
+    const errorMsg = img.parentElement?.querySelector(
+      `#error-${img.alt.split(" ")[2]}`,
+    );
     if (errorMsg) {
-      errorMsg.classList.remove('hidden');
+      errorMsg.classList.remove("hidden");
     }
   };
 
@@ -66,9 +78,7 @@ function DescribeImage({ questions, onDelete }: DescribeImageProps) {
     <div className="flex flex-col gap-[20px]">
       {questions?.map((item) => {
         const imageData =
-          typeof item.data === "string"
-            ? JSON.parse(item.data)
-            : item.data;
+          typeof item.data === "string" ? JSON.parse(item.data) : item.data;
         const imagePath = imageData.image;
 
         return (
@@ -92,13 +102,17 @@ function DescribeImage({ questions, onDelete }: DescribeImageProps) {
               {imagePath ? (
                 <div className="text-center">
                   <img
-                    src={getImageUrl(imagePath)}
+                    src={imagePath ? imagePath : null}
                     alt={`Describe Image ${item.sNo}`}
                     className="max-w-full max-h-[400px] object-contain rounded"
                     onError={(e) => handleImageError(e, imagePath)}
                   />
-                  <p className="text-red-500 text-xs mt-2 hidden" id={`error-${item.id}`}>
-                    ⚠️ Image not accessible. Backend needs to serve static files from mock-tests-media directory.
+                  <p
+                    className="text-red-500 text-xs mt-2 hidden"
+                    id={`error-${item.id}`}
+                  >
+                    ⚠️ Image not accessible. Backend needs to serve static files
+                    from mock-tests-media directory.
                   </p>
                 </div>
               ) : (
@@ -106,7 +120,7 @@ function DescribeImage({ questions, onDelete }: DescribeImageProps) {
               )}
             </div>
             <p className="text-xs text-gray-500 mt-2">
-              Image Path: {imagePath}
+              Image Path: {imagePath ? imagePath : "N/A"}
             </p>
           </div>
         );

@@ -2,7 +2,7 @@ import useHttp from "@/hooks/use-http";
 import { SuccessResponse } from "@/utils/model/model";
 import { RequestAssignmentResponse } from "@/utils/model/response-models";
 import { useMutation } from "@tanstack/react-query";
-import { Table, TableProps, Tag, Button, Space } from "antd";
+import { Table, TableProps, Tag, Button, Space, Alert } from "antd";
 import React, { useEffect, useState } from "react";
 import { FaHourglassStart } from "react-icons/fa";
 import { GiProgression } from "react-icons/gi";
@@ -132,6 +132,19 @@ function StudentSchedule() {
       ),
     },
   ];
+
+  if (allAssignedTasks.isError) {
+    return (
+      <div style={{ padding: 24 }}>
+        <Alert
+          type="error"
+          showIcon
+          title="No schedule found for today"
+          description="Please log in tomorrow."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6">

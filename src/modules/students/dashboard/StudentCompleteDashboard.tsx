@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Alert,
   Button,
@@ -545,7 +545,7 @@ const DashboardHeader = ({ profile }: any) => (
               <Avatar
                 size={150}
                 src={profile?.image || undefined}
-                srcSet="https://i.pinimg.com/736x/46/99/f6/4699f6ecd0109cffb82decd8d937ab72.jpg"
+                srcSet={profile?.image ?? undefined}
                 style={{
                   border: "3px solid rgba(255,255,255,0.5)",
                   background: "#ffffff22",
@@ -659,6 +659,15 @@ const StudentCompleteDashboard = () => {
     studentDashboardCall.data?.data ||
     studentDashboardCall.data;
   console.log("dashboardDatadashboardData", dashboardData);
+  useEffect(() => {
+    localStorage.setItem(
+      "studentProfile_modes",
+      JSON.stringify({
+        exam_mode: dashboardData?.profile_summary?.exam_mode,
+        lab: dashboardData?.profile_summary?.lab,
+      }),
+    );
+  }, [dashboardData]);
 
   if (studentDashboardCall.isPending) {
     return (

@@ -81,8 +81,8 @@ export const useMockTestFlow = ({
   const isLastQuestionInSection =
     currentQuestionIndex === currentSectionQuestions.length - 1;
   const isLastSection = currentSectionIndex === sections.length - 1;
-  const mts_id = "64450873-1655-48a1-9d3b-2c723a844283";
-  const mtss_id = "61d91570-2930-4073-8b69-2dbdf0071b2b";
+  const mts_id = localStorage.getItem("current_mts_id") || mtsId;
+  // const mtss_id = "61d91570-2930-4073-8b69-2dbdf0071b2b";
 
   const currentExistingAttempt = useMemo(() => {
     if (!currentSection?.id) return null;
@@ -98,7 +98,7 @@ export const useMockTestFlow = ({
         url: "startMockTestSection",
         method: "POST",
         // endURL: `${payload.mts_id}/sections/${payload.section_id}/start`,
-        endURL: `${mts_id}/sections/${mtss_id}/start`,
+        endURL: `${payload.mts_id}/sections/${payload.section_id}/start`,
       }),
     onSuccess: (data: any) => {
       console.log("startSectionCall success raw response:", data);

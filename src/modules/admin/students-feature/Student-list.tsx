@@ -5,7 +5,7 @@ import { Student } from "@/utils/model/response-models";
 import { useMutation } from "@tanstack/react-query";
 import { Button, Card, Table, TableProps, Tag } from "antd";
 import React from "react";
-import { FaUserEdit } from "react-icons/fa";
+import { FaUserEdit, FaUserPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const StudentList = () => {
@@ -88,7 +88,18 @@ const StudentList = () => {
   ];
 
   return (
-    <RibbonCard title="Student List">
+    <RibbonCard
+      title="Student List"
+      extra={
+        <Button
+          onClick={() => navigate("/add-student")}
+          icon={<FaUserPlus />}
+          type="primary"
+        >
+          Add Student
+        </Button>
+      }
+    >
       <Table bordered rowKey="id" columns={columns} dataSource={studentData} />
     </RibbonCard>
   );

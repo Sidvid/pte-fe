@@ -18,6 +18,16 @@ export const URLS = {
   studentAttendanceHistory: "api/admin/attendance/student",
   studentPerformance: "api/admin/student",
   changePassword: "api/auth/change-password",
+  activateStudentWithImage: "api/admin/student/activate",
+  registerUser: "api/auth/register",
+  scheduleLabVideo: "api/admin/lab-videos/schedule",
+  adminLabVideos: "api/admin/lab-videos",
+  theoryVideoMappings: "api/admin/theory-videos/mappings",
+  theoryVideoOptions: "api/admin/theory-videos/options/videos",
+  theoryTaskOptions: "api/admin/theory-videos/options/tasks",
+  addTheoryVideoMapping: "api/admin/theory-videos/mappings",
+  updateTheoryVideoMapping: "api/admin/theory-videos/mappings",
+  deleteTheoryVideoMapping: "api/admin/theory-videos/mappings",
   // Student routes
   requestAssignments: "api/student/request-assignment",
   theoryVideosCompletionStatus: "api/student/videos/theory/status",
@@ -25,11 +35,13 @@ export const URLS = {
   saveQuestionResponse: "api/student/question-responses",
   submitDailyTask: "/api/student/daily-tasks/submit",
   studentDashboard: "/api/student/dashboard",
-  startMockTest: "/api/student/mock-tests/:test_id/start",
-  startMockTestSection: "/api/student/mock-tests",
   submitMockTestSection: "/api/student/mock-tests",
   getMockTestQuestions: "/api/student/mock-tests",
   dailyTaskReview: "/api/student/daily-tasks",
+  studentScheduledLabVideo: "/api/student/lab-videos/today",
+  startMockTestSection: "/api/student/mock-tests",
+  startMockTest: "/api/student/mock-tests",
+  getMockTestById: "api/student/mock-tests",
 };
 type Methods = "POST" | "GET" | "PUT" | "DELETE";
 interface RequestProps {

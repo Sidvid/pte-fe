@@ -16,6 +16,9 @@ import DailyTasksCollection from "./daily-tasks/daily-task-collection";
 import ViewSingleCollectionQuestions from "./daily-tasks/view-single-collection-questions";
 import StudentList from "./students-feature/Student-list";
 import StudentEditPage from "./students-feature/StudentEditPage";
+import StudentCreatePage from "../students/components/StudentCreatePage";
+import TheoryVideos from "./lab-videos/TheoryVideos";
+import TheoryVideoConfigPage from "./lab-videos/TheoryVideoConfigPage";
 const queryClient = new QueryClient();
 function App() {
   return (
@@ -41,6 +44,7 @@ function App() {
               <Route element={<ApplicationBody />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/labVideos" element={<LabVideos />} />
+                {/* <Route path="/theoryVideos" element={<TheoryVideos />} /> */}
                 <Route path="/mockTest" element={<MockTest />} />
                 <Route path="/mockTest/:id" element={<ViewSingleMockTest />} />
                 <Route path="/schedule" element={<Schedule />} />
@@ -50,6 +54,7 @@ function App() {
                   path="/admin/student/:student_id/edit"
                   element={<StudentEditPage />}
                 />
+                <Route path="/add-student" element={<StudentCreatePage />} />
                 <Route
                   path="/dailyTasks/:id"
                   element={<DailyTasksCollection />}
@@ -57,6 +62,10 @@ function App() {
                 <Route
                   path="/view-single-collection-questions/:id"
                   element={<ViewSingleCollectionQuestions />}
+                />
+                <Route
+                  path="/theory-videos-config"
+                  element={<TheoryVideoConfigPage />}
                 />
               </Route>
               <Route

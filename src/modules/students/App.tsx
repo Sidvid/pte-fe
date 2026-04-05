@@ -15,6 +15,8 @@ import StudentVideos from "./components/student-videos";
 import Login from "../common/pages/login";
 import { PortalTypes } from "@/utils/model/common-enums";
 import StudentDailyTaskReview from "@/pte-test-players/student-response-components/StudentDailyTaskReview";
+import VideoPlayer from "../common/videoPlayer/VideoPlayer";
+import WatchVideoPage from "../common/videoPlayer/WatchVideoPage";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +52,7 @@ function App() {
                   element={<StudentMockTestView />}
                 />
                 <Route path="/video/:id" element={<LabVideos />} />
+                <Route path="/watch-video/:id" element={<WatchVideoPage />} />
                 <Route path="/daily-tasks" element={<StudentDailyTasks />} />
                 <Route path="/schedule" element={<StudentSchedule />} />
                 <Route path="/mock-tests" element={<StudentMockTests />} />
