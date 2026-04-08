@@ -198,7 +198,11 @@ const AdminDashboard = () => {
     {
       title: "Overall",
       key: "overall",
-      render: (_: any, record: any) => record.score?.overall ?? "-",
+      render: (_: any, record: any) => (
+        <Tag color="purple">
+          {record.score?.overall ?? record.score?.status?.replace("_", " ")}
+        </Tag>
+      ),
     },
   ];
 

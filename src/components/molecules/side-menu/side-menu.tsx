@@ -64,6 +64,7 @@ function SideMenu({ data, selected, onClick }: SideMenuProps) {
       // Remove token cookie
       await cookieStore.delete("access_token");
       await cookieStore.delete("ACCESS_TOKEN");
+      await localStorage.clear(); // Clear localStorage as well, if you store any user data there
       // if your app uses a specific constant-based cookie key,
       // keep the exact one here too
 
