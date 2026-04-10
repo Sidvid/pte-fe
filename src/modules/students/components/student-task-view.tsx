@@ -41,10 +41,37 @@ const StudentTaskView: React.FC = () => {
   console.log("taskId from params:", taskIdFromParams);
   console.log("navigation state:", taskState);
 
-  const fromSchedule = taskState?.fromSchedule || false;
-  const isDailyTask = taskState?.isDailyTask || false;
   const taskIdFromState = taskState?.taskId || taskIdFromParams;
   console.log("Derived taskId:", taskIdFromState);
+
+  const startDailyTask = useMutation({
+    mutationFn: (payload: any) =>
+      sendRequest({
+        url: "startDailyTask",
+        method: "POST",
+        // endURL: `${payload.mts_id}/sections/${payload.section_id}/start`,
+        endURL: `${payload.task_id}/start`,
+      }),
+    onSuccess: (data: any) => {
+      console.log("getAllQuestionsFromTask success raw response:", data);
+      // setQuestionsFromTask(data?.response?.data || []);
+      localStorage.setItem(
+        "current_dts_id",
+        data?.response?.data?.dts_id || "",
+      );
+      // setLoading(false);
+    },
+    onError: (err: any) => {
+      console.error(err);
+      message.error(err?.message || "Failed to start section");
+    },
+  });
+
+  useEffect(() => {
+    if (taskState?.isDailyTask) {
+      startDailyTask.mutateAsync({ task_id: taskIdFromState });
+    }
+  }, [taskIdFromState, taskState?.isDailyTask]);
 
   const getAllQuestionsFromTask = useMutation({
     mutationFn: (payload: any) =>
@@ -92,118 +119,9 @@ const StudentTaskView: React.FC = () => {
     }
   }, [taskIdFromState, taskState?.isDailyTask]);
 
-  // if (loading) {
-  //   return (
-  //     <div className="flex justify-center items-center h-64">
-  //       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-  //       <span className="ml-3">Loading task...</span>
-  //     </div>
-  //   );
-  // }
-
-  // if (
-  //   !taskDetails ||
-  //   !taskDetails.questions ||
-  //   taskDetails.questions.length === 0
-  // ) {
-  //   return (
-  //     <div className="p-6">
-  //       {/* <Alert
-  //         message="No Questions Found"
-  //         description="This task doesn't contain any questions. Please contact your administrator."
-  //         type="warning"
-  //         showIcon
-  //         className="mb-4"
-  //       />
-  //       <div className="bg-white p-6 rounded-xl shadow-md">
-  //         <h2 className="text-xl font-semibold mb-4">
-  //           Task: {taskDetails?.title || "Sample Task"}
-  //         </h2>
-  //         <p>No questions are available for this task.</p>
-  //       </div> */}
-  //       {/* <MockTestPlayer /> */}
-  //     </div>
-  //   );
-  // }
   console.log("Questions from task:", questionsFromTask);
   return (
-    // <div className="p-6">
-    //   <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-xl shadow-lg mb-6">
-    //     <h1 className="text-2xl font-bold">{taskDetails?.title || "Task"}</h1>
-    //     <div className="flex justify-between mt-2">
-    //       <span>Duration: {taskDetails?.duration || 0} minutes</span>
-    //       <span>Questions: {taskDetails?.questions.length || 0}</span>
-    //     </div>
-    //   </div>
-
-    //   <div className="bg-white p-6 rounded-xl shadow-md">
-    //     <Steps
-    //       current={currentStep}
-    //       items={taskDetails?.questions.map((_, index) => ({
-    //         title: `Q${index + 1}`,
-    //       }))}
-    //       className="mb-6"
-    //     />
-
-    //     {taskDetails?.questions[currentStep] && (
-    //       <div className="mb-6">
-    //         <div className="mt-2 text-sm text-gray-500">
-    //           Question #
-    //           {taskDetails.questions[currentStep].sNo || currentStep + 1}
-    //         </div>
-    //         {taskDetails.questions[currentStep].type === "FIB_RW" && (
-    //           <FillInTheBlanks
-    //             text={
-    //               typeof taskDetails.questions[currentStep].data === "object"
-    //                 ? (taskDetails.questions[currentStep].data as any).text
-    //                 : taskDetails.questions[currentStep].data
-    //             }
-    //           />
-    //         )}
-    //         {taskDetails.questions[currentStep].type ===
-    //           "FIB_DRAG_AND_DROP" && (
-    //           <FibDragDrop questions={[taskDetails.questions[currentStep]]} />
-    //         )}
-    //         {/* Handle other question types if needed */}
-    //         {!["FIB_RW", "FIB_DRAG_AND_DROP"].includes(
-    //           taskDetails.questions[currentStep].type,
-    //         ) && (
-    //           <div>
-    //             <p>
-    //               Unsupported question type:{" "}
-    //               {taskDetails.questions[currentStep].type}
-    //             </p>
-    //             <pre>
-    //               {JSON.stringify(taskDetails.questions[currentStep], null, 2)}
-    //             </pre>
-    //           </div>
-    //         )}
-    //       </div>
-    //     )}
-
-    //     <div className="flex justify-between">
-    //       <Button disabled={currentStep === 0} onClick={handlePrevious}>
-    //         Previous
-    //       </Button>
-    //       {currentStep < (taskDetails?.questions.length || 0) - 1 ? (
-    //         <Button type="primary" onClick={handleNext}>
-    //           Next
-    //         </Button>
-    //       ) : (
-    //         <Button type="primary" onClick={handleSubmit}>
-    //           Submit Task
-    //         </Button>
-    //       )}
-    //     </div>
-    //   </div>
-    // </div>
     <>
-      {/* <DailyTaskPlayer questions={questionsFromTask} /> */}
-      {/* {taskState?.isDailyTask ? (
-        <DailyTaskPlayer questions={questionsFromTask} />
-      ) : (
-        <MockTestPreviewPage />
-      )} */}
       {taskState?.isDailyTask ? (
         <DailyTaskPlayer
           questions={questionsFromTask}

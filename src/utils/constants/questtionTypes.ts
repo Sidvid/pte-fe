@@ -192,7 +192,7 @@ export const normalizeQuestionType = (type: string) => {
     mcm_r: "rmcma",
 
     // Listening
-    fib_l: "lfib",
+    fib_l: "fib_l",
     mcs_l: "lmcsa",
     mcm_l: "lmcma",
 
@@ -266,6 +266,7 @@ export const getQuestionTitle = (type: string) => {
 
     // Listening
     lfib: "Listening: Fill in the Blanks",
+    fib_l: "Listening: Fill in the Blanks",
     lmcsa: "Listening: Multiple Choice, Single Answer",
     lmcma: "Listening: Multiple Choice, Multiple Answer",
     hcs: "Highlight Correct Summary",

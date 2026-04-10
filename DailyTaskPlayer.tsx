@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   Progress,
+  Skeleton,
   Space,
   Typography,
   message,
@@ -108,12 +109,13 @@ const DailyTaskPlayer = ({ questions = [], title = "Daily Task" }) => {
   if (!questions.length || !currentQuestion) {
     return (
       <div style={{ padding: 24, maxWidth: 900, margin: "0 auto" }}>
-        <Alert
+        {/* <Alert
           type="warning"
           showIcon
           message="No questions found"
           description="This daily task does not contain any questions."
-        />
+        /> */}
+        <Skeleton />;
       </div>
     );
   }

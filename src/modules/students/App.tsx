@@ -1,6 +1,4 @@
-import SideMenu from "@/components/molecules/side-menu/side-menu";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router";
-import * as React from "react";
+import { BrowserRouter, Routes, Route } from "react-router";
 import { ConfigProvider } from "antd";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ApplicationBody from "../common/body/body";
@@ -15,8 +13,9 @@ import StudentVideos from "./components/student-videos";
 import Login from "../common/pages/login";
 import { PortalTypes } from "@/utils/model/common-enums";
 import StudentDailyTaskReview from "@/pte-test-players/student-response-components/StudentDailyTaskReview";
-import VideoPlayer from "../common/videoPlayer/VideoPlayer";
 import WatchVideoPage from "../common/videoPlayer/WatchVideoPage";
+import ProtectedRoute from "../common/ProtectedRoute";
+import NotFound from "../common/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -40,10 +39,14 @@ function App() {
         <div className="min-h-full">
           <BrowserRouter>
             <Routes>
+              // Public routes
               <Route
                 path="/"
                 element={<Login portal={PortalTypes.STUDENT} />}
               />
+              <Route path="/unauthorized" element={<NotFound />} />
+              // Protected routes for students
+              {/* <Route element={<ProtectedRoute portal="student" />}> */}
               <Route element={<ApplicationBody />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/take-task/:id" element={<StudentTaskView />} />
@@ -62,6 +65,8 @@ function App() {
                   element={<StudentDailyTaskReview />}
                 />
               </Route>
+              {/* </Route> */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </div>

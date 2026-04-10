@@ -16,6 +16,8 @@ import {
   FullscreenOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
+import { GiProgression } from "react-icons/gi";
+import { useNavigate } from "react-router";
 
 const { Text, Title } = Typography;
 
@@ -26,6 +28,9 @@ const VideoPlayer = ({
   minCompletionPercent = 95,
   disableSeeking = true,
   forceFullscreen = true,
+  isProceedToTaskBtnEnabled,
+  task_id,
+  fromTheoryVideos,
 }) => {
   const videoRef = useRef(null);
   const containerRef = useRef(null);
@@ -37,6 +42,7 @@ const VideoPlayer = ({
   const [isCompleted, setIsCompleted] = useState(false);
   const [fullscreenWarning, setFullscreenWarning] = useState(false);
   const [tabWarning, setTabWarning] = useState(false);
+  const navigate = useNavigate();
 
   const completionPercent = duration
     ? Math.min((maxWatchedTime / duration) * 100, 100)
@@ -191,6 +197,19 @@ const VideoPlayer = ({
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [handleKeyDown, handleFullscreenChange, handleVisibilityChange]);
+  console.log("hsihasasidhcidcib", isProceedToTaskBtnEnabled);
+  console.log("-------------------------------------", isCompleted);
+
+  const handleAssignedVideoTask = () => {
+    console.log("Complete Task clicked for record:", task_id);
+    navigate(`/take-task/${task_id}`, {
+      state: {
+        fromTheoryVideos,
+        isDailyTask: true,
+        taskId: task_id,
+      },
+    });
+  };
 
   return (
     <>
@@ -225,6 +244,15 @@ const VideoPlayer = ({
               position: "relative",
             }}
           > */}
+          {isProceedToTaskBtnEnabled && (
+            <Button
+              type="primary"
+              onClick={handleAssignedVideoTask}
+              icon={<GiProgression />}
+            >
+              Complete Task
+            </Button>
+          )}
           <video
             ref={videoRef}
             src={videoUrl}
@@ -235,7 +263,7 @@ const VideoPlayer = ({
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
             // onClick={handlePlayPause}
-            controls={false}
+            controls={true}
             style={{
               width: "100%",
               maxHeight: "75vh",

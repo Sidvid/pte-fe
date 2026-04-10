@@ -17,6 +17,10 @@ interface Video {
   task_id: string;
   is_video_unlocked: boolean;
   is_video_watched: boolean;
+  is_task_enabled: boolean;
+  sequence: string;
+  video_url: string;
+  status: string;
 }
 
 function StudentVideos() {
@@ -99,19 +103,53 @@ function StudentVideos() {
     fetchVideos.mutate();
   }, []);
 
-  const handleWatchVideo = (record: any) => {
+  const markVideoWatched = useMutation({
+    mutationFn: (sequence: string) =>
+      sendRequest({
+        url: "markVideoWatched",
+        method: "POST",
+        endURL: `${sequence}/complete`,
+        // payload: { sequence },
+      }) as Promise<SuccessResponse<any>>,
+    onSuccess: (data: SuccessResponse<any>) => {
+      const { response } = data;
+      console.log("Video marked as watched:", response);
+    },
+  });
+
+  const onCompleteVideo = async (videoId: string) => {
+    try {
+      await markVideoWatched.mutateAsync(videoId);
+    } catch (error) {
+      console.error("Error marking video as watched:", error);
+    }
+  };
+
+  const handleWatchVideo = async (record: any) => {
     console.log("Watch video clicked for record:", record);
-    navigate(`/watch-video/${record?.videoId}`, {
+    navigate(`/watch-video/${record?.sequence}`, {
       state: {
+        fromTheoryVideos: true,
         title: record?.title,
         video_url: record?.video_url,
-        onComplete: null,
+        onComplete: !record?.is_video_watched ? record?.sequence : null,
+        task_id: record?.task_id,
+        isProceedToTaskBtnEnabled:
+          record?.is_video_watched && !record?.is_task_submitted,
       },
     });
   };
 
-  const theoryVideos = videos.filter((video) => video.type === "theory");
-  const labVideos = videos.filter((video) => video.type === "lab");
+  const handleAssignedVideoTask = (record: any) => {
+    console.log("Complete Task clicked for record:", record);
+    navigate(`/take-task/${record?.task_id}`, {
+      state: {
+        fromTheoryVideos: true,
+        isDailyTask: true,
+        taskId: record?.task_id,
+      },
+    });
+  };
 
   const videoColumns: TableProps<Video>["columns"] = [
     {
@@ -159,8 +197,13 @@ function StudentVideos() {
           >
             Watch
           </Button>
-          {record.is_video_unlocked && (
-            <Button icon={<GiProgression />} type="primary">
+          {record.is_video_watched && (
+            <Button
+              onClick={() => handleAssignedVideoTask(record)}
+              disabled={!record.is_task_enabled}
+              icon={<GiProgression />}
+              type="primary"
+            >
               Complete Task
             </Button>
           )}

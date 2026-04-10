@@ -50,7 +50,7 @@ function StudentSchedule() {
 
   const handleTakeTask = (task: ScheduleItem) => {
     console.log("Taking task:", task);
-    navigate(`/mock-test/${task?.assigned_task_id}`, {
+    navigate(`/take-task/${task?.assigned_task_id}`, {
       state: {
         fromSchedule: true,
         isDailyTask: task.type === "Daily Task" ? true : false,

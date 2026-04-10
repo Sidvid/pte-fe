@@ -41,7 +41,9 @@ export const URLS = {
   studentScheduledLabVideo: "/api/student/lab-videos/today",
   startMockTestSection: "/api/student/mock-tests",
   startMockTest: "/api/student/mock-tests",
-  getMockTestById: "api/student/mock-tests",
+  getMockTestById: "/api/student/mock-tests",
+  markVideoWatched: "/api/student/videos/theory",
+  startDailyTask: "/api/student/daily-tasks",
 };
 type Methods = "POST" | "GET" | "PUT" | "DELETE";
 interface RequestProps {
