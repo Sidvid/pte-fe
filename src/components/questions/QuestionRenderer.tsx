@@ -73,6 +73,7 @@ const QuestionRenderer = ({
   onResponse,
   loading = false,
   isPaused = false,
+  isOnlyViewQuestions,
 }) => {
   if (loading) {
     return (
@@ -112,6 +113,7 @@ const QuestionRenderer = ({
         questionNumber={questionNumber}
         totalQuestions={totalQuestions}
         onResponse={onResponse}
+        isOnlyViewQuestions={isOnlyViewQuestions}
       />
     </div>
   );

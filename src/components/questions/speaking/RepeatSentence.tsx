@@ -16,6 +16,7 @@ const RepeatSentence = ({
   onResponse,
   recordTime = 15,
   isPaused = false,
+  isOnlyViewQuestions,
 }) => {
   const [phase, setPhase] = useState("listen"); // listen | recording | done
   const [audioBlob, setAudioBlob] = useState(null);

@@ -16,6 +16,7 @@ const SummarizeGroupDiscussion = ({
   onResponse,
   recordTime = 40,
   isPaused = false,
+  isOnlyViewQuestions,
 }) => {
   const [phase, setPhase] = useState("listen"); // listen | recording | done
   const [audioBlob, setAudioBlob] = useState(null);
@@ -97,6 +98,7 @@ const SummarizeGroupDiscussion = ({
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
       timeRemaining={phase === "recording" ? recordTimer.formatTime() : null}
+      isOnlyViewQuestions={isOnlyViewQuestions}
       instructions="You will hear a group discussion or discussion prompt. Listen carefully and then summarize the discussion in your own words."
     >
       <Space direction="vertical" style={{ width: "100%" }} size="large">

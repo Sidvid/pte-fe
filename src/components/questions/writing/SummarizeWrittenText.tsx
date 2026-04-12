@@ -12,6 +12,7 @@ const SummarizeWrittenText = ({
   totalQuestions,
   onResponse,
   timeLimit = 10 * 60,
+  isOnlyViewQuestions,
 }) => {
   const [text, setText] = useState("");
 
@@ -40,6 +41,7 @@ const SummarizeWrittenText = ({
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
       timeRemaining={timer.formatTime()}
+      isOnlyViewQuestions={isOnlyViewQuestions}
       instructions="Read the passage below and summarize it using one sentence."
     >
       <Space direction="vertical" style={{ width: "100%" }} size="large">

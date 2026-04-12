@@ -17,6 +17,7 @@ const RespondToSituation = ({
   onResponse,
   recordTime = 40,
   isPaused = false,
+  isOnlyViewQuestions,
 }) => {
   const [phase, setPhase] = useState("listen"); // listen | recording | done
   const [audioBlob, setAudioBlob] = useState(null);
@@ -94,6 +95,7 @@ const RespondToSituation = ({
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
       timeRemaining={phase === "recording" ? recordTimer.formatTime() : null}
+      isOnlyViewQuestions={isOnlyViewQuestions}
       instructions="You will hear and/or read a situation. Respond in an appropriate way."
     >
       <Space direction="vertical" style={{ width: "100%" }} size="large">

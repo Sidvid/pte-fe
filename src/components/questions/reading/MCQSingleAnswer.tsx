@@ -11,7 +11,8 @@ const MCQSingleAnswer = ({
   totalQuestions,
   onResponse,
   timeLimit = 120,
-  type = "rmcsa", // rmcsa or lmcsa
+  type = "rmcsa", // rmcsa or lmcsa,
+  isOnlyViewQuestions,
 }) => {
   const [selected, setSelected] = useState(null);
 
@@ -40,6 +41,7 @@ const MCQSingleAnswer = ({
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
       timeRemaining={timer.formatTime()}
+      isOnlyViewQuestions={isOnlyViewQuestions}
       instructions="Read the text and answer the question by selecting the correct response."
     >
       <Space direction="vertical" style={{ width: "100%" }} size="large">

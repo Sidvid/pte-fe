@@ -28,6 +28,7 @@ export const URLS = {
   addTheoryVideoMapping: "api/admin/theory-videos/mappings",
   updateTheoryVideoMapping: "api/admin/theory-videos/mappings",
   deleteTheoryVideoMapping: "api/admin/theory-videos/mappings",
+  resetStudentPassword: "api/auth/reset-student-password",
   // Student routes
   requestAssignments: "api/student/request-assignment",
   theoryVideosCompletionStatus: "api/student/videos/theory/status",
@@ -44,6 +45,8 @@ export const URLS = {
   getMockTestById: "/api/student/mock-tests",
   markVideoWatched: "/api/student/videos/theory",
   startDailyTask: "/api/student/daily-tasks",
+  testAudioURL: "/api/student/test-audio-url",
+  mockTestById: "api/student/mock-tests",
 };
 type Methods = "POST" | "GET" | "PUT" | "DELETE";
 interface RequestProps {

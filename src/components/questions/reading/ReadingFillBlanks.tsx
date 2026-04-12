@@ -11,6 +11,7 @@ const ReadingFillBlanks = ({
   totalQuestions,
   onResponse,
   timeLimit = 120,
+  isOnlyViewQuestions,
 }) => {
   const timer = useQuestionTimer(timeLimit, () => {
     onResponse?.({
@@ -52,6 +53,7 @@ const ReadingFillBlanks = ({
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
       timeRemaining={timer.formatTime()}
+      isOnlyViewQuestions={isOnlyViewQuestions}
       instructions="In the text below some words are missing. Drag words from the box below to the appropriate place in the text."
     >
       <Card style={{ background: "#fafafa" }}>

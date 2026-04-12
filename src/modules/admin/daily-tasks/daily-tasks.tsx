@@ -1,3 +1,4 @@
+import RibbonCard from "@/components/molecules/card/RibbonCard";
 import useHttp from "@/hooks/use-http";
 import {
   QuestionToSectionMap,
@@ -90,9 +91,9 @@ function DailyTasks() {
     },
   ];
   return (
-    <div>
+    <RibbonCard title={"Daily Tasks"} className="w-full">
       <Table<Task> dataSource={dailyTasks} columns={columns} />
-    </div>
+    </RibbonCard>
   );
 }
 

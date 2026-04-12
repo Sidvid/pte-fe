@@ -55,10 +55,7 @@ const StudentTaskView: React.FC = () => {
     onSuccess: (data: any) => {
       console.log("getAllQuestionsFromTask success raw response:", data);
       // setQuestionsFromTask(data?.response?.data || []);
-      localStorage.setItem(
-        "current_dts_id",
-        data?.response?.data?.dts_id || "",
-      );
+      localStorage.setItem("current_dts_id", data?.response?.dts_id || "");
       // setLoading(false);
     },
     onError: (err: any) => {
@@ -66,7 +63,7 @@ const StudentTaskView: React.FC = () => {
       message.error(err?.message || "Failed to start section");
     },
   });
-
+  console.log("Questions from task:", taskState);
   useEffect(() => {
     if (taskState?.isDailyTask) {
       startDailyTask.mutateAsync({ task_id: taskIdFromState });

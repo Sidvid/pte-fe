@@ -12,6 +12,7 @@ const ListeningFillBlanks = ({
   totalQuestions,
   onResponse,
   timeLimit = 120,
+  isOnlyViewQuestions,
 }) => {
   const [phase, setPhase] = useState("listen"); // listen | write
   const [answers, setAnswers] = useState([]);
@@ -56,6 +57,7 @@ const ListeningFillBlanks = ({
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
       timeRemaining={phase === "write" ? timer.formatTime() : null}
+      isOnlyViewQuestions={isOnlyViewQuestions}
       instructions="You will hear a recording. Type the missing words in each blank."
     >
       <Space direction="vertical" style={{ width: "100%" }} size="large">

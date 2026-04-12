@@ -13,6 +13,7 @@ const SummarizeSpokenText = ({
   totalQuestions,
   onResponse,
   writingTime = 10 * 60,
+  isOnlyViewQuestions,
 }) => {
   const [phase, setPhase] = useState("listen"); // listen | write
   const [text, setText] = useState("");
@@ -44,6 +45,7 @@ const SummarizeSpokenText = ({
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
       timeRemaining={phase === "write" ? timer.formatTime() : null}
+      isOnlyViewQuestions={isOnlyViewQuestions}
       instructions="You will hear a short lecture. Write a summary for a fellow student who was not present."
     >
       <Space direction="vertical" style={{ width: "100%" }} size="large">

@@ -12,6 +12,7 @@ const WriteEssay = ({
   totalQuestions,
   onResponse,
   timeLimit = 20 * 60,
+  isOnlyViewQuestions,
 }) => {
   const [text, setText] = useState("");
 
@@ -48,6 +49,7 @@ const WriteEssay = ({
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
       timeRemaining={timer.formatTime()}
+      isOnlyViewQuestions={isOnlyViewQuestions}
       instructions="You will have 20 minutes to plan, write and revise an essay about the topic below."
     >
       <Space direction="vertical" style={{ width: "100%" }} size="large">

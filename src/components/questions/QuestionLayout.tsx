@@ -33,6 +33,7 @@ const QuestionLayout = ({
   questionNumber,
   totalQuestions,
   timeRemaining,
+  isOnlyViewQuestions = false,
   instructions,
   children,
 }) => {
@@ -73,7 +74,7 @@ const QuestionLayout = ({
           <Text type="secondary">
             Question {questionNumber} of {totalQuestions}
           </Text>
-          {timeRemaining && (
+          {!isOnlyViewQuestions && timeRemaining && (
             <Timer
               time={timeRemaining}
               isWarning={

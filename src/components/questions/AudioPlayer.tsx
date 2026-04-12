@@ -10,11 +10,11 @@ import { useAudioPlayer } from "react-use-audio-player";
 const { Text } = Typography;
 
 const AudioPlayer = ({
-  src,
+  src = "",
   autoPlay = false,
   maxPlays = 1,
-  onPlayComplete,
-  onPlayStart,
+  onPlayComplete = null,
+  onPlayStart = null,
   disabled = false,
 }) => {
   const [playCount, setPlayCount] = useState(0);
@@ -26,7 +26,7 @@ const AudioPlayer = ({
     play,
     pause,
     stop,
-    playing,
+    isPlaying: playing,
     duration,
     seek,
     getPosition,

@@ -1,3 +1,4 @@
+import RibbonCard from "@/components/molecules/card/RibbonCard";
 import useHttp from "@/hooks/use-http";
 import {
   QuestionToSectionMap,
@@ -50,7 +51,7 @@ function DailyTasksCollection() {
               state: { ...rest, id, index, title: text },
             })
           }
-          style={{ cursor: 'pointer', color: '#1890ff' }}
+          style={{ cursor: "pointer", color: "#1890ff" }}
         >
           {`${text}-${index}`}
         </p>
@@ -77,9 +78,9 @@ function DailyTasksCollection() {
     },
   ];
   return (
-    <div>
+    <RibbonCard title={"Daily Tasks Collection"} className="w-full">
       <Table<Collection> dataSource={collection} columns={columns} />
-    </div>
+    </RibbonCard>
   );
 }
 

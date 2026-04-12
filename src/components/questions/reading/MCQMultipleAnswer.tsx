@@ -11,6 +11,7 @@ const MCQMultipleAnswer = ({
   totalQuestions,
   onResponse,
   timeLimit = 120,
+  isOnlyViewQuestions,
   type = "rmcma", // rmcma or lmcma
 }) => {
   const [selected, setSelected] = useState([]);
@@ -43,6 +44,7 @@ const MCQMultipleAnswer = ({
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
       timeRemaining={timer.formatTime()}
+      isOnlyViewQuestions={isOnlyViewQuestions}
       instructions="Read the text and answer the question by selecting all the correct responses."
     >
       <Space direction="vertical" style={{ width: "100%" }} size="large">

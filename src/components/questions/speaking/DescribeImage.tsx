@@ -16,6 +16,7 @@ const DescribeImage = ({
   prepTime = 25,
   recordTime = 40,
   isPaused = false,
+  isOnlyViewQuestions,
 }) => {
   const [phase, setPhase] = useState("prep"); // prep | recording | done
   const [audioBlob, setAudioBlob] = useState(null);
@@ -99,6 +100,7 @@ const DescribeImage = ({
       timeRemaining={
         phase === "prep" ? prepTimer.formatTime() : recordTimer.formatTime()
       }
+      isOnlyViewQuestions={isOnlyViewQuestions}
       instructions={instructions}
     >
       <Space direction="vertical" style={{ width: "100%" }} size="large">

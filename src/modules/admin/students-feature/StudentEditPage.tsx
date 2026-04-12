@@ -21,6 +21,8 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { GrUpdate } from "react-icons/gr";
+import { MdOutlineDoneOutline } from "react-icons/md";
+import { RxReset } from "react-icons/rx";
 import dayjs from "dayjs";
 import {
   ArrowLeftOutlined,
@@ -87,6 +89,8 @@ const StudentEditPage = () => {
   const { student_id } = useParams();
   const navigate = useNavigate();
   const { sendRequest } = useHttp({ type: "auth" });
+  const [isResetPasswordMode, setIsResetPasswordMode] = useState(false);
+  const [newPasswordVal, setNewPasswordVal] = useState("");
   const [form] = Form.useForm();
 
   const [activeTab, setActiveTab] = useState("details");
@@ -141,6 +145,23 @@ const StudentEditPage = () => {
     onSuccess: () => {
       message.success("Student updated successfully");
       getStudentCall.mutate();
+    },
+    onError: (err: any) => {
+      console.error(err);
+      message.error(err?.message || "Failed to update student");
+    },
+  });
+
+  const resetPasswordForStudent = useMutation({
+    mutationFn: (payload: any) =>
+      sendRequest({
+        url: "resetStudentPassword",
+        method: "POST",
+        payload,
+      }),
+    onSuccess: () => {
+      message.success("Student password reset successfully");
+      setIsResetPasswordMode(false);
     },
     onError: (err: any) => {
       console.error(err);
@@ -239,6 +260,13 @@ const StudentEditPage = () => {
     );
   }
 
+  const handleResetPassword = () => {
+    resetPasswordForStudent.mutate({
+      student_id: studentData?.user_id,
+      new_password: newPasswordVal,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#eff6ff,_#f8fafc_35%,_#f8fafc_100%)] p-4 md:p-6">
       <div className="mx-auto w-full max-w-[1550px]">
@@ -322,7 +350,7 @@ const StudentEditPage = () => {
               </div>
             </div>
 
-            <div className="mt-6">
+            <div className="mt-6 flex gap-3">
               <Button
                 icon={<ArrowLeftOutlined />}
                 onClick={() => navigate(-1)}
@@ -330,6 +358,34 @@ const StudentEditPage = () => {
               >
                 Back
               </Button>
+              {!isResetPasswordMode && (
+                <Button
+                  onClick={() => setIsResetPasswordMode(true)}
+                  icon={<RxReset />}
+                  color="volcano"
+                  variant="solid"
+                >
+                  Reset Password
+                </Button>
+              )}
+              {isResetPasswordMode && (
+                <div className="w-xl">
+                  <Input.Password
+                    minLength={6}
+                    onChange={(e) => setNewPasswordVal(e.target.value)}
+                    value={newPasswordVal}
+                    type="password"
+                    suffix={
+                      <Button
+                        onClick={handleResetPassword}
+                        type="primary"
+                        icon={<MdOutlineDoneOutline />}
+                      />
+                    }
+                    placeholder="New Password- min 6 digits"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </Card>

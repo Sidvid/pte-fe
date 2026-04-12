@@ -13,6 +13,7 @@ const WriteFromDictation = ({
   totalQuestions,
   onResponse,
   timeLimit = 60,
+  isOnlyViewQuestions,
 }) => {
   const [phase, setPhase] = useState("listen"); // listen | write
   const [text, setText] = useState("");
@@ -43,6 +44,7 @@ const WriteFromDictation = ({
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
       timeRemaining={phase === "write" ? timer.formatTime() : null}
+      isOnlyViewQuestions={isOnlyViewQuestions}
       instructions="You will hear a sentence. Type the sentence in the box below exactly as you hear it."
     >
       <Space direction="vertical" style={{ width: "100%" }} size="large">

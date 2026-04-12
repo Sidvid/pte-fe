@@ -43,6 +43,7 @@ const ReadingWritingFillBlanks = ({
   totalQuestions,
   onResponse,
   timeLimit = 120,
+  isOnlyViewQuestions,
 }) => {
   const timer = useQuestionTimer(timeLimit, () => {
     onResponse?.({ inputs: answers });
@@ -77,6 +78,7 @@ const ReadingWritingFillBlanks = ({
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
       timeRemaining={timer.formatTime()}
+      isOnlyViewQuestions={isOnlyViewQuestions}
       instructions="Below is a text with blanks. Select the appropriate words from the dropdown list."
     >
       <Card style={{ background: "#fafafa" }}>

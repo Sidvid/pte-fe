@@ -16,6 +16,7 @@ const AnswerShortQuestion = ({
   onResponse,
   recordTime = 10,
   isPaused = false,
+  isOnlyViewQuestions,
 }) => {
   const [phase, setPhase] = useState("listen"); // listen | recording | done
   const [audioBlob, setAudioBlob] = useState(null);
@@ -98,6 +99,7 @@ const AnswerShortQuestion = ({
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
       timeRemaining={phase === "recording" ? recordTimer.formatTime() : null}
+      isOnlyViewQuestions={isOnlyViewQuestions}
       instructions={instructions}
     >
       <Space direction="vertical" style={{ width: "100%" }} size="large">

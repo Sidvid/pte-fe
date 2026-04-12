@@ -13,6 +13,7 @@ const ReorderParagraphs = ({
   totalQuestions,
   onResponse,
   timeLimit = 120,
+  isOnlyViewQuestions,
 }) => {
   const [items, setItems] = useState(
     question.data?.sentences?.map((text, index) => ({
@@ -47,6 +48,7 @@ const ReorderParagraphs = ({
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
       timeRemaining={timer.formatTime()}
+      isOnlyViewQuestions={isOnlyViewQuestions}
       instructions="The text boxes below have been placed in random order. Restore the original order by dragging the text boxes."
     >
       <DragDropContext onDragEnd={handleDragEnd}>
