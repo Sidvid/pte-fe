@@ -172,7 +172,9 @@ function StudentVideos() {
       dataIndex: "is_video_watched",
       key: "is_video_watched",
       render: (watched) => (
-        <Tag color={watched ? "green" : "red"}>{watched ? "Yes" : "No"}</Tag>
+        <Tag variant="outlined" color={watched ? "green" : "red"}>
+          {watched ? "Yes" : "No"}
+        </Tag>
       ),
     },
     {
@@ -181,7 +183,11 @@ function StudentVideos() {
       key: "status",
       render: (status) => {
         const text = status?.replace("_", " ");
-        return <Tag color="blue">{text}</Tag>;
+        return (
+          <Tag variant="outlined" color="blue">
+            {text}
+          </Tag>
+        );
       },
     },
     {

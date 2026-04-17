@@ -31,6 +31,53 @@ export const useMockTestFlow = ({
 
   const sections = testData?.mock_test_sections || [];
 
+  const handleQuestionTimeUp = async () => {
+    try {
+      if (!currentQuestion || !currentMtssId || !mtsId) {
+        console.warn("Question timer expired but question not initialized");
+        return;
+      }
+
+      const currentResponse = responses[currentQuestion.id];
+
+      // Save whatever response exists (even if empty/incomplete)
+      if (currentResponse) {
+        try {
+          await saveQuestionResponseCall.mutateAsync({
+            question_id: currentQuestion.id,
+            mtss_id: currentMtssId,
+            response: currentResponse,
+          });
+        } catch (err) {
+          console.error("Failed to save response on timer expiry:", err);
+        }
+      }
+
+      // Move to next question or submit section
+      if (!isLastQuestionInSection) {
+        setCurrentQuestionIndex((prev) => prev + 1);
+        message.info("Time's up! Moving to next question.");
+      } else {
+        // Last question in section - auto-submit section
+        await submitSectionCall.mutateAsync({
+          mts_id: mtsId,
+          mtss_id: currentMtssId,
+        });
+
+        if (!isLastSection) {
+          setShowTransition(true);
+        } else {
+          await submitMockTestCall.mutateAsync({
+            mts_id: mtsId,
+          });
+        }
+      }
+    } catch (err: any) {
+      console.error("Error handling question timeout:", err);
+      message.error(err?.message || "Error processing timeout");
+    }
+  };
+
   const getInitialSectionIndex = () => {
     if (!sections.length) return 0;
 
@@ -355,5 +402,7 @@ export const useMockTestFlow = ({
     saveLoading: saveQuestionResponseCall.isPending,
     submitSectionLoading: submitSectionCall.isPending,
     submitMockLoading: submitMockTestCall.isPending,
+
+    handleQuestionTimeUp,
   };
 };

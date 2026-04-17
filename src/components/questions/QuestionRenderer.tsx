@@ -71,6 +71,7 @@ const QuestionRenderer = ({
   questionNumber,
   totalQuestions,
   onResponse,
+  onQuestionTimeUp,
   loading = false,
   isPaused = false,
   isOnlyViewQuestions,
@@ -114,6 +115,7 @@ const QuestionRenderer = ({
         totalQuestions={totalQuestions}
         onResponse={onResponse}
         isOnlyViewQuestions={isOnlyViewQuestions}
+        onQuestionTimeUp={onQuestionTimeUp}
       />
     </div>
   );

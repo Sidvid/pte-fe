@@ -1,42 +1,48 @@
 import React, { useEffect } from "react";
 import { Alert, Empty, Skeleton } from "antd";
 import { useMutation } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import useHttp from "@/hooks/use-http";
 import DailyTaskReviewPage from "./DailyTaskReviewPage";
 
 const StudentDailyTaskReview = () => {
-  const { dts_id } = useParams();
+  const { state } = useLocation();
+  const { dts_id, mts_id } = useParams();
   const { sendRequest } = useHttp({ type: "auth" });
+
+  const isMockReview = !!mts_id;
+  const reviewId = mts_id || dts_id;
 
   const reviewCall = useMutation({
     mutationFn: () =>
       sendRequest({
-        url: "dailyTaskReview",
+        url: isMockReview ? "mockTestReview" : "dailyTaskReview",
         method: "GET",
-        endURL: `${dts_id}/review`,
+        endURL: `${reviewId}/review`,
       }),
   });
 
   useEffect(() => {
-    if (dts_id) {
+    if (reviewId) {
       reviewCall.mutate();
     }
-  }, [dts_id]);
+  }, [reviewId]);
 
-  if (!dts_id) {
+  // ✅ Invalid id
+  if (!reviewId) {
     return (
       <div className="p-6">
         <Alert
           type="warning"
           showIcon
-          message="Invalid daily task review request"
-          description="No daily task id provided."
+          message="Invalid review request"
+          description="No review id provided."
         />
       </div>
     );
   }
 
+  // ✅ Loading
   if (reviewCall.isPending) {
     return (
       <div className="min-h-screen bg-slate-50 p-6">
@@ -47,13 +53,14 @@ const StudentDailyTaskReview = () => {
     );
   }
 
+  // ✅ Error
   if (reviewCall.isError) {
     return (
       <div className="p-6">
         <Alert
           type="error"
           showIcon
-          message="Failed to load daily task review"
+          message="Failed to load review"
           description="Please try again after some time."
         />
       </div>
@@ -70,6 +77,11 @@ const StudentDailyTaskReview = () => {
       </div>
     );
   }
+
+  // ✅ Decide which page to render
+  // if (isMockReview) {
+  //   return <DailyTaskReviewPage reviewData={reviewData} />;
+  // }
 
   return <DailyTaskReviewPage reviewData={reviewData} />;
 };

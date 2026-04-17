@@ -47,6 +47,7 @@ export const URLS = {
   startDailyTask: "/api/student/daily-tasks",
   testAudioURL: "/api/student/test-audio-url",
   mockTestById: "api/student/mock-tests",
+  mockTestReview: "api/student/mock-tests",
 };
 type Methods = "POST" | "GET" | "PUT" | "DELETE";
 interface RequestProps {

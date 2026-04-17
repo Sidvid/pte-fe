@@ -19,6 +19,7 @@ import StudentEditPage from "./students-feature/StudentEditPage";
 import StudentCreatePage from "../students/components/StudentCreatePage";
 import TheoryVideos from "./lab-videos/TheoryVideos";
 import TheoryVideoConfigPage from "./lab-videos/TheoryVideoConfigPage";
+import StudentDailyTaskReview from "@/pte-test-players/student-response-components/StudentDailyTaskReview";
 const queryClient = new QueryClient();
 function App() {
   return (
@@ -62,6 +63,10 @@ function App() {
                 <Route
                   path="/view-single-collection-questions/:id"
                   element={<ViewSingleCollectionQuestions />}
+                />
+                <Route
+                  path="/mock-test-review/:mts_id"
+                  element={<StudentDailyTaskReview />}
                 />
                 <Route
                   path="/theory-videos-config"

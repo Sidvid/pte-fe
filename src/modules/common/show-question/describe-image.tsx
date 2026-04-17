@@ -73,10 +73,15 @@ function DescribeImage({ questions, onDelete }: DescribeImageProps) {
       errorMsg.classList.remove("hidden");
     }
   };
+  // console.log(
+  //   "DescribeImage questions===========================================",
+  //   questions,
+  // );
 
   return (
     <div className="flex flex-col gap-[20px]">
       {questions?.map((item) => {
+        console.log("Rendering DescribeImage question", item);
         const imageData =
           typeof item.data === "string" ? JSON.parse(item.data) : item.data;
         const imagePath = imageData.image;
@@ -107,6 +112,7 @@ function DescribeImage({ questions, onDelete }: DescribeImageProps) {
                     className="max-w-full max-h-[400px] object-contain rounded"
                     onError={(e) => handleImageError(e, imagePath)}
                   />
+                  <p>{item.extra?.script || "No script provided"}</p>
                   <p
                     className="text-red-500 text-xs mt-2 hidden"
                     id={`error-${item.id}`}

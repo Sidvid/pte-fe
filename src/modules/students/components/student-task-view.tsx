@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Card, Button, Space, Steps, Alert, message } from "antd";
+import { message } from "antd";
 import useHttp from "@/hooks/use-http";
 import { useMutation } from "@tanstack/react-query";
 import { useLocation, useParams } from "react-router-dom";
 import { QuestionItem } from "@/utils/model/response-models";
-import FillInTheBlanks from "@/modules/common/show-question/fill-in-the-blank";
-import FibDragDrop from "@/modules/common/show-question/fib-drag-drop";
-import QuestionRenderer from "@/components/questions/QuestionRenderer";
-import { allSampleQuestions } from "@/utils/constants/app-constants";
-import MockTestPlayer from "../../../../MockTestPlayer";
 import DailyTaskPlayer from "../../../../DailyTaskPlayer";
-import MockTestPreviewPage from "../../../../TestMockPlayer";
 import MockTestIntroPage from "@/pte-test-players/mock-test-components/MockTestIntroPage";
+import MockTestExamPage from "@/pte-test-players/mock-test-components/MockTestExamPage";
 
 interface TaskDetails {
   id: string;
@@ -34,9 +29,12 @@ const StudentTaskView: React.FC = () => {
     [] || null,
   );
   const params = useParams();
+  console.log("%%%location****", location);
 
   const taskIdFromParams = params.id;
   const taskState = location.state;
+  const [showExam, setShowExam] = useState(false);
+  const [mtsId, setMtsId] = useState<string | null>(null);
 
   console.log("taskId from params:", taskIdFromParams);
   console.log("navigation state:", taskState);
@@ -89,6 +87,35 @@ const StudentTaskView: React.FC = () => {
     },
   });
 
+  const startMockTestCall = useMutation({
+    mutationFn: () =>
+      sendRequest({
+        url: "startMockTest",
+        method: "POST",
+        endURL: `${taskState?.taskId}/start`,
+      }),
+    onSuccess: (data: any) => {
+      const mts_id =
+        data?.response?.mts_id ||
+        data?.response?.data?.mts_id ||
+        data?.data?.mts_id ||
+        data?.mts_id;
+
+      if (!mts_id) {
+        message.error("Mock test started but mts_id not received");
+        return;
+      }
+
+      localStorage.setItem("current_mts_id", mts_id);
+      setMtsId(mts_id);
+      setShowExam(true);
+    },
+    onError: (err: any) => {
+      console.error(err);
+      message.error(err?.message || "Failed to start mock test");
+    },
+  });
+
   const getAllQuestionsForMockTest = useMutation({
     mutationFn: (payload: any) =>
       sendRequest({
@@ -117,6 +144,21 @@ const StudentTaskView: React.FC = () => {
   }, [taskIdFromState, taskState?.isDailyTask]);
 
   console.log("Questions from task:", questionsFromTask);
+
+  const mockTestResponse =
+    getAllQuestionsForMockTest.data?.response ||
+    getAllQuestionsForMockTest.data?.data ||
+    getAllQuestionsForMockTest.data;
+
+  const handleStartMockProceed = async () => {
+    try {
+      await startMockTestCall.mutateAsync();
+    } catch (err: any) {
+      console.error(err);
+      message.error(err?.message || "Unable to proceed with mock test");
+    }
+  };
+
   return (
     <>
       {taskState?.isDailyTask ? (
@@ -125,11 +167,18 @@ const StudentTaskView: React.FC = () => {
           // title="Daily Task"
           // dtsId={localStorage.getItem("current_dts_id")}
         />
-      ) : (
+      ) : !showExam ? (
         <MockTestIntroPage
           testData={questionsFromTask?.data}
-          onProceed={() => null}
+          onProceed={handleStartMockProceed}
           loading={false}
+        />
+      ) : (
+        <MockTestExamPage
+          mockTestResponse={mockTestResponse}
+          mtsId={localStorage.getItem("current_mts_id") || mtsId || ""}
+          existingSectionAttempts={[]}
+          existingResponsesByMtssId={{}}
         />
       )}
     </>

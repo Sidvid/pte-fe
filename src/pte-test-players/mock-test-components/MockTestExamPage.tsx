@@ -42,6 +42,7 @@ const MockTestExamPage = ({
     sectionStarted,
     startSectionLoading,
     responses,
+    handleQuestionTimeUp,
   } = useMockTestFlow({
     testData,
     mtsId,
@@ -137,6 +138,7 @@ const MockTestExamPage = ({
         onResponse={handleResponse}
         loading={false}
         isPaused={isBusy}
+        onQuestionTimeUp={handleQuestionTimeUp}
       />
 
       <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">

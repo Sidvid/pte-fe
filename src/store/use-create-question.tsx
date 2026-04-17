@@ -3,7 +3,7 @@ import { create } from "zustand";
 const initialData = {
   taskId: "",
   type: "",
-  extra: "",
+  extra: null,
   text: "",
   isButtonEnabled: false,
 };

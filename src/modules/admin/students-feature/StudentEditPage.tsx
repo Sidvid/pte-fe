@@ -7,6 +7,7 @@ import {
   Col,
   DatePicker,
   Divider,
+  Empty,
   Form,
   Input,
   List,
@@ -35,6 +36,7 @@ import {
   FundOutlined,
 } from "@ant-design/icons";
 import useHttp from "@/hooks/use-http";
+import { FaFile } from "react-icons/fa";
 
 const { Title, Text } = Typography;
 
@@ -267,6 +269,8 @@ const StudentEditPage = () => {
     });
   };
 
+  console.log("studentDatastudentDstudentDataata", studentData);
+
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#eff6ff,_#f8fafc_35%,_#f8fafc_100%)] p-4 md:p-6">
       <div className="mx-auto w-full max-w-[1550px]">
@@ -363,7 +367,7 @@ const StudentEditPage = () => {
                   onClick={() => setIsResetPasswordMode(true)}
                   icon={<RxReset />}
                   color="volcano"
-                  variant="solid"
+                  variant="outlined"
                 >
                   Reset Password
                 </Button>
@@ -902,6 +906,69 @@ const StudentEditPage = () => {
                           </Card>
                         </div>
                       </Col>
+                      {/* Last 5 Mock Tests */}
+                      <Card className="rounded-[24px] border border-slate-200 bg-white shadow-sm mt-6">
+                        <div className="mb-4 flex items-center gap-3">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                            <FaFile />
+                          </div>
+                          <div>
+                            <Title level={4} className="!mb-0">
+                              Last 5 Submitted Mock Tests
+                            </Title>
+                            <Text type="secondary">
+                              Most recent completed mock test attempts
+                            </Text>
+                          </div>
+                        </div>
+
+                        {studentData?.last_submitted_mock_tests?.length ? (
+                          <List
+                            dataSource={studentData.last_submitted_mock_tests}
+                            renderItem={(item: any) => (
+                              <List.Item className="!px-0">
+                                <div className="flex w-full items-center justify-between rounded-2xl bg-slate-50 px-4 py-4">
+                                  <div>
+                                    <Text strong>{item.mock_tests?.title}</Text>
+                                    <div className="text-xs text-slate-500 mt-1">
+                                      Started: {formatDateTime(item.started_at)}{" "}
+                                      <br />
+                                      Submitted:{" "}
+                                      {formatDateTime(item.submitted_at)}
+                                    </div>
+                                  </div>
+
+                                  <div className="flex items-center gap-4">
+                                    <Tag color="blue">
+                                      Overall: {item.score?.overall ?? "-"}
+                                    </Tag>
+
+                                    <Button
+                                      type="primary"
+                                      size="small"
+                                      onClick={() =>
+                                        navigate(
+                                          `/mock-test-review/${item.mts_id}`,
+                                          {
+                                            state: {
+                                              fromStudentEdit: true,
+                                              mts_id: item.mts_id,
+                                            },
+                                          },
+                                        )
+                                      }
+                                    >
+                                      View Review
+                                    </Button>
+                                  </div>
+                                </div>
+                              </List.Item>
+                            )}
+                          />
+                        ) : (
+                          <Empty description="No submitted mock tests found" />
+                        )}
+                      </Card>
                     </Row>
                   </div>
                 ),

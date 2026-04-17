@@ -16,6 +16,7 @@ import { GiProgression } from "react-icons/gi";
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { getSectionLabel } from "@/utils/helpers/core-helpers";
+import { GrInProgress } from "react-icons/gr";
 
 interface MockTest {
   id: string;
@@ -24,6 +25,8 @@ interface MockTest {
   collection_id: number;
   total_questions: number;
   total_duration: number;
+  attempt_status?: "NOT_STARTED" | "ONGOING" | "COMPLETED";
+  mts_id?: string; // Added mts_id to track ongoing/completed attempts
   sections: Array<{
     id: string;
     title: string;
@@ -96,29 +99,58 @@ function StudentMockTests() {
     },
     {
       title: "Status",
-      dataIndex: "published",
-      key: "published",
-      render: (published) => (
-        <Tag color={published ? "green" : "red"}>
-          {published ? "Published" : "Draft"}
+      dataIndex: "attempt_status",
+      key: "attempt_status",
+      render: (attempt_status) => (
+        <Tag
+          variant="outlined"
+          color={
+            attempt_status === "COMPLETED"
+              ? "green"
+              : attempt_status === "ONGOING"
+                ? "blue"
+                : "red"
+          }
+        >
+          {attempt_status === "COMPLETED"
+            ? "Completed"
+            : attempt_status === "ONGOING"
+              ? "Ongoing"
+              : "Not Started"}
         </Tag>
       ),
     },
     {
       title: "Action",
       key: "mock_action",
-      render: (_, record) => (
-        <Space size="middle">
+      render: (_, record) => {
+        if (record.attempt_status === "ONGOING") {
+          return (
+            <Button
+              type="primary"
+              icon={<GrInProgress />}
+              onClick={() =>
+                navigate(`/mock-test/${record.id}?mts_id=${record.mts_id}`)
+              }
+            >
+              Resume
+            </Button>
+          );
+        }
+
+        return (
           <Button
             type="primary"
-            onClick={() => handleTakeMockTest(record.id)}
-            disabled={!record.published}
             icon={<GiProgression />}
+            onClick={() => navigate(`/mock-test/${record.id}`)}
+            disabled={
+              !record.published || record.attempt_status === "COMPLETED"
+            }
           >
             Take Test
           </Button>
-        </Space>
-      ),
+        );
+      },
     },
   ];
 

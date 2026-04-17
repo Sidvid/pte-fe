@@ -69,6 +69,10 @@ interface RepeatSentence {
   script: string;
 }
 
+interface DescribeImageExtra {
+  script: string;
+}
+
 export interface QuestionItem {
   id: string;
   index: number;
@@ -77,7 +81,7 @@ export interface QuestionItem {
 
   data: QuestionContent | string;
 
-  extra: Record<string, unknown> | string | RepeatSentence;
+  extra: Record<string, unknown> | string | RepeatSentence | DescribeImageExtra;
 
   created_at: string;
   sNo?: number;

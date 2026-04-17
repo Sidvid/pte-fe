@@ -87,15 +87,17 @@ function QuestionMaker({
       sendRequest({ url: "addNewQuestion", method: "POST", payload }),
     onSuccess: (data) => {
       if (!data) {
-        console.error("⚠️ API returned undefined - check useHttp error handling");
+        console.error(
+          "⚠️ API returned undefined - check useHttp error handling",
+        );
         return;
       }
-      
+
       console.log("✅ Question added successfully!", data);
       console.log("Full response:", JSON.stringify(data, null, 2));
       setOpenModal(false);
       clearData();
-      
+
       if (onQuestionAdded) {
         console.log("Calling onQuestionAdded to refresh list...");
         setTimeout(() => {
@@ -110,19 +112,19 @@ function QuestionMaker({
   });
   console.log("QQQ", questionData);
   console.log("Task ID being used:", taskId);
-  
+
   const addNewQuestionHandler = () => {
     if (!taskId) {
       console.error("Task ID is missing!");
       return;
     }
-    
+
     const formData = new FormData();
-    
+
     formData.append("task_id", taskId);
-    
+
     let actualType: string = typeOfQuestion;
-    
+
     if (typeOfQuestion === QuestionMapping.READ_ALOUD) {
       actualType = "ra";
     } else if (typeOfQuestion === QuestionMapping.NO_FLOW_READ_ALOUD) {
@@ -148,7 +150,7 @@ function QuestionMaker({
     } else if (typeOfQuestion === QuestionMapping.DICTATION_PREDICTION) {
       actualType = "di";
     } else if (typeOfQuestion === QuestionMapping.WFD_PREDICTION) {
-      actualType = "wfd"; 
+      actualType = "wfd";
     } else if (typeOfQuestion === QuestionMapping.MC_SINGLE) {
       actualType = "mc_single";
     } else if (typeOfQuestion === QuestionMapping.MC_MULTIPLE) {
@@ -160,38 +162,40 @@ function QuestionMaker({
     } else {
       actualType = typeOfQuestion;
     }
-    
+
     formData.append("type", actualType);
-    
+
     if (questionData.text) {
-      const textValue = typeof questionData.text === 'object' 
-        ? JSON.stringify(questionData.text) 
-        : questionData.text;
+      const textValue =
+        typeof questionData.text === "object"
+          ? JSON.stringify(questionData.text)
+          : questionData.text;
       formData.append("text", textValue);
     }
-    
+
     if (questionData.extra) {
-      const extraValue = typeof questionData.extra === 'object' 
-        ? JSON.stringify(questionData.extra) 
-        : questionData.extra;
+      const extraValue =
+        typeof questionData.extra === "object"
+          ? JSON.stringify(questionData.extra)
+          : questionData.extra;
       formData.append("extra", extraValue);
     }
-    
+
     if (questionData.type instanceof File) {
       formData.append("file", questionData.type);
     }
-    
+
     console.log("Submitting question with FormData:");
     for (const [key, value] of formData.entries()) {
       console.log("  ", key, ":", value);
     }
-    
+
     createQuestionCall.mutateAsync(formData);
   };
   const Footer = () => {
     return (
       <div>
-        <GradientButton 
+        <GradientButton
           onClick={addNewQuestionHandler}
           disabled={createQuestionCall.isPending}
         >

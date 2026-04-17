@@ -76,7 +76,11 @@ function StudentSchedule() {
       title: "Duration",
       dataIndex: "duration",
       key: "duration",
-      render: (duration) => <Tag color="volcano">{duration} mins</Tag>,
+      render: (duration) => (
+        <Tag variant="outlined" color="volcano">
+          {duration} mins
+        </Tag>
+      ),
     },
     {
       title: "Length",
@@ -89,11 +93,12 @@ function StudentSchedule() {
       key: "type",
       render: (type) => (
         <Tag
+          variant="outlined"
           color={
             type === "Mock Test"
               ? "green"
               : type === "Daily Task"
-                ? "blue"
+                ? "magenta"
                 : "orange"
           }
         >
