@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   Col,
+  Collapse,
   DatePicker,
   Divider,
   Empty,
@@ -17,6 +18,7 @@ import {
   Tabs,
   Tag,
   Typography,
+  Upload,
   message,
 } from "antd";
 import { useMutation } from "@tanstack/react-query";
@@ -97,6 +99,9 @@ const StudentEditPage = () => {
 
   const [activeTab, setActiveTab] = useState("details");
   const [insightsLoaded, setInsightsLoaded] = useState(false);
+
+  const [newImageFile, setNewImageFile] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const fromDate = dayjs().subtract(15, "day").format("YYYY-MM-DD");
   const toDate = dayjs().format("YYYY-MM-DD");
@@ -229,19 +234,46 @@ const StudentEditPage = () => {
     performanceCall.data?.data ||
     performanceCall.data;
 
+  // const handleUpdate = (values: any) => {
+  //   updateStudentCall.mutate({
+  //     user_id: studentData?.user_id,
+  //     name: values.name,
+  //     address: values.address,
+  //     phone1: values.phone1,
+  //     phone2: values.phone2,
+  //     lab: values.lab,
+  //     online: values.online,
+  //     exam_mode: values.exam_mode,
+  //     sub_start: values.sub_start ? values.sub_start.toISOString() : null,
+  //     sub_end: values.sub_end ? values.sub_end.toISOString() : null,
+  //   });
+  // };
+
   const handleUpdate = (values: any) => {
-    updateStudentCall.mutate({
-      user_id: studentData?.user_id,
-      name: values.name,
-      address: values.address,
-      phone1: values.phone1,
-      phone2: values.phone2,
-      lab: values.lab,
-      online: values.online,
-      exam_mode: values.exam_mode,
-      sub_start: values.sub_start ? values.sub_start.toISOString() : null,
-      sub_end: values.sub_end ? values.sub_end.toISOString() : null,
-    });
+    const formData = new FormData();
+
+    formData.append("user_id", studentData?.user_id);
+    formData.append("name", values.name || "");
+    formData.append("address", values.address || "");
+    formData.append("phone1", values.phone1 || "");
+    formData.append("phone2", values.phone2 || "");
+    formData.append("lab", values.lab);
+    formData.append("online", values.online);
+    formData.append("exam_mode", values.exam_mode);
+
+    if (values.sub_start) {
+      formData.append("sub_start", values.sub_start.toISOString());
+    }
+
+    if (values.sub_end) {
+      formData.append("sub_end", values.sub_end.toISOString());
+    }
+
+    if (newImageFile) {
+      formData.append("image", newImageFile); // ✅ important
+    }
+
+    updateStudentCall.mutate(formData);
   };
 
   if (getStudentCall.isPending) {
@@ -282,12 +314,53 @@ const StudentEditPage = () => {
           <div className="bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 px-6 py-8 text-white md:px-8">
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.3fr_1fr]">
               <div className="flex items-start gap-5">
-                <Avatar
+                {/* <Avatar
                   size={84}
                   src={studentData?.image || undefined}
                   icon={<UserOutlined />}
                   className="border-4 border-white/40 shadow-lg"
-                />
+                /> */}
+
+                <div className="flex items-start gap-5">
+                  <div className="relative">
+                    <Avatar
+                      size={84}
+                      src={previewImage || studentData?.image || undefined}
+                      icon={<UserOutlined />}
+                      className="border-4 border-white/40 shadow-lg"
+                    />
+
+                    <Upload
+                      showUploadList={false}
+                      beforeUpload={(file) => {
+                        const isImage = file.type.startsWith("image/");
+                        if (!isImage) {
+                          message.error("Only image files are allowed");
+                          return Upload.LIST_IGNORE;
+                        }
+
+                        const isLt5M = file.size / 1024 / 1024 < 5;
+                        if (!isLt5M) {
+                          message.error("Image must be smaller than 5MB");
+                          return Upload.LIST_IGNORE;
+                        }
+
+                        setNewImageFile(file);
+                        setPreviewImage(URL.createObjectURL(file));
+                        return false; // prevent auto upload
+                      }}
+                    >
+                      <Button
+                        size="small"
+                        type="primary"
+                        shape="circle"
+                        icon={<EditOutlined />}
+                        className="absolute -bottom-2 -right-2"
+                      />
+                    </Upload>
+                  </div>
+                </div>
+
                 <div>
                   <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-white/85">
                     <EditOutlined />
@@ -601,33 +674,618 @@ const StudentEditPage = () => {
                     <Alert
                       type="info"
                       showIcon
-                      message="Insights will load when this tab is opened"
+                      title="Insights will load when this tab is opened"
                     />
                   </div>
                 ) : (
-                  <div className="mt-2">
-                    <Row gutter={[20, 20]}>
-                      {/* Attendance */}
-                      <Col xs={24} lg={9}>
-                        <Card className="rounded-[24px] border border-slate-200 bg-white shadow-sm">
-                          <Title level={4}>Attendance History</Title>
-                          <Text type="secondary">
-                            Last 15 days attendance status
-                          </Text>
+                  // <div className="mt-2">
+                  //   <Row gutter={[20, 20]}>
+                  //     {/* Attendance */}
+                  //     <Col xs={24} lg={9}>
+                  //       <Card className="rounded-[24px] border border-slate-200 bg-white shadow-sm">
+                  //         <Title level={4}>Attendance History</Title>
+                  //         <Text type="secondary">
+                  //           Last 15 days attendance status
+                  //         </Text>
 
-                          <Divider />
+                  //         <Divider />
 
-                          {attendanceHistoryCall.isPending ? (
-                            <Skeleton active paragraph={{ rows: 7 }} />
-                          ) : (
+                  //         {attendanceHistoryCall.isPending ? (
+                  //           <Skeleton active paragraph={{ rows: 7 }} />
+                  //         ) : (
+                  //           <List
+                  //             dataSource={attendanceData?.attendances || []}
+                  //             locale={{
+                  //               emptyText: "No attendance history found",
+                  //             }}
+                  //             renderItem={(item: any) => (
+                  //               <List.Item className="!px-0">
+                  //                 <div className="flex w-full items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  //                   <div>
+                  //                     <Text strong>
+                  //                       {formatDate(item.date)}
+                  //                     </Text>
+                  //                     <div className="text-xs text-slate-500">
+                  //                       In: {formatDateTime(item.in_ts)} | Out:{" "}
+                  //                       {formatDateTime(item.out_ts)}
+                  //                     </div>
+                  //                   </div>
+                  //                   <Tag
+                  //                     color={
+                  //                       item.status === "COMPLETED"
+                  //                         ? "green"
+                  //                         : item.status === "PRESENT"
+                  //                           ? "orange"
+                  //                           : "red"
+                  //                     }
+                  //                   >
+                  //                     {item.status}
+                  //                   </Tag>
+                  //                 </div>
+                  //               </List.Item>
+                  //             )}
+                  //           />
+                  //         )}
+                  //       </Card>
+                  //     </Col>
+
+                  //     {/* Performance */}
+                  //     <Col xs={24} lg={15}>
+                  //       <div className="space-y-5">
+                  //         <Card className="rounded-[24px] border border-slate-200 bg-white shadow-sm">
+                  //           <div className="mb-4 flex items-center gap-3">
+                  //             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                  //               <TrophyOutlined />
+                  //             </div>
+                  //             <div>
+                  //               <Title level={4} className="!mb-0">
+                  //                 Latest Performance
+                  //               </Title>
+                  //               <Text type="secondary">
+                  //                 Most recent mock test and daily task
+                  //               </Text>
+                  //             </div>
+                  //           </div>
+
+                  //           {performanceCall.isPending ? (
+                  //             <Skeleton active paragraph={{ rows: 6 }} />
+                  //           ) : (
+                  //             <Row gutter={[16, 16]}>
+                  //               <Col xs={24} xl={12}>
+                  //                 <Card className="rounded-[20px] bg-gradient-to-br from-blue-50 to-sky-50">
+                  //                   <Title level={5}>Latest Mock Test</Title>
+                  //                   <Text>
+                  //                     {performanceData?.latest_mock_test
+                  //                       ?.title || "No mock test yet"}
+                  //                   </Text>
+                  //                   <Divider />
+                  //                   <Row gutter={[12, 12]}>
+                  //                     <Col span={12}>
+                  //                       <ScoreCard
+                  //                         label="Overall"
+                  //                         value={
+                  //                           performanceData?.latest_mock_test
+                  //                             ?.score?.overall
+                  //                         }
+                  //                         color="#1677ff"
+                  //                       />
+                  //                     </Col>
+                  //                     <Col span={12}>
+                  //                       <ScoreCard
+                  //                         label="Speaking"
+                  //                         value={
+                  //                           performanceData?.latest_mock_test
+                  //                             ?.score?.speaking
+                  //                         }
+                  //                         color="#13c2c2"
+                  //                       />
+                  //                     </Col>
+                  //                     <Col span={12}>
+                  //                       <ScoreCard
+                  //                         label="Writing"
+                  //                         value={
+                  //                           performanceData?.latest_mock_test
+                  //                             ?.score?.writing
+                  //                         }
+                  //                         color="#52c41a"
+                  //                       />
+                  //                     </Col>
+                  //                     <Col span={12}>
+                  //                       <ScoreCard
+                  //                         label="Reading"
+                  //                         value={
+                  //                           performanceData?.latest_mock_test
+                  //                             ?.score?.reading
+                  //                         }
+                  //                         color="#722ed1"
+                  //                       />
+                  //                     </Col>
+                  //                   </Row>
+                  //                 </Card>
+                  //               </Col>
+
+                  //               <Col xs={24} xl={12}>
+                  //                 <Card className="rounded-[20px] bg-gradient-to-br from-purple-50 to-pink-50">
+                  //                   <Title level={5}>Latest Daily Task</Title>
+                  //                   <Text>
+                  //                     {performanceData?.latest_daily_task
+                  //                       ?.title || "No daily task yet"}
+                  //                   </Text>
+                  //                   <Divider />
+                  //                   <Row gutter={[12, 12]}>
+                  //                     <Col span={12}>
+                  //                       <ScoreCard
+                  //                         label="Overall"
+                  //                         value={
+                  //                           performanceData?.latest_daily_task
+                  //                             ?.score?.overall
+                  //                         }
+                  //                         color="#1677ff"
+                  //                       />
+                  //                     </Col>
+                  //                     <Col span={12}>
+                  //                       <ScoreCard
+                  //                         label="Speaking"
+                  //                         value={
+                  //                           performanceData?.latest_daily_task
+                  //                             ?.score?.speaking
+                  //                         }
+                  //                         color="#13c2c2"
+                  //                       />
+                  //                     </Col>
+                  //                     <Col span={12}>
+                  //                       <ScoreCard
+                  //                         label="Writing"
+                  //                         value={
+                  //                           performanceData?.latest_daily_task
+                  //                             ?.score?.writing
+                  //                         }
+                  //                         color="#52c41a"
+                  //                       />
+                  //                     </Col>
+                  //                     <Col span={12}>
+                  //                       <ScoreCard
+                  //                         label="Reading"
+                  //                         value={
+                  //                           performanceData?.latest_daily_task
+                  //                             ?.score?.reading
+                  //                         }
+                  //                         color="#722ed1"
+                  //                       />
+                  //                     </Col>
+                  //                   </Row>
+                  //                 </Card>
+                  //               </Col>
+                  //             </Row>
+                  //           )}
+                  //         </Card>
+
+                  //         <Card className="rounded-[24px] border border-slate-200 bg-white shadow-sm">
+                  //           <div className="mb-4 flex items-center gap-3">
+                  //             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                  //               <FundOutlined />
+                  //             </div>
+                  //             <div>
+                  //               <Title level={4} className="!mb-0">
+                  //                 Average Performance
+                  //               </Title>
+                  //               <Text type="secondary">
+                  //                 Overall recent average across activity
+                  //               </Text>
+                  //             </div>
+                  //           </div>
+
+                  //           {performanceCall.isPending ? (
+                  //             <Skeleton active paragraph={{ rows: 6 }} />
+                  //           ) : (
+                  //             <Row gutter={[16, 16]}>
+                  //               <Col xs={24} xl={12}>
+                  //                 <Card className="rounded-[20px] border border-slate-200 bg-slate-50">
+                  //                   <Title level={5}>Mock Test Average</Title>
+                  //                   <Row gutter={[12, 12]}>
+                  //                     <Col span={12}>
+                  //                       <ScoreCard
+                  //                         label="Overall"
+                  //                         value={
+                  //                           performanceData?.mock_test_average
+                  //                             ?.overall
+                  //                         }
+                  //                         color="#1677ff"
+                  //                       />
+                  //                     </Col>
+                  //                     <Col span={12}>
+                  //                       <ScoreCard
+                  //                         label="Speaking"
+                  //                         value={
+                  //                           performanceData?.mock_test_average
+                  //                             ?.speaking
+                  //                         }
+                  //                         color="#13c2c2"
+                  //                       />
+                  //                     </Col>
+                  //                     <Col span={12}>
+                  //                       <ScoreCard
+                  //                         label="Writing"
+                  //                         value={
+                  //                           performanceData?.mock_test_average
+                  //                             ?.writing
+                  //                         }
+                  //                         color="#52c41a"
+                  //                       />
+                  //                     </Col>
+                  //                     <Col span={12}>
+                  //                       <ScoreCard
+                  //                         label="Reading"
+                  //                         value={
+                  //                           performanceData?.mock_test_average
+                  //                             ?.reading
+                  //                         }
+                  //                         color="#722ed1"
+                  //                       />
+                  //                     </Col>
+                  //                   </Row>
+                  //                 </Card>
+                  //               </Col>
+
+                  //               <Col xs={24} xl={12}>
+                  //                 <Card className="rounded-[20px] border border-slate-200 bg-slate-50">
+                  //                   <Title level={5}>Daily Task Average</Title>
+                  //                   <Row gutter={[12, 12]}>
+                  //                     <Col span={12}>
+                  //                       <ScoreCard
+                  //                         label="Overall"
+                  //                         value={
+                  //                           performanceData?.daily_task_average
+                  //                             ?.overall
+                  //                         }
+                  //                         color="#1677ff"
+                  //                       />
+                  //                     </Col>
+                  //                     <Col span={12}>
+                  //                       <ScoreCard
+                  //                         label="Speaking"
+                  //                         value={
+                  //                           performanceData?.daily_task_average
+                  //                             ?.speaking
+                  //                         }
+                  //                         color="#13c2c2"
+                  //                       />
+                  //                     </Col>
+                  //                     <Col span={12}>
+                  //                       <ScoreCard
+                  //                         label="Writing"
+                  //                         value={
+                  //                           performanceData?.daily_task_average
+                  //                             ?.writing
+                  //                         }
+                  //                         color="#52c41a"
+                  //                       />
+                  //                     </Col>
+                  //                     <Col span={12}>
+                  //                       <ScoreCard
+                  //                         label="Reading"
+                  //                         value={
+                  //                           performanceData?.daily_task_average
+                  //                             ?.reading
+                  //                         }
+                  //                         color="#722ed1"
+                  //                       />
+                  //                     </Col>
+                  //                   </Row>
+                  //                 </Card>
+                  //               </Col>
+                  //             </Row>
+                  //           )}
+                  //         </Card>
+                  //       </div>
+                  //     </Col>
+                  //     {/* Last 5 Mock Tests */}
+                  //     <Card className="rounded-[24px] border border-slate-200 bg-white shadow-sm mt-6">
+                  //       <div className="mb-4 flex items-center gap-3">
+                  //         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                  //           <FaFile />
+                  //         </div>
+                  //         <div>
+                  //           <Title level={4} className="!mb-0">
+                  //             Last 5 Submitted Mock Tests
+                  //           </Title>
+                  //           <Text type="secondary">
+                  //             Most recent completed mock test attempts
+                  //           </Text>
+                  //         </div>
+                  //       </div>
+
+                  //       {studentData?.last_submitted_mock_tests?.length ? (
+                  //         <List
+                  //           dataSource={studentData.last_submitted_mock_tests}
+                  //           renderItem={(item: any) => (
+                  //             <List.Item className="!px-0">
+                  //               <div className="flex w-full items-center justify-between rounded-2xl bg-slate-50 px-4 py-4">
+                  //                 <div>
+                  //                   <Text strong>{item.mock_tests?.title}</Text>
+                  //                   <div className="text-xs text-slate-500 mt-1">
+                  //                     Started: {formatDateTime(item.started_at)}{" "}
+                  //                     <br />
+                  //                     Submitted:{" "}
+                  //                     {formatDateTime(item.submitted_at)}
+                  //                   </div>
+                  //                 </div>
+
+                  //                 <div className="flex items-center gap-4">
+                  //                   <Tag color="blue">
+                  //                     Overall: {item.score?.overall ?? "-"}
+                  //                   </Tag>
+
+                  //                   <Button
+                  //                     type="primary"
+                  //                     size="small"
+                  //                     onClick={() =>
+                  //                       navigate(
+                  //                         `/mock-test-review/${item.mts_id}`,
+                  //                         {
+                  //                           state: {
+                  //                             fromStudentEdit: true,
+                  //                             mts_id: item.mts_id,
+                  //                           },
+                  //                         },
+                  //                       )
+                  //                     }
+                  //                   >
+                  //                     View Review
+                  //                   </Button>
+                  //                 </div>
+                  //               </div>
+                  //             </List.Item>
+                  //           )}
+                  //         />
+                  //       ) : (
+                  //         <Empty description="No submitted mock tests found" />
+                  //       )}
+                  //     </Card>
+                  //   </Row>
+                  // </div>
+
+                  //---------------------//
+
+                  // <div className="mt-4 space-y-6">
+                  //   {/* ================= ROW 1 ================= */}
+                  //   <Row gutter={[24, 24]}>
+                  //     {/* Attendance */}
+                  //     <Col xs={24} xl={12}>
+                  //       <Card className="rounded-[24px] border border-slate-200 shadow-sm">
+                  //         <div className="mb-4 flex items-center justify-between">
+                  //           <Title level={4} className="!mb-0">
+                  //             Attendance (Last 15 Days)
+                  //           </Title>
+                  //           <Tag color="blue">
+                  //             {attendanceData?.attendances?.length || 0} Records
+                  //           </Tag>
+                  //         </div>
+
+                  //         {attendanceHistoryCall.isPending ? (
+                  //           <Skeleton active paragraph={{ rows: 6 }} />
+                  //         ) : (
+                  //           <div className="max-h-[400px] overflow-y-auto pr-2">
+                  //             <List
+                  //               dataSource={attendanceData?.attendances || []}
+                  //               locale={{
+                  //                 emptyText: "No attendance history found",
+                  //               }}
+                  //               renderItem={(item: any) => (
+                  //                 <List.Item className="!px-0">
+                  //                   <div className="flex w-full items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
+                  //                     <div>
+                  //                       <Text strong>
+                  //                         {formatDate(item.date)}
+                  //                       </Text>
+                  //                       <div className="text-xs text-slate-500">
+                  //                         In: {formatDateTime(item.in_ts)} |
+                  //                         Out: {formatDateTime(item.out_ts)}
+                  //                       </div>
+                  //                     </div>
+                  //                     <Tag
+                  //                       color={
+                  //                         item.status === "COMPLETED"
+                  //                           ? "green"
+                  //                           : item.status === "PRESENT"
+                  //                             ? "orange"
+                  //                             : "red"
+                  //                       }
+                  //                     >
+                  //                       {item.status}
+                  //                     </Tag>
+                  //                   </div>
+                  //                 </List.Item>
+                  //               )}
+                  //             />
+                  //           </div>
+                  //         )}
+                  //       </Card>
+                  //     </Col>
+
+                  //     {/* Last 5 Mock Tests */}
+                  //     <Col xs={24} xl={12}>
+                  //       <Card className="rounded-[24px] border border-slate-200 shadow-sm">
+                  //         <div className="mb-4 flex items-center justify-between">
+                  //           <Title level={4} className="!mb-0">
+                  //             Recent Mock Tests
+                  //           </Title>
+                  //           <Tag color="purple">
+                  //             {studentData?.last_submitted_mock_tests?.length ||
+                  //               0}{" "}
+                  //             Attempts
+                  //           </Tag>
+                  //         </div>
+
+                  //         {studentData?.last_submitted_mock_tests?.length ? (
+                  //           <List
+                  //             dataSource={studentData.last_submitted_mock_tests}
+                  //             renderItem={(item: any) => (
+                  //               <List.Item className="!px-0">
+                  //                 <div className="flex w-full items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
+                  //                   <div>
+                  //                     <Text strong>
+                  //                       {item.mock_tests?.title}
+                  //                     </Text>
+                  //                     <div className="text-xs text-slate-500">
+                  //                       {formatDateTime(item.submitted_at)}
+                  //                     </div>
+                  //                   </div>
+
+                  //                   <div className="flex items-center gap-3">
+                  //                     <Tag color="blue">
+                  //                       {item.score?.overall ?? "-"}
+                  //                     </Tag>
+
+                  //                     <Button
+                  //                       type="primary"
+                  //                       size="small"
+                  //                       onClick={() =>
+                  //                         navigate(
+                  //                           `/mock-test-review/${item.mts_id}`,
+                  //                           {
+                  //                             state: { fromStudentEdit: true },
+                  //                           },
+                  //                         )
+                  //                       }
+                  //                     >
+                  //                       Review
+                  //                     </Button>
+                  //                   </div>
+                  //                 </div>
+                  //               </List.Item>
+                  //             )}
+                  //           />
+                  //         ) : (
+                  //           <Empty description="No mock tests submitted yet" />
+                  //         )}
+                  //       </Card>
+                  //     </Col>
+                  //   </Row>
+
+                  //   {/* ================= ROW 2 ================= */}
+                  //   <Card className="rounded-[24px] border border-slate-200 shadow-sm">
+                  //     <Title level={4} className="!mb-6">
+                  //       Academic Performance Overview
+                  //     </Title>
+
+                  //     {performanceCall.isPending ? (
+                  //       <Skeleton active paragraph={{ rows: 8 }} />
+                  //     ) : (
+                  //       <Row gutter={[24, 24]}>
+                  //         <Col xs={24} md={12}>
+                  //           <Title level={5}>Latest Mock Test</Title>
+                  //           <Row gutter={[16, 16]}>
+                  //             <Col span={12}>
+                  //               <ScoreCard
+                  //                 label="Overall"
+                  //                 value={
+                  //                   performanceData?.latest_mock_test?.score
+                  //                     ?.overall
+                  //                 }
+                  //               />
+                  //             </Col>
+                  //             <Col span={12}>
+                  //               <ScoreCard
+                  //                 label="Speaking"
+                  //                 value={
+                  //                   performanceData?.latest_mock_test?.score
+                  //                     ?.speaking
+                  //                 }
+                  //               />
+                  //             </Col>
+                  //             <Col span={12}>
+                  //               <ScoreCard
+                  //                 label="Writing"
+                  //                 value={
+                  //                   performanceData?.latest_mock_test?.score
+                  //                     ?.writing
+                  //                 }
+                  //               />
+                  //             </Col>
+                  //             <Col span={12}>
+                  //               <ScoreCard
+                  //                 label="Reading"
+                  //                 value={
+                  //                   performanceData?.latest_mock_test?.score
+                  //                     ?.reading
+                  //                 }
+                  //               />
+                  //             </Col>
+                  //           </Row>
+                  //         </Col>
+
+                  //         <Col xs={24} md={12}>
+                  //           <Title level={5}>Latest Daily Task</Title>
+                  //           <Row gutter={[16, 16]}>
+                  //             <Col span={12}>
+                  //               <ScoreCard
+                  //                 label="Overall"
+                  //                 value={
+                  //                   performanceData?.latest_daily_task?.score
+                  //                     ?.overall
+                  //                 }
+                  //               />
+                  //             </Col>
+                  //             <Col span={12}>
+                  //               <ScoreCard
+                  //                 label="Speaking"
+                  //                 value={
+                  //                   performanceData?.latest_daily_task?.score
+                  //                     ?.speaking
+                  //                 }
+                  //               />
+                  //             </Col>
+                  //             <Col span={12}>
+                  //               <ScoreCard
+                  //                 label="Writing"
+                  //                 value={
+                  //                   performanceData?.latest_daily_task?.score
+                  //                     ?.writing
+                  //                 }
+                  //               />
+                  //             </Col>
+                  //             <Col span={12}>
+                  //               <ScoreCard
+                  //                 label="Reading"
+                  //                 value={
+                  //                   performanceData?.latest_daily_task?.score
+                  //                     ?.reading
+                  //                 }
+                  //               />
+                  //             </Col>
+                  //           </Row>
+                  //         </Col>
+                  //       </Row>
+                  //     )}
+                  //   </Card>
+                  // </div>
+
+                  //----------------------//
+
+                  <div className="mt-4">
+                    <Collapse
+                      defaultActiveKey={["attendance", "performance"]}
+                      ghost
+                      size="large"
+                    >
+                      {/* ================= Attendance ================= */}
+                      <Collapse.Panel
+                        header="Attendance History (Last 15 Days)"
+                        key="attendance"
+                      >
+                        {attendanceHistoryCall.isPending ? (
+                          <Skeleton active paragraph={{ rows: 6 }} />
+                        ) : (
+                          <div className="max-h-[400px] overflow-y-auto pr-2">
                             <List
                               dataSource={attendanceData?.attendances || []}
                               locale={{
                                 emptyText: "No attendance history found",
                               }}
                               renderItem={(item: any) => (
-                                <List.Item className="!px-0">
-                                  <div className="flex w-full items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                                <List.Item>
+                                  <div className="flex w-full items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
                                     <div>
                                       <Text strong>
                                         {formatDate(item.date)}
@@ -652,295 +1310,31 @@ const StudentEditPage = () => {
                                 </List.Item>
                               )}
                             />
-                          )}
-                        </Card>
-                      </Col>
-
-                      {/* Performance */}
-                      <Col xs={24} lg={15}>
-                        <div className="space-y-5">
-                          <Card className="rounded-[24px] border border-slate-200 bg-white shadow-sm">
-                            <div className="mb-4 flex items-center gap-3">
-                              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                                <TrophyOutlined />
-                              </div>
-                              <div>
-                                <Title level={4} className="!mb-0">
-                                  Latest Performance
-                                </Title>
-                                <Text type="secondary">
-                                  Most recent mock test and daily task
-                                </Text>
-                              </div>
-                            </div>
-
-                            {performanceCall.isPending ? (
-                              <Skeleton active paragraph={{ rows: 6 }} />
-                            ) : (
-                              <Row gutter={[16, 16]}>
-                                <Col xs={24} xl={12}>
-                                  <Card className="rounded-[20px] bg-gradient-to-br from-blue-50 to-sky-50">
-                                    <Title level={5}>Latest Mock Test</Title>
-                                    <Text>
-                                      {performanceData?.latest_mock_test
-                                        ?.title || "No mock test yet"}
-                                    </Text>
-                                    <Divider />
-                                    <Row gutter={[12, 12]}>
-                                      <Col span={12}>
-                                        <ScoreCard
-                                          label="Overall"
-                                          value={
-                                            performanceData?.latest_mock_test
-                                              ?.score?.overall
-                                          }
-                                          color="#1677ff"
-                                        />
-                                      </Col>
-                                      <Col span={12}>
-                                        <ScoreCard
-                                          label="Speaking"
-                                          value={
-                                            performanceData?.latest_mock_test
-                                              ?.score?.speaking
-                                          }
-                                          color="#13c2c2"
-                                        />
-                                      </Col>
-                                      <Col span={12}>
-                                        <ScoreCard
-                                          label="Writing"
-                                          value={
-                                            performanceData?.latest_mock_test
-                                              ?.score?.writing
-                                          }
-                                          color="#52c41a"
-                                        />
-                                      </Col>
-                                      <Col span={12}>
-                                        <ScoreCard
-                                          label="Reading"
-                                          value={
-                                            performanceData?.latest_mock_test
-                                              ?.score?.reading
-                                          }
-                                          color="#722ed1"
-                                        />
-                                      </Col>
-                                    </Row>
-                                  </Card>
-                                </Col>
-
-                                <Col xs={24} xl={12}>
-                                  <Card className="rounded-[20px] bg-gradient-to-br from-purple-50 to-pink-50">
-                                    <Title level={5}>Latest Daily Task</Title>
-                                    <Text>
-                                      {performanceData?.latest_daily_task
-                                        ?.title || "No daily task yet"}
-                                    </Text>
-                                    <Divider />
-                                    <Row gutter={[12, 12]}>
-                                      <Col span={12}>
-                                        <ScoreCard
-                                          label="Overall"
-                                          value={
-                                            performanceData?.latest_daily_task
-                                              ?.score?.overall
-                                          }
-                                          color="#1677ff"
-                                        />
-                                      </Col>
-                                      <Col span={12}>
-                                        <ScoreCard
-                                          label="Speaking"
-                                          value={
-                                            performanceData?.latest_daily_task
-                                              ?.score?.speaking
-                                          }
-                                          color="#13c2c2"
-                                        />
-                                      </Col>
-                                      <Col span={12}>
-                                        <ScoreCard
-                                          label="Writing"
-                                          value={
-                                            performanceData?.latest_daily_task
-                                              ?.score?.writing
-                                          }
-                                          color="#52c41a"
-                                        />
-                                      </Col>
-                                      <Col span={12}>
-                                        <ScoreCard
-                                          label="Reading"
-                                          value={
-                                            performanceData?.latest_daily_task
-                                              ?.score?.reading
-                                          }
-                                          color="#722ed1"
-                                        />
-                                      </Col>
-                                    </Row>
-                                  </Card>
-                                </Col>
-                              </Row>
-                            )}
-                          </Card>
-
-                          <Card className="rounded-[24px] border border-slate-200 bg-white shadow-sm">
-                            <div className="mb-4 flex items-center gap-3">
-                              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                                <FundOutlined />
-                              </div>
-                              <div>
-                                <Title level={4} className="!mb-0">
-                                  Average Performance
-                                </Title>
-                                <Text type="secondary">
-                                  Overall recent average across activity
-                                </Text>
-                              </div>
-                            </div>
-
-                            {performanceCall.isPending ? (
-                              <Skeleton active paragraph={{ rows: 6 }} />
-                            ) : (
-                              <Row gutter={[16, 16]}>
-                                <Col xs={24} xl={12}>
-                                  <Card className="rounded-[20px] border border-slate-200 bg-slate-50">
-                                    <Title level={5}>Mock Test Average</Title>
-                                    <Row gutter={[12, 12]}>
-                                      <Col span={12}>
-                                        <ScoreCard
-                                          label="Overall"
-                                          value={
-                                            performanceData?.mock_test_average
-                                              ?.overall
-                                          }
-                                          color="#1677ff"
-                                        />
-                                      </Col>
-                                      <Col span={12}>
-                                        <ScoreCard
-                                          label="Speaking"
-                                          value={
-                                            performanceData?.mock_test_average
-                                              ?.speaking
-                                          }
-                                          color="#13c2c2"
-                                        />
-                                      </Col>
-                                      <Col span={12}>
-                                        <ScoreCard
-                                          label="Writing"
-                                          value={
-                                            performanceData?.mock_test_average
-                                              ?.writing
-                                          }
-                                          color="#52c41a"
-                                        />
-                                      </Col>
-                                      <Col span={12}>
-                                        <ScoreCard
-                                          label="Reading"
-                                          value={
-                                            performanceData?.mock_test_average
-                                              ?.reading
-                                          }
-                                          color="#722ed1"
-                                        />
-                                      </Col>
-                                    </Row>
-                                  </Card>
-                                </Col>
-
-                                <Col xs={24} xl={12}>
-                                  <Card className="rounded-[20px] border border-slate-200 bg-slate-50">
-                                    <Title level={5}>Daily Task Average</Title>
-                                    <Row gutter={[12, 12]}>
-                                      <Col span={12}>
-                                        <ScoreCard
-                                          label="Overall"
-                                          value={
-                                            performanceData?.daily_task_average
-                                              ?.overall
-                                          }
-                                          color="#1677ff"
-                                        />
-                                      </Col>
-                                      <Col span={12}>
-                                        <ScoreCard
-                                          label="Speaking"
-                                          value={
-                                            performanceData?.daily_task_average
-                                              ?.speaking
-                                          }
-                                          color="#13c2c2"
-                                        />
-                                      </Col>
-                                      <Col span={12}>
-                                        <ScoreCard
-                                          label="Writing"
-                                          value={
-                                            performanceData?.daily_task_average
-                                              ?.writing
-                                          }
-                                          color="#52c41a"
-                                        />
-                                      </Col>
-                                      <Col span={12}>
-                                        <ScoreCard
-                                          label="Reading"
-                                          value={
-                                            performanceData?.daily_task_average
-                                              ?.reading
-                                          }
-                                          color="#722ed1"
-                                        />
-                                      </Col>
-                                    </Row>
-                                  </Card>
-                                </Col>
-                              </Row>
-                            )}
-                          </Card>
-                        </div>
-                      </Col>
-                      {/* Last 5 Mock Tests */}
-                      <Card className="rounded-[24px] border border-slate-200 bg-white shadow-sm mt-6">
-                        <div className="mb-4 flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                            <FaFile />
                           </div>
-                          <div>
-                            <Title level={4} className="!mb-0">
-                              Last 5 Submitted Mock Tests
-                            </Title>
-                            <Text type="secondary">
-                              Most recent completed mock test attempts
-                            </Text>
-                          </div>
-                        </div>
+                        )}
+                      </Collapse.Panel>
 
+                      {/* ================= Recent Mock Tests ================= */}
+                      <Collapse.Panel
+                        header="Last 5 Submitted Mock Tests"
+                        key="mock-tests"
+                      >
                         {studentData?.last_submitted_mock_tests?.length ? (
                           <List
                             dataSource={studentData.last_submitted_mock_tests}
                             renderItem={(item: any) => (
-                              <List.Item className="!px-0">
-                                <div className="flex w-full items-center justify-between rounded-2xl bg-slate-50 px-4 py-4">
+                              <List.Item>
+                                <div className="flex w-full items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
                                   <div>
                                     <Text strong>{item.mock_tests?.title}</Text>
-                                    <div className="text-xs text-slate-500 mt-1">
-                                      Started: {formatDateTime(item.started_at)}{" "}
-                                      <br />
-                                      Submitted:{" "}
+                                    <div className="text-xs text-slate-500">
                                       {formatDateTime(item.submitted_at)}
                                     </div>
                                   </div>
 
-                                  <div className="flex items-center gap-4">
+                                  <div className="flex items-center gap-3">
                                     <Tag color="blue">
-                                      Overall: {item.score?.overall ?? "-"}
+                                      {item.score?.overall ?? "-"}
                                     </Tag>
 
                                     <Button
@@ -950,15 +1344,12 @@ const StudentEditPage = () => {
                                         navigate(
                                           `/mock-test-review/${item.mts_id}`,
                                           {
-                                            state: {
-                                              fromStudentEdit: true,
-                                              mts_id: item.mts_id,
-                                            },
+                                            state: { fromStudentEdit: true },
                                           },
                                         )
                                       }
                                     >
-                                      View Review
+                                      Review
                                     </Button>
                                   </div>
                                 </div>
@@ -966,10 +1357,106 @@ const StudentEditPage = () => {
                             )}
                           />
                         ) : (
-                          <Empty description="No submitted mock tests found" />
+                          <Empty description="No mock tests submitted yet" />
                         )}
-                      </Card>
-                    </Row>
+                      </Collapse.Panel>
+
+                      {/* ================= Academic Performance ================= */}
+                      <Collapse.Panel
+                        header="Academic Performance Overview"
+                        key="performance"
+                      >
+                        {performanceCall.isPending ? (
+                          <Skeleton active paragraph={{ rows: 8 }} />
+                        ) : (
+                          <Row gutter={[24, 24]}>
+                            <Col xs={24} md={12}>
+                              <Title level={5}>Latest Mock Test</Title>
+                              <Row gutter={[16, 16]}>
+                                <Col span={12}>
+                                  <ScoreCard
+                                    label="Overall"
+                                    value={
+                                      performanceData?.latest_mock_test?.score
+                                        ?.overall
+                                    }
+                                  />
+                                </Col>
+                                <Col span={12}>
+                                  <ScoreCard
+                                    label="Speaking"
+                                    value={
+                                      performanceData?.latest_mock_test?.score
+                                        ?.speaking
+                                    }
+                                  />
+                                </Col>
+                                <Col span={12}>
+                                  <ScoreCard
+                                    label="Writing"
+                                    value={
+                                      performanceData?.latest_mock_test?.score
+                                        ?.writing
+                                    }
+                                  />
+                                </Col>
+                                <Col span={12}>
+                                  <ScoreCard
+                                    label="Reading"
+                                    value={
+                                      performanceData?.latest_mock_test?.score
+                                        ?.reading
+                                    }
+                                  />
+                                </Col>
+                              </Row>
+                            </Col>
+
+                            <Col xs={24} md={12}>
+                              <Title level={5}>Latest Daily Task</Title>
+                              <Row gutter={[16, 16]}>
+                                <Col span={12}>
+                                  <ScoreCard
+                                    label="Overall"
+                                    value={
+                                      performanceData?.latest_daily_task?.score
+                                        ?.overall
+                                    }
+                                  />
+                                </Col>
+                                <Col span={12}>
+                                  <ScoreCard
+                                    label="Speaking"
+                                    value={
+                                      performanceData?.latest_daily_task?.score
+                                        ?.speaking
+                                    }
+                                  />
+                                </Col>
+                                <Col span={12}>
+                                  <ScoreCard
+                                    label="Writing"
+                                    value={
+                                      performanceData?.latest_daily_task?.score
+                                        ?.writing
+                                    }
+                                  />
+                                </Col>
+                                <Col span={12}>
+                                  <ScoreCard
+                                    label="Reading"
+                                    value={
+                                      performanceData?.latest_daily_task?.score
+                                        ?.reading
+                                    }
+                                  />
+                                </Col>
+                              </Row>
+                            </Col>
+                          </Row>
+                        )}
+                      </Collapse.Panel>
+                    </Collapse>
                   </div>
                 ),
               },

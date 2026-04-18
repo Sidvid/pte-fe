@@ -1,32 +1,47 @@
 import RibbonCard from "@/components/molecules/card/RibbonCard";
 import useHttp from "@/hooks/use-http";
-import { SuccessResponse } from "@/utils/model/model";
 import { Student } from "@/utils/model/response-models";
 import { useMutation } from "@tanstack/react-query";
-import { Button, Card, Table, TableProps, Tag } from "antd";
+import { Button, Table, TableProps, Tag } from "antd";
 import React from "react";
 import { FaUserEdit, FaUserPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const StudentList = () => {
   const { sendRequest } = useHttp({ type: "auth" });
+  const [dataPagination, setDataPagination] = React.useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+  });
   const [studentData, setStudentsData] = React.useState<Student[]>();
   const navigate = useNavigate();
 
   const allStudents = useMutation({
     mutationFn: () =>
-      sendRequest({ url: "getAllStudents", method: "GET" }) as Promise<
-        SuccessResponse<Student>
-      >,
-    onSuccess: (data: SuccessResponse<any>) => {
-      const { response } = data;
-      setStudentsData(response?.data?.students);
+      sendRequest({
+        url: "getAllStudents",
+        method: "GET",
+        params: {
+          page: dataPagination.page,
+          limit: dataPagination.limit,
+        },
+      }),
+    onSuccess: (data) => {
+      const response = data?.response?.data;
+
+      setStudentsData(response?.students || []);
+
+      setDataPagination((prev) => ({
+        ...prev,
+        total: response?.pagination?.totalCount || 0,
+      }));
     },
   });
 
   React.useEffect(() => {
     allStudents.mutateAsync();
-  }, []);
+  }, [dataPagination.page, dataPagination.limit]);
 
   const handleEditStudent = (studentId: string) => {
     navigate(`/admin/student/${studentId}/edit`);
@@ -65,7 +80,7 @@ const StudentList = () => {
       title: "Exam Mode",
       dataIndex: "exam_mode",
       render: (exam_mode) => (
-        <Tag color={exam_mode ? "blue" : "red"}>
+        <Tag variant="outlined" color={exam_mode ? "blue" : "red"}>
           {exam_mode ? "Enabled" : "Disabled"}
         </Tag>
       ),
@@ -100,7 +115,28 @@ const StudentList = () => {
         </Button>
       }
     >
-      <Table bordered rowKey="id" columns={columns} dataSource={studentData} />
+      {/* <Table bordered rowKey="id" columns={columns} dataSource={studentData} /> */}
+      <Table
+        bordered
+        rowKey="id"
+        columns={columns}
+        dataSource={studentData}
+        loading={allStudents.isPending}
+        pagination={{
+          current: dataPagination.page,
+          pageSize: dataPagination.limit,
+          total: dataPagination.total,
+          showSizeChanger: true,
+          pageSizeOptions: ["5", "10", "20", "50"],
+        }}
+        onChange={(pagination) => {
+          setDataPagination((prev) => ({
+            ...prev,
+            page: pagination.current ?? prev.page,
+            limit: pagination.pageSize ?? prev.limit,
+          }));
+        }}
+      />
     </RibbonCard>
   );
 };
