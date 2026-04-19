@@ -2,7 +2,7 @@ import RibbonCard from "@/components/molecules/card/RibbonCard";
 import useHttp from "@/hooks/use-http";
 import { Student } from "@/utils/model/response-models";
 import { useMutation } from "@tanstack/react-query";
-import { Button, Table, TableProps, Tag } from "antd";
+import { Button, Col, Table, TableProps, Tag } from "antd";
 import React from "react";
 import { FaUserEdit, FaUserPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -103,41 +103,44 @@ const StudentList = () => {
   ];
 
   return (
-    <RibbonCard
-      title="Student List"
-      extra={
-        <Button
-          onClick={() => navigate("/add-student")}
-          icon={<FaUserPlus />}
-          type="primary"
-        >
-          Add Student
-        </Button>
-      }
-    >
-      {/* <Table bordered rowKey="id" columns={columns} dataSource={studentData} /> */}
-      <Table
-        bordered
-        rowKey="id"
-        columns={columns}
-        dataSource={studentData}
-        loading={allStudents.isPending}
-        pagination={{
-          current: dataPagination.page,
-          pageSize: dataPagination.limit,
-          total: dataPagination.total,
-          showSizeChanger: true,
-          pageSizeOptions: ["5", "10", "20", "50"],
-        }}
-        onChange={(pagination) => {
-          setDataPagination((prev) => ({
-            ...prev,
-            page: pagination.current ?? prev.page,
-            limit: pagination.pageSize ?? prev.limit,
-          }));
-        }}
-      />
-    </RibbonCard>
+    <Col span={23}>
+      <br />
+      <RibbonCard
+        title="Student List"
+        extra={
+          <Button
+            onClick={() => navigate("/add-student")}
+            icon={<FaUserPlus />}
+            type="primary"
+          >
+            Add Student
+          </Button>
+        }
+      >
+        {/* <Table bordered rowKey="id" columns={columns} dataSource={studentData} /> */}
+        <Table
+          bordered
+          rowKey="id"
+          columns={columns}
+          dataSource={studentData}
+          loading={allStudents.isPending}
+          pagination={{
+            current: dataPagination.page,
+            pageSize: dataPagination.limit,
+            total: dataPagination.total,
+            showSizeChanger: true,
+            pageSizeOptions: ["5", "10", "20", "50"],
+          }}
+          onChange={(pagination) => {
+            setDataPagination((prev) => ({
+              ...prev,
+              page: pagination.current ?? prev.page,
+              limit: pagination.pageSize ?? prev.limit,
+            }));
+          }}
+        />
+      </RibbonCard>
+    </Col>
   );
 };
 export default StudentList;

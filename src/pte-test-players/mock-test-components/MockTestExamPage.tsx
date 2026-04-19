@@ -158,6 +158,7 @@ const MockTestExamPage = ({
 
       <MockBottomBar
         isLastQuestion={isLastQuestionInSection}
+        isLastSection={isLastSection}
         isSaving={isBusy}
         disabled={!responses[currentQuestion.id]}
         onNext={handleNext}

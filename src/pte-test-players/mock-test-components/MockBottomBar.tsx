@@ -5,6 +5,7 @@ const { Text } = Typography;
 
 type MockBottomBarProps = {
   isLastQuestion?: boolean;
+  isLastSection?: boolean;
   isSaving?: boolean;
   disabled?: boolean;
   onNext?: () => void;
@@ -13,6 +14,7 @@ type MockBottomBarProps = {
 
 const MockBottomBar = ({
   isLastQuestion = false,
+  isLastSection = false,
   isSaving = false,
   disabled = false,
   onNext,
@@ -48,7 +50,9 @@ const MockBottomBar = ({
               onClick={onSubmitSection}
               className="rounded-xl"
             >
-              Submit Section
+              {isLastQuestion && isLastSection
+                ? "Submit Test"
+                : "Submit Section"}
             </Button>
           )}
         </Space>

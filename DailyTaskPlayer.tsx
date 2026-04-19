@@ -10,12 +10,10 @@ import {
   message,
 } from "antd";
 import { useMutation } from "@tanstack/react-query";
-// import QuestionRenderer from "../components/questions/QuestionRenderer";
-// import { useHttp } from "../hooks/useHttp";
-// import { getQuestionTitle } from "../utils/questionType";
 import QuestionRenderer from "@/components/questions/QuestionRenderer";
 import useHttp from "@/hooks/use-http";
 import { getQuestionTitle } from "@/utils/constants/questtionTypes";
+import { useNavigate } from "react-router";
 
 const { Title, Text } = Typography;
 
@@ -23,11 +21,12 @@ const DailyTaskPlayer = ({ questions = [], title = "Daily Task" }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [responses, setResponses] = useState({});
   const { sendRequest } = useHttp({ type: "auth" });
+  const navigate = useNavigate();
 
   const currentQuestion = questions[currentIndex];
   const isLastQuestion = currentIndex === questions.length - 1;
 
-  const submitDailyTaskCall = useMutation({
+  const submitDailyTaskCall = useMutation<any, Error, any>({
     mutationFn: (payload) =>
       sendRequest({
         url: "submitDailyTask",
@@ -43,7 +42,7 @@ const DailyTaskPlayer = ({ questions = [], title = "Daily Task" }) => {
     },
   });
 
-  const saveQuestionResponseCall = useMutation({
+  const saveQuestionResponseCall = useMutation<any, Error, any>({
     mutationFn: (payload) =>
       sendRequest({
         url: "saveQuestionResponse",
@@ -90,6 +89,7 @@ const DailyTaskPlayer = ({ questions = [], title = "Daily Task" }) => {
         await submitDailyTaskCall.mutateAsync({
           dts_id: localStorage.getItem("current_dts_id"),
         });
+        navigate("/dashboard");
         return;
       }
 

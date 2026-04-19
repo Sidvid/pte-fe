@@ -6,6 +6,7 @@ import useHttp from "@/hooks/use-http";
 import { useNavigate } from "react-router";
 import { Button, Form, Input, message, Modal } from "antd";
 import { useMutation } from "@tanstack/react-query";
+import { RiMenuUnfold4Fill } from "react-icons/ri";
 export interface SideMenuData {
   value: string;
   title: string;
@@ -17,9 +18,17 @@ interface SideMenuProps {
   data: SideMenuData[];
   selected: SideMenuData["value"];
   onClick?: (value: SideMenuData["value"]) => void;
+  isMenuCollapsed: boolean;
+  setIsMenuCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function SideMenu({ data, selected, onClick }: SideMenuProps) {
+function SideMenu({
+  data,
+  selected,
+  onClick,
+  isMenuCollapsed,
+  setIsMenuCollapsed,
+}: SideMenuProps) {
   const [activeMenu, setActiveMenu] = useState<string>(
     selected ?? data[0].value,
   );
@@ -78,55 +87,76 @@ function SideMenu({ data, selected, onClick }: SideMenuProps) {
 
   return (
     <>
-      <div className="bg-purple h-full px-8 py-6 flex flex-col">
-        <img className="w-[130px] h-[60px] mb-20 ml-6" src={Logo} alt="" />
-
-        <div>
-          {data.map(({ title, value, icon }) => (
-            <div
-              key={value}
-              className={`${
-                activeMenu === value ? "bg-link" : ""
-              } cursor-pointer py-10 px-10 rounded-xl flex flex-row items-center gap-10 mb-4`}
-              onClick={() => itemClickHandle(value)}
-            >
-              {icon &&
-                React.isValidElement(icon) &&
-                React.cloneElement(icon as React.ReactElement<any>, {
-                  className: `w-20 h-20 text-sidemenu-text`,
-                })}
-              <p className="f12 w400 text-app-white">{title}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Bottom actions */}
-        <div className="mt-auto pt-8 space-y-3">
-          <div
-            className="cursor-pointer py-6 px-10 rounded-xl flex flex-row items-center gap-10 hover:bg-link transition-all"
-            onClick={() => setIsChangePasswordOpen(true)}
-          >
-            <p className="flex gap-5 f12 w400 text-app-white">
+      {/* {isMenuCollapsed && (
+        <RiMenuUnfoldFill
+          color="black"
+          onClick={() => setIsMenuCollapsed(!isMenuCollapsed)}
+          style={{ fontSize: 20 }}
+        />
+      )} */}
+      {!isMenuCollapsed && (
+        <div className="bg-purple h-full px-8 py-6 flex flex-col">
+          <div className="flex justify-between">
+            <img className="w-[130px] h-[60px] mb-20 ml-6" src={Logo} alt="" />
+            {!isMenuCollapsed && (
+              <RiMenuUnfold4Fill
+                className="cursor-pointer"
+                onClick={() => setIsMenuCollapsed(!isMenuCollapsed)}
+                style={{ fontSize: 30 }}
+              />
+            )}
+          </div>
+          <>
+            {
               <div>
-                <FaEdit />
+                {data.map(({ title, value, icon }) => (
+                  <div
+                    key={value}
+                    className={`${
+                      activeMenu === value ? "bg-link" : ""
+                    } cursor-pointer py-10 px-10 rounded-xl flex flex-row items-center gap-10 mb-4`}
+                    onClick={() => itemClickHandle(value)}
+                  >
+                    {icon &&
+                      React.isValidElement(icon) &&
+                      React.cloneElement(icon as React.ReactElement<any>, {
+                        className: `w-20 h-20 text-sidemenu-text`,
+                      })}
+                    <p className="f12 w400 text-app-white">{title}</p>
+                  </div>
+                ))}
               </div>
-              <div> Change Password</div>
+            }
+
+            {/* Bottom actions */}
+            <div className="mt-auto pt-8 space-y-3">
+              <div
+                className="cursor-pointer py-6 px-10 rounded-xl flex flex-row items-center gap-10 hover:bg-link transition-all"
+                onClick={() => setIsChangePasswordOpen(true)}
+              >
+                <p className="flex gap-5 f12 w400 text-app-white">
+                  <div>
+                    <FaEdit />
+                  </div>
+                  <div> Change Password</div>
+                </p>
+              </div>
+            </div>
+          </>
+
+          <div
+            className="cursor-pointer py-6 px-10 rounded-xl flex flex-row items-center gap-10 hover:bg-red-500/20 transition-all"
+            onClick={handleLogout}
+          >
+            <p className="flex gap-5 items-center f12 w400 text-app-white">
+              <div>
+                <FaPowerOff />
+              </div>
+              <div> Logout</div>
             </p>
           </div>
         </div>
-
-        <div
-          className="cursor-pointer py-6 px-10 rounded-xl flex flex-row items-center gap-10 hover:bg-red-500/20 transition-all"
-          onClick={handleLogout}
-        >
-          <p className="flex gap-5 items-center f12 w400 text-app-white">
-            <div>
-              <FaPowerOff />
-            </div>
-            <div> Logout</div>
-          </p>
-        </div>
-      </div>
+      )}
 
       {/* Change Password Modal */}
       <Modal

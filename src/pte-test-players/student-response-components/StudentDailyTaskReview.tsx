@@ -66,6 +66,7 @@ const StudentDailyTaskReview = () => {
       </div>
     );
   }
+  console.log("Review Call Data:", reviewCall);
 
   const reviewData =
     reviewCall.data?.response || reviewCall.data?.data || reviewCall.data;

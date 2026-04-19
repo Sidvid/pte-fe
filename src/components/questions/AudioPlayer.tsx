@@ -46,6 +46,17 @@ const AudioPlayer = ({
           onPlayStart?.();
         },
       });
+      // load(src, {
+      //   format: "mp3", // <--- Force the player to treat it as an MP3
+      //   autoplay: autoPlay,
+      //   onend: () => {
+      //     setPlayCount((prev) => prev + 1);
+      //     onPlayComplete?.();
+      //   },
+      //   onplay: () => {
+      //     onPlayStart?.();
+      //   },
+      // });
     }
 
     return () => {

@@ -1,9 +1,5 @@
 import SideMenu from "@/components/molecules/side-menu/side-menu";
-import { BrowserRouter, Routes, Route } from "react-router";
 import * as React from "react";
-
-import Avatar from "@/components/molecules/avatar/avatar";
-import useTheme from "@/hooks/use-theme";
 
 import {
   AiOutlineHome,
@@ -12,19 +8,18 @@ import {
   AiOutlineUnorderedList,
   AiOutlineVideoCamera,
   AiOutlineVideoCameraAdd,
-  AiOutlineSun,
-  AiOutlineMoon,
 } from "react-icons/ai";
 import { PiStudentFill } from "react-icons/pi";
 import { useNavigate } from "react-router";
 
-import { Outlet, useParams, useLocation } from "react-router";
+import { Outlet, useLocation } from "react-router";
 import { isStudentApp } from "@/utils/helpers/core-helpers";
-import TheoryVideoConfigPage from "@/modules/admin/lab-videos/TheoryVideoConfigPage";
 import { GrConfigure } from "react-icons/gr";
+import { RiMenuUnfoldFill } from "react-icons/ri";
 
 function ApplicationBody() {
-  const { theme, toggleTheme } = useTheme();
+  const [isMenuCollapsed, setIsMenuCollapsed] = React.useState(false);
+
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -78,11 +73,6 @@ function ApplicationBody() {
           title: "Daily Tasks",
           icon: <AiOutlineUnorderedList />,
         },
-        // {
-        //   value: "theoryVideos",
-        //   title: "Theory Videos",
-        //   icon: <AiOutlineVideoCamera />,
-        // },
         {
           value: "labVideos",
           title: "Lab Videos",
@@ -102,27 +92,40 @@ function ApplicationBody() {
 
   return (
     <div className="flex flex-col h-screen w-screen">
-      <section className="flex flex-1 overflow-hidden">
-        <aside className="w-[250px]  overflow-y-auto">
-          <SideMenu
-            data={sideMenuData}
-            selected={pathname.split("/")[1]}
-            onClick={(value) => navigate(value)}
-          />
+      <section className="flex flex-1 overflow-hidden relative">
+        <aside
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+            isMenuCollapsed ? "w-0" : "w-[250px]"
+          }`}
+        >
+          <div className="w-[250px] h-full">
+            <SideMenu
+              data={sideMenuData}
+              selected={pathname.split("/")[1]}
+              onClick={(value) => navigate(value)}
+              isMenuCollapsed={isMenuCollapsed}
+              setIsMenuCollapsed={setIsMenuCollapsed}
+            />
+          </div>
         </aside>
 
-        <main className="flex-1 overflow-y-auto bg-background p-16">
-          {/* <section className="shadow-card sticky top-10 z-[100] bg-foreground flex flex-row justify-end items-center gap-10 px-24 py-6 mb-4 rounded-[12px]">
-            <div onClick={toggleTheme} className="cursor-pointer relative">
-              {theme === "light" ? (
-                <AiOutlineMoon className="text-lg w-24 h-24 text-text-primary" />
-              ) : (
-                <AiOutlineSun className="text-lg w-24 h-24 text-text-primary" />
-              )}
-            </div>
-            <Avatar />
-          </section> */}
-          <div className="min-h-full">
+        {/* Main */}
+        <main
+          className={`flex-1 overflow-y-auto bg-background transition-all duration-500 ease-in-out ${
+            isMenuCollapsed ? "p-10" : "p-16"
+          }`}
+        >
+          {/* ✅ Hamburger icon */}
+
+          {isMenuCollapsed && (
+            <RiMenuUnfoldFill
+              className="cursor-pointer sticky top-4 left-4 z-50"
+              color="black"
+              onClick={() => setIsMenuCollapsed(!isMenuCollapsed)}
+              style={{ fontSize: 30 }}
+            />
+          )}
+          <div className={`${isMenuCollapsed ? "pl-20 ml-20" : ""}`}>
             <Outlet />
           </div>
         </main>
