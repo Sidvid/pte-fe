@@ -25,7 +25,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { GrUpdate } from "react-icons/gr";
 import { MdOutlineDoneOutline } from "react-icons/md";
-import { RxReset } from "react-icons/rx";
+import { RxCross2, RxReset } from "react-icons/rx";
 import dayjs from "dayjs";
 import {
   ArrowLeftOutlined,
@@ -38,7 +38,7 @@ import {
   FundOutlined,
 } from "@ant-design/icons";
 import useHttp from "@/hooks/use-http";
-import { FaFile } from "react-icons/fa";
+import { FaCross, FaFile } from "react-icons/fa";
 import RibbonCard from "@/components/molecules/card/RibbonCard";
 
 const { Title, Text } = Typography;
@@ -446,11 +446,24 @@ const StudentEditPage = () => {
                     onChange={(e) => setNewPasswordVal(e.target.value)}
                     value={newPasswordVal}
                     type="password"
+                    prefix={
+                      // <Button
+                      //   type="primary"
+                      //   onClick={() => setIsResetPasswordMode(false)}
+                      //   icon={<RxCross2 />}
+                      // />
+                      <RxCross2 fontSize={20} style={{ color: "#061457" }} />
+                    }
                     suffix={
-                      <Button
+                      // <Button
+                      //   onClick={handleResetPassword}
+                      //   type="primary"
+                      //   icon={<MdOutlineDoneOutline />}
+                      // />
+                      <MdOutlineDoneOutline
                         onClick={handleResetPassword}
-                        type="primary"
-                        icon={<MdOutlineDoneOutline />}
+                        fontSize={20}
+                        style={{ color: "#061457" }}
                       />
                     }
                     placeholder="New Password- min 6 digits"
