@@ -71,8 +71,20 @@ function StudentMockTests() {
     }
   }, []);
 
-  const handleTakeMockTest = (testId: string) => {
-    navigate(`/mock-test/${testId}`);
+  const handleResumeMockTest = (record: any) => {
+    const ongoingAttempts = record?.sections.find(
+      (s: any) => s.mtss_id !== null && s.submitted_at === null,
+    );
+    console.log(ongoingAttempts);
+    console.log(record);
+    navigate(`/mock-test/${record.id}?mts_id=${record.mts_id}`, {
+      state: {
+        hello: true,
+        testStatus: "ONGOING",
+        mtss_id: ongoingAttempts?.mtss_id,
+        section_id: ongoingAttempts?.id,
+      },
+    });
   };
 
   const columns: TableProps<MockTest>["columns"] = [
@@ -129,9 +141,8 @@ function StudentMockTests() {
             <Button
               type="primary"
               icon={<GrInProgress />}
-              onClick={() =>
-                navigate(`/mock-test/${record.id}?mts_id=${record.mts_id}`)
-              }
+              onClick={() => handleResumeMockTest(record)}
+              // onClick={() => console.log(record)}
             >
               Resume
             </Button>

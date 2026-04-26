@@ -1,5 +1,6 @@
 import RibbonCard from "@/components/molecules/card/RibbonCard";
 import useHttp from "@/hooks/use-http";
+import { useColumnSearch } from "@/utils/helpers/core-helpers";
 import { Student } from "@/utils/model/response-models";
 import { useMutation } from "@tanstack/react-query";
 import { Button, Col, Table, TableProps, Tag } from "antd";
@@ -8,10 +9,11 @@ import { FaUserEdit, FaUserPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const StudentList = () => {
+  const { getColumnSearchProps } = useColumnSearch();
   const { sendRequest } = useHttp({ type: "auth" });
   const [dataPagination, setDataPagination] = React.useState({
     page: 1,
-    limit: 10,
+    limit: 350,
     total: 0,
   });
   const [studentData, setStudentsData] = React.useState<Student[]>();
@@ -51,6 +53,7 @@ const StudentList = () => {
     {
       title: "Name",
       dataIndex: "name",
+      ...getColumnSearchProps("name"),
     },
     {
       title: "Address",
@@ -124,20 +127,21 @@ const StudentList = () => {
           columns={columns}
           dataSource={studentData}
           loading={allStudents.isPending}
-          pagination={{
-            current: dataPagination.page,
-            pageSize: dataPagination.limit,
-            total: dataPagination.total,
-            showSizeChanger: true,
-            pageSizeOptions: ["5", "10", "20", "50"],
-          }}
-          onChange={(pagination) => {
-            setDataPagination((prev) => ({
-              ...prev,
-              page: pagination.current ?? prev.page,
-              limit: pagination.pageSize ?? prev.limit,
-            }));
-          }}
+          pagination={{ pageSize: 10 }}
+          // pagination={{
+          //   current: dataPagination.page,
+          //   pageSize: dataPagination.limit,
+          //   total: dataPagination.total,
+          //   showSizeChanger: true,
+          //   pageSizeOptions: ["5", "10", "20", "50"],
+          // }}
+          // onChange={(pagination) => {
+          //   setDataPagination((prev) => ({
+          //     ...prev,
+          //     page: pagination.current ?? prev.page,
+          //     limit: pagination.pageSize ?? prev.limit,
+          //   }));
+          // }}
         />
       </RibbonCard>
     </Col>

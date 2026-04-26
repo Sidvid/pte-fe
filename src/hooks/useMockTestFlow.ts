@@ -21,11 +21,15 @@ export const useMockTestFlow = ({
   mtsId,
   existingSectionAttempts = [],
   existingResponsesByMtssId = {},
+  resumeMockTestData,
+  testStatus,
 }: {
   testData: any;
   mtsId: string;
   existingSectionAttempts?: ExistingSectionAttempt[];
   existingResponsesByMtssId?: Record<string, ExistingResponse[]>;
+  resumeMockTestData?: any;
+  testStatus?: string;
 }) => {
   const { sendRequest } = useHttp({ type: "auth" });
 
@@ -78,15 +82,41 @@ export const useMockTestFlow = ({
     }
   };
 
+  // const getInitialSectionIndex = () => {
+  //   if (!sections.length) return 0;
+
+  //   for (let i = 0; i < sections.length; i++) {
+  //     const sec = sections[i];
+  //     // const attempt = existingSectionAttempts.find(
+  //     //   (a) => a.section_id === sec.id,
+  //     // );
+  //     const attempt = resumeMockTestData?.section_id === sec.id;
+  //     if (!attempt) return i;
+  //   }
+
+  //   return 0;
+  // };
+
   const getInitialSectionIndex = () => {
     if (!sections.length) return 0;
 
+    // If we are resuming from dashboard, find the index of that specific section
+    if (resumeMockTestData?.section_id) {
+      const foundIndex = sections.findIndex(
+        (s) => s.id === resumeMockTestData.section_id,
+      );
+      return foundIndex !== -1 ? foundIndex : 0;
+    }
+
+    // Otherwise, fallback: find the first section that isn't submitted
+    // (Using your existingSectionAttempts for this fallback)
     for (let i = 0; i < sections.length; i++) {
       const sec = sections[i];
-      const attempt = existingSectionAttempts.find(
-        (a) => a.section_id === sec.id,
-      );
-      if (!attempt || !attempt.submitted_at) return i;
+      // const attempt = existingSectionAttempts.find(
+      //   (a) => a.section_id === sec.id,
+      // );
+      const attempt = resumeMockTestData?.section_id === sec.id;
+      if (!attempt) return i;
     }
 
     return 0;
@@ -107,6 +137,7 @@ export const useMockTestFlow = ({
     sectionTitle: string;
     questionNumber: number;
   }>(null);
+  const [resumeMockTestLoading, setResumeMockTestLoading] = useState(false);
 
   const autoSubmittingRef = useRef(false);
 
@@ -222,52 +253,110 @@ export const useMockTestFlow = ({
     },
   });
 
+  const fetchResponses = async (mts_id: string, mtss_id: string) => {
+    return await sendRequest({
+      url: "resumeMockTest", // Matches your definition
+      method: "GET",
+      endURL: `${mts_id}/sections/${mtss_id}/responses`,
+    });
+  };
+
+  // useEffect(() => {
+  //   if (!mtsId || !currentSection?.id || sectionStarted) return;
+
+  //   startSectionCall.mutate({
+  //     mts_id: mtsId,
+  //     section_id: currentSection.id,
+  //   });
+  // }, [mtsId, currentSection?.id, sectionStarted]);
+
   useEffect(() => {
     if (!mtsId || !currentSection?.id || sectionStarted) return;
 
-    startSectionCall.mutate({
-      mts_id: mtsId,
-      section_id: currentSection.id,
-    });
-  }, [mtsId, currentSection?.id, sectionStarted]);
+    const activeAttempt = resumeMockTestData?.section_id === currentSection.id;
+
+    if (
+      testStatus === "ONGOING" ||
+      resumeMockTestData?.testStatus === "ONGOING"
+    ) {
+      console.log("Resuming active section:", resumeMockTestData.mtss_id);
+      setCurrentMtssId(resumeMockTestData.mtss_id);
+      setSectionStarted(true);
+    } else {
+      startSectionCall.mutate({
+        mts_id: mtsId,
+        section_id: currentSection.id,
+      });
+    }
+  }, [mtsId, currentSection?.id, sectionStarted, resumeMockTestData]);
 
   useEffect(() => {
-    if (!currentMtssId || !currentSectionQuestions.length) return;
+    // 1. Only run if we have the section ID and the questions are actually loaded
+    if (!currentMtssId || currentSectionQuestions.length === 0) return;
 
-    const savedResponses = existingResponsesByMtssId[currentMtssId] || [];
+    if (
+      testStatus === "ONGOING" ||
+      resumeMockTestData?.testStatus === "ONGOING"
+    ) {
+      const loadResponses = async () => {
+        setResumeMockTestLoading(true);
+        try {
+          const res = await fetchResponses(mtsId, currentMtssId);
+          const savedResponses = res?.response?.data || [];
 
-    if (!savedResponses.length) {
-      setCurrentQuestionIndex(0);
-      return;
+          console.log("Loaded responses:", res?.response?.data);
+          console.log("Current section questions:", currentSectionQuestions);
+
+          if (savedResponses.length > 0) {
+            // Sync answers
+            setResponses((prev) => {
+              const updated = { ...prev };
+              savedResponses.forEach((r: any) => {
+                // Ensure we use string comparison for IDs
+                updated[String(r.question_id)] = r.response;
+              });
+              return updated;
+            });
+
+            // 2. Identify the first question not answered
+            const answeredIds = new Set(
+              savedResponses.map((r: any) => String(r.question_id)),
+            );
+
+            const firstUnansweredIndex = currentSectionQuestions.findIndex(
+              (q: any) => !answeredIds.has(String(q.id)),
+            );
+
+            const resumeIndex =
+              firstUnansweredIndex === -1
+                ? currentSectionQuestions.length - 1
+                : firstUnansweredIndex;
+
+            console.log("Calculated resume index:", resumeIndex);
+            setCurrentQuestionIndex(resumeIndex);
+
+            setResumeNotice({
+              sectionTitle: currentSection.title,
+              questionNumber: resumeIndex + 1,
+            });
+          } else {
+            console.log("No saved responses found, defaulting to index 0");
+            setCurrentQuestionIndex(0);
+          }
+        } catch (err) {
+          console.error("Failed to hydrate responses:", err);
+        } finally {
+          setResumeMockTestLoading(false);
+        }
+      };
+
+      loadResponses();
     }
-
-    setResponses((prev) => {
-      const updated = { ...prev };
-      savedResponses.forEach((r) => {
-        updated[r.question_id] = r.response;
-      });
-      return updated;
-    });
-
-    const answeredIds = new Set(savedResponses.map((r) => r.question_id));
-    const firstUnansweredIndex = currentSectionQuestions.findIndex(
-      (q: any) => !answeredIds.has(q.id),
-    );
-
-    const resumeIndex =
-      firstUnansweredIndex === -1
-        ? Math.min(savedResponses.length, currentSectionQuestions.length - 1)
-        : firstUnansweredIndex;
-
-    setCurrentQuestionIndex(resumeIndex);
-
-    if (savedResponses.length > 0) {
-      setResumeNotice({
-        sectionTitle: currentSection.title,
-        questionNumber: resumeIndex + 1,
-      });
-    }
-  }, [currentMtssId, currentSectionQuestions, existingResponsesByMtssId]);
+    return () => {
+      setResumeMockTestLoading(false);
+    };
+  }, [currentMtssId, currentSectionQuestions]); // Remove responses from deps to avoid loop
+  console.log("----loading from the mock test hook", resumeMockTestLoading);
 
   const handleResponse = (response: any) => {
     if (!currentQuestion) return;
@@ -404,5 +493,6 @@ export const useMockTestFlow = ({
     submitMockLoading: submitMockTestCall.isPending,
 
     handleQuestionTimeUp,
+    resumeMockTestLoading,
   };
 };

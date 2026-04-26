@@ -77,3 +77,78 @@ export const getSectionLabel = (type: string) => {
       return type;
   }
 };
+
+import { Input, Button, Space } from "antd";
+import type { ColumnType } from "antd/es/table";
+import { SearchOutlined } from "@ant-design/icons";
+import { useRef, useState } from "react";
+
+export const useColumnSearch = () => {
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef(null);
+
+  const getColumnSearchProps = (dataIndex: string): ColumnType<any> => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => {
+            confirm();
+            setSearchText(selectedKeys[0]);
+            setSearchedColumn(dataIndex);
+          }}
+          style={{ marginBottom: 8, display: "block" }}
+        />
+
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => {
+              confirm();
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+            icon={<SearchOutlined />}
+            size="small"
+          >
+            Search
+          </Button>
+
+          <Button
+            onClick={() => {
+              clearFilters?.();
+              setSearchText("");
+              confirm();
+            }}
+            size="small"
+          >
+            Reset
+          </Button>
+        </Space>
+      </div>
+    ),
+
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
+    ),
+
+    onFilter: (value, record) =>
+      record[dataIndex]
+        ?.toString()
+        .toLowerCase()
+        .includes((value as string).toLowerCase()),
+  });
+
+  return { getColumnSearchProps };
+};

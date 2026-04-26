@@ -16,15 +16,10 @@ import {
   List,
   Divider,
   Table,
+  Descriptions,
 } from "antd";
 import { useMutation } from "@tanstack/react-query";
 import {
-  UserOutlined,
-  CalendarOutlined,
-  TrophyOutlined,
-  ClockCircleOutlined,
-  CheckCircleOutlined,
-  WarningOutlined,
   PlayCircleOutlined,
   BookOutlined,
   IdcardOutlined,
@@ -38,8 +33,6 @@ import {
 } from "@/utils/helpers/core-helpers";
 import { FaEye } from "react-icons/fa";
 import RibbonCard from "@/components/molecules/card/RibbonCard";
-import { R } from "node_modules/react-router/dist/development/index-react-server-client-BcrVT7Dd.mjs";
-// import { useHttp } from "../hooks/useHttp";
 
 const { Title, Text } = Typography;
 
@@ -84,12 +77,7 @@ const ScoreMiniCard = ({ label, value }: { label: string; value?: number }) => (
 );
 
 const ProfileSummaryCard = ({ profile }: any) => (
-  <RibbonCard
-    title="Profile Summary"
-    // variant="outlined"
-    // style={{ borderRadius: 20, height: "100%" }}
-    // styles={{ body: { padding: 20 } }}
-  >
+  <RibbonCard title="Profile Summary">
     <Space align="start" size={16}>
       <div style={{ marginTop: 8 }}>
         <Space size="middle">
@@ -136,21 +124,25 @@ const SubscriptionCard = ({ subscription }: any) => {
         <Tag color={subscription?.is_active ? "green" : "red"}>
           {subscription?.is_active ? "ACTIVE" : "EXPIRED"}
         </Tag>
-
-        <Statistic
-          title="Days Left"
-          value={subscription?.days_left || 0}
-          valueStyle={{ color }}
+        <Progress
+          strokeWidth={5}
+          percent={percentLeft}
+          strokeColor={color}
+          showInfo={false}
         />
 
-        <Progress percent={percentLeft} strokeColor={color} showInfo={false} />
+        <Descriptions
+          title={`${subscription?.days_left || 0} - Days Left`}
 
-        <Text>
+          // value={subscription?.days_left || 0}
+          // valueStyle={{ color }}
+        />
+        <Text style={{ display: "flex", gap: 15 }}>
           <b>Start:</b> {formatDate(subscription?.sub_start)}
-        </Text>
-        <Text>
           <b>End:</b> {formatDate(subscription?.sub_end)}
         </Text>
+        {/* <Text> */}
+        {/* </Text> */}
       </Space>
     </RibbonCard>
   );
@@ -227,66 +219,51 @@ const WeeklyAttendanceCard = ({ weekly }: any) => (
   </RibbonCard>
 );
 
-const OngoingMockTestCard = ({ mockTest, onContinue }: any) => (
-  <RibbonCard title="Ongoing Mock Test">
-    <Space orientation="vertical" style={{ width: "100%" }} size={14}>
-      {!mockTest ? (
-        <Empty
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description="No ongoing mock test"
-        />
-      ) : (
-        <>
-          <Title level={4} style={{ margin: 0 }}>
-            {mockTest.title}
-          </Title>
+const OngoingMockTestCard = ({ mockTest, mockTestData }: any) => {
+  const navigate = useNavigate();
+  const { mts_id, test_id } = mockTestData;
+  console.log("mockTestDatamockTestDatamockTestDatamockTestData", mockTestData);
 
-          <Text>
-            <b>Started:</b> {formatDateTime(mockTest.started_at)}
-          </Text>
+  // Find the active section
+  const ongoingAttempts = mockTest?.sections.find(
+    (s: any) => s.mtss_id !== null && s.submitted_at === null,
+  );
 
-          <Button
-            type="primary"
-            icon={<PlayCircleOutlined />}
-            onClick={() => onContinue?.(mockTest)}
-            style={{ alignSelf: "flex-start" }}
-          >
-            Continue Test
-          </Button>
+  const handleContinue = () => {
+    // Navigate first
+    navigate(`/mock-test/${test_id}?mts_id=${mts_id}`, {
+      state: {
+        mtss_id: ongoingAttempts?.mtss_id,
+        section_id: ongoingAttempts?.section_id,
+        testStatus: "ONGOING",
+      },
+    });
 
-          <Divider style={{ margin: "12px 0" }} />
+    // Notify parent if needed (just for logging)
+    // onContinue?.(mockTest);
+  };
 
-          <List
-            size="small"
-            dataSource={mockTest.sections || []}
-            renderItem={(sec: any) => (
-              <List.Item>
-                <Space direction="vertical" style={{ width: "100%" }} size={2}>
-                  <Space
-                    style={{
-                      width: "100%",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Text strong>{sec.title}</Text>
-                    <Tag
-                      color={sec.status === "SUBMITTED" ? "green" : "orange"}
-                    >
-                      {sec.status}
-                    </Tag>
-                  </Space>
-                  <Text type="secondary">
-                    Responses: {sec.count_responses} / {sec.question_count}
-                  </Text>
-                </Space>
-              </List.Item>
-            )}
-          />
-        </>
-      )}
-    </Space>
-  </RibbonCard>
-);
+  return (
+    <Tag variant="filled" color="volcano">
+      <Space orientation="horizontal" style={{ width: "100%" }} size={10}>
+        {/* <div className="flex gap-3"> */}
+        <b>In Progress Mock Test:</b>
+        <b>{mockTest.title}</b>
+        <b>Started:</b> {formatDateTime(mockTest.started_at)}
+        {/* </div> */}
+        <Button
+          type="link"
+          icon={<PlayCircleOutlined />}
+          onClick={handleContinue}
+          disabled={!ongoingAttempts}
+          style={{ alignSelf: "flex-start" }}
+        >
+          <b> Resume Test</b>
+        </Button>
+      </Space>
+    </Tag>
+  );
+};
 
 const LastMockTestsCard = ({ tests }: any) => (
   <RibbonCard title="Last 5 Mock Tests">
@@ -424,7 +401,6 @@ const DashboardHeader = ({ profile }: any) => (
               color: "#fff",
               padding: "6px 14px",
               borderRadius: 999,
-              width: "fit-content",
               fontSize: 14,
               fontWeight: 500,
               backdropFilter: "blur(8px)",
@@ -433,33 +409,47 @@ const DashboardHeader = ({ profile }: any) => (
             ✨ Welcome back
           </div>
 
-          <Title
-            level={1}
+          {/* Title Row: Name, Student Label, and ID */}
+          <div
             style={{
-              color: "#fff",
-              margin: 0,
-              fontSize: "clamp(28px, 4vw, 42px)",
-              lineHeight: 1.1,
+              display: "flex",
+              alignItems: "center",
+              gap: "15px",
+              flexWrap: "wrap",
             }}
           >
-            {profile?.name || "Student"}
-          </Title>
+            <Title
+              level={1}
+              style={{
+                color: "#fff",
+                margin: 0,
+                fontSize: "clamp(28px, 4vw, 42px)",
+                lineHeight: 1.1,
+              }}
+            >
+              {profile?.name || "Student"}
+            </Title>
+            <Tag
+              color="blue"
+              style={{
+                borderRadius: 999,
+                paddingInline: 12,
+                paddingBlock: 4,
+                fontSize: 13,
+                fontWeight: 500,
+                background: "rgba(255,255,255,0.18)",
+                color: "#fff",
+                border: "1px solid rgba(255,255,255,0.25)",
+              }}
+            >
+              Address: {profile?.address || "-"}
+            </Tag>
+          </div>
 
-          <Text
-            style={{
-              color: "rgba(255,255,255,0.92)",
-              fontSize: 16,
-              maxWidth: 620,
-            }}
-          >
-            Stay on top of your mock tests, attendance, subscription, and
-            learning progress — all in one smart dashboard.
-          </Text>
-
+          {/* Original Tag Styles */}
           <Space wrap size={[10, 10]} style={{ marginTop: 8 }}>
             {profile?.role && (
               <Tag
-                color="blue"
                 style={{
                   borderRadius: 999,
                   paddingInline: 12,
@@ -474,7 +464,6 @@ const DashboardHeader = ({ profile }: any) => (
                 {profile.role}
               </Tag>
             )}
-
             {profile?.lab && (
               <Tag
                 style={{
@@ -491,7 +480,6 @@ const DashboardHeader = ({ profile }: any) => (
                 Lab Student
               </Tag>
             )}
-
             {profile?.online && (
               <Tag
                 style={{
@@ -508,7 +496,6 @@ const DashboardHeader = ({ profile }: any) => (
                 Online
               </Tag>
             )}
-
             {profile?.exam_mode && (
               <Tag
                 style={{
@@ -533,36 +520,38 @@ const DashboardHeader = ({ profile }: any) => (
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <div
             style={{
+              textAlign: "center",
               background: "rgba(255,255,255,0.11)",
               border: "1px solid rgba(255,255,255,0.55)",
               borderRadius: 24,
-              padding: 18,
-              minWidth: 250,
+              padding: 24,
               backdropFilter: "blur(20px)",
             }}
           >
-            <Space align="center" size={16}>
+            <Space orientation="vertical" align="center" size={12}>
               <Avatar
-                size={150}
+                size={120}
                 src={profile?.image || undefined}
-                srcSet={profile?.image ?? undefined}
                 style={{
                   border: "3px solid rgba(255,255,255,0.5)",
                   background: "#ffffff22",
                 }}
               />
-              <div>
-                <Text style={{ color: "rgba(255,255,255,0.85)" }}>
-                  Student Profile
-                </Text>
-                <div style={{ marginTop: 8 }}>
-                  <Text
-                    style={{ color: "rgba(255,255,255,0.9)", fontSize: 13 }}
-                  >
-                    Ready to continue your PTE journey 🚀
-                  </Text>
-                </div>
-              </div>
+              <Text
+                color="blue"
+                style={{
+                  borderRadius: 999,
+                  paddingInline: 12,
+                  paddingBlock: 4,
+                  fontSize: 13,
+                  fontWeight: 500,
+                  background: "rgba(255,255,255,0.18)",
+                  color: "#fff",
+                  border: "1px solid rgba(255,255,255,0.25)",
+                }}
+              >
+                Joined: {formatDate(profile?.joined_at)}
+              </Text>
             </Space>
           </div>
         </div>
@@ -699,51 +688,116 @@ const StudentCompleteDashboard = () => {
   }
 
   return (
-    <div style={{ padding: 24, background: "#f5f7fb", minHeight: "100vh" }}>
+    <div style={{ padding: "24px", background: "#f5f7fb", minHeight: "100vh" }}>
       <DashboardHeader profile={dashboardData.profile_summary} />
 
-      <Row gutter={[20, 20]}>
-        <Col xs={24} lg={10}>
-          <ProfileSummaryCard profile={dashboardData.profile_summary} />
-        </Col>
+      <Row gutter={[24, 24]}>
+        {/* 1. High Priority: Ongoing Test */}
+        {dashboardData.current_ongoing_mock_test && (
+          <Col span={24}>
+            <div className="hover:shadow-md transition-shadow duration-300">
+              <OngoingMockTestCard
+                mockTestData={{
+                  mts_id: dashboardData.current_ongoing_mock_test?.mts_id,
+                  test_id: dashboardData.current_ongoing_mock_test?.test_id,
+                }}
+                mockTest={dashboardData.current_ongoing_mock_test}
+              />
+            </div>
+          </Col>
+        )}
 
-        <Col xs={24} lg={7}>
-          <SubscriptionCard subscription={dashboardData.subscription} />
-        </Col>
-
-        <Col xs={24} lg={7}>
-          <AttendanceTodayCard attendance={dashboardData.today_attendance} />
+        {/* 2. Stats Row: Perfectly balanced 8/8/8 */}
+        <Col xs={24} lg={12}>
+          <div className="h-full ">
+            <SubscriptionCard subscription={dashboardData.subscription} />
+          </div>
         </Col>
 
         <Col xs={24} lg={12}>
-          <WeeklyAttendanceCard
-            weekly={dashboardData.weekly_attendance_summary}
-          />
+          <div className="h-full ">
+            <AttendanceTodayCard attendance={dashboardData.today_attendance} />
+          </div>
         </Col>
 
-        <Col xs={24} lg={12}>
-          <OngoingMockTestCard
-            mockTest={dashboardData.current_ongoing_mock_test}
-            onContinue={(mockTest: any) => {
-              console.log("Continue mock test:", mockTest);
-              // navigate(`/student/mock-tests/continue/${mockTest.mts_id}`)
-            }}
-          />
+        {/* 3. Data Row: Full width to fix the lopsided table */}
+        <Col span={24}>
+          <Card
+            title="Recent Daily Tasks"
+            bordered={false}
+            className="shadow-sm rounded-xl"
+          >
+            <Last10SubmittedDailyTaskCard
+              dashboardData={dashboardData}
+              dailyTaskColumns={dailyTaskColumns}
+            />
+          </Card>
         </Col>
 
         <Col span={24}>
-          <Last10SubmittedDailyTaskCard
-            dashboardData={dashboardData}
-            dailyTaskColumns={dailyTaskColumns}
-          />
+          <Card
+            title="Recent Mock Tests"
+            bordered={false}
+            className="shadow-sm rounded-xl"
+          >
+            <LastMockTestsCard tests={dashboardData.last_5_mock_test_summary} />
+          </Card>
         </Col>
 
-        <Col span={24}>
-          <LastMockTestsCard tests={dashboardData.last_5_mock_test_summary} />
+        <Col xs={24} md={24}>
+          <div className="h-full ">
+            <WeeklyAttendanceCard
+              weekly={dashboardData.weekly_attendance_summary}
+            />
+          </div>
         </Col>
       </Row>
     </div>
   );
+
+  // return (
+  //   <div style={{ padding: 24, background: "#f5f7fb", minHeight: "100vh" }}>
+  //     <DashboardHeader profile={dashboardData.profile_summary} />
+  //     {dashboardData.current_ongoing_mock_test && (
+  //       <Col xs={24} lg={24} xl={24}>
+  //         <OngoingMockTestCard
+  //           mockTestData={{
+  //             mts_id: dashboardData.current_ongoing_mock_test?.mts_id,
+  //             test_id: dashboardData.current_ongoing_mock_test?.test_id,
+  //           }}
+  //           mockTest={dashboardData.current_ongoing_mock_test}
+  //         />
+  //       </Col>
+  //     )}
+
+  //     <Row gutter={[20, 20]}>
+  //       <Col xs={24} lg={8}>
+  //         <SubscriptionCard subscription={dashboardData.subscription} />
+  //       </Col>
+
+  //       <Col xs={24} lg={6}>
+  //         <AttendanceTodayCard attendance={dashboardData.today_attendance} />
+  //       </Col>
+
+  //       <Col xs={24} lg={8}>
+  //         <WeeklyAttendanceCard
+  //           weekly={dashboardData.weekly_attendance_summary}
+  //         />
+  //       </Col>
+
+  //       <Col span={16}>
+  //         <Last10SubmittedDailyTaskCard
+  //           dashboardData={dashboardData}
+  //           dailyTaskColumns={dailyTaskColumns}
+  //         />
+  //       </Col>
+
+  //       <Col span={24}>
+  //         <LastMockTestsCard tests={dashboardData.last_5_mock_test_summary} />
+  //       </Col>
+  //     </Row>
+  //   </div>
+  // );
 };
 
 export default StudentCompleteDashboard;

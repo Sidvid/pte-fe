@@ -1,4 +1,4 @@
-import { Alert, Button, Card, Result, Spin, Typography } from "antd";
+import { Alert, Button, Card, Result, Skeleton, Spin, Typography } from "antd";
 import MockTestShell from "./MockTestShell";
 import QuestionRenderer from "@/components/questions/QuestionRenderer";
 import MockBottomBar from "./MockBottomBar";
@@ -11,6 +11,8 @@ type MockTestExamPageProps = {
   mtsId: string;
   existingSectionAttempts?: any[];
   existingResponsesByMtssId?: Record<string, any[]>;
+  resumeMockTestData?: any;
+  testStatus?: string;
 };
 
 const MockTestExamPage = ({
@@ -18,9 +20,11 @@ const MockTestExamPage = ({
   mtsId,
   existingSectionAttempts = [],
   existingResponsesByMtssId = {},
+  resumeMockTestData,
+  testStatus,
 }: MockTestExamPageProps) => {
   const testData = mockTestResponse?.data;
-
+  console.log("from central page", resumeMockTestData);
   const {
     currentSection,
     currentQuestion,
@@ -43,11 +47,14 @@ const MockTestExamPage = ({
     startSectionLoading,
     responses,
     handleQuestionTimeUp,
+    resumeMockTestLoading,
   } = useMockTestFlow({
     testData,
     mtsId,
     existingSectionAttempts,
     existingResponsesByMtssId,
+    resumeMockTestData,
+    testStatus,
   });
 
   if (!testData) {
@@ -108,6 +115,19 @@ const MockTestExamPage = ({
   }
 
   const isBusy = saveLoading || submitSectionLoading || submitMockLoading;
+
+  if (resumeMockTestLoading) {
+    return (
+      <Skeleton title={{}} loading={true} active paragraph={{ rows: 10 }}>
+        <div>
+          <p>
+            Resuming your mock test. Please wait while we load your previous
+            progress.
+          </p>
+        </div>
+      </Skeleton>
+    );
+  }
 
   return (
     <MockTestShell

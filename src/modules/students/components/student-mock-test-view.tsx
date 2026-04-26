@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Alert, Skeleton, message } from "antd";
 import { useMutation } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import useHttp from "@/hooks/use-http";
 import MockTestIntroPage from "@/pte-test-players/mock-test-components/MockTestIntroPage";
 import MockTestExamPage from "@/pte-test-players/mock-test-components/MockTestExamPage";
@@ -9,6 +9,13 @@ import MockTestExamPage from "@/pte-test-players/mock-test-components/MockTestEx
 const StudentMockTestView = () => {
   const { id: test_id } = useParams();
   console.log("fdfdfdfdf", test_id);
+  const resumeMockTestData = useLocation();
+  const testStatus = useLocation().state?.testStatus || "NOT_STARTED";
+  console.log(
+    "------------------------------resumeMockTestData------------------------------",
+    resumeMockTestData,
+  );
+  // const test_id = resumeMockTestData?.state?.fromDashboard ?
   const { sendRequest } = useHttp({ type: "auth" });
 
   const [showExam, setShowExam] = useState(false);
@@ -132,7 +139,9 @@ const StudentMockTestView = () => {
       mockTestResponse={mockTestResponse}
       mtsId={localStorage.getItem("current_mts_id") || mtsId || ""}
       existingSectionAttempts={[]}
-      existingResponsesByMtssId={{}}
+      // existingResponsesByMtssId={{}}
+      testStatus={testStatus}
+      resumeMockTestData={{ ...resumeMockTestData?.state }}
     />
   );
 };

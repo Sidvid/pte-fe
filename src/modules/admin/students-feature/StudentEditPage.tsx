@@ -39,6 +39,7 @@ import {
 } from "@ant-design/icons";
 import useHttp from "@/hooks/use-http";
 import { FaFile } from "react-icons/fa";
+import RibbonCard from "@/components/molecules/card/RibbonCard";
 
 const { Title, Text } = Typography;
 
@@ -478,8 +479,11 @@ const StudentEditPage = () => {
                     <Form form={form} layout="vertical" onFinish={handleUpdate}>
                       <Row gutter={[20, 20]}>
                         <Col xs={24} xl={16}>
-                          <Card className="rounded-[24px] border border-slate-200 bg-white shadow-sm">
-                            <Title level={4}>Basic Information</Title>
+                          <RibbonCard
+                            title="Basic Information"
+                            className="rounded-[24px] border border-slate-200 bg-white shadow-sm"
+                          >
+                            {/* <Title level={4}>Basic Information</Title> */}
                             <Row gutter={16}>
                               <Col xs={24} md={12}>
                                 <Form.Item name="name" label="Name">
@@ -504,13 +508,14 @@ const StudentEditPage = () => {
                                 </Form.Item>
                               </Col>
                             </Row>
-                          </Card>
+                          </RibbonCard>
                         </Col>
 
                         <Col xs={24} xl={8}>
-                          <Card className="rounded-[24px] border border-slate-200 bg-gradient-to-br from-slate-50 to-white shadow-sm">
-                            <Title level={4}>Profile Snapshot</Title>
-
+                          <RibbonCard
+                            title="Profile Snapshot"
+                            className="rounded-[24px] border border-slate-200 bg-gradient-to-br from-slate-50 to-white shadow-sm"
+                          >
                             <div className="mt-4 grid grid-cols-1 gap-3">
                               <InfoTile
                                 label="Student ID"
@@ -528,12 +533,14 @@ const StudentEditPage = () => {
                                 icon={<ClockCircleOutlined />}
                               />
                             </div>
-                          </Card>
+                          </RibbonCard>
                         </Col>
 
                         <Col xs={24} lg={12}>
-                          <Card className="rounded-[24px] border border-slate-200 bg-white shadow-sm">
-                            <Title level={4}>Contact Information</Title>
+                          <RibbonCard
+                            title="Contact Information"
+                            className="rounded-[24px] border border-slate-200 bg-white shadow-sm"
+                          >
                             <Row gutter={16}>
                               <Col xs={24}>
                                 <Form.Item name="phone1" label="Phone 1">
@@ -556,12 +563,14 @@ const StudentEditPage = () => {
                                 </Form.Item>
                               </Col>
                             </Row>
-                          </Card>
+                          </RibbonCard>
                         </Col>
 
                         <Col xs={24} lg={12}>
-                          <Card className="rounded-[24px] border border-slate-200 bg-white shadow-sm">
-                            <Title level={4}>Subscription</Title>
+                          <RibbonCard
+                            title="Subscription"
+                            className="rounded-[24px] border border-slate-200 bg-white shadow-sm"
+                          >
                             <Row gutter={16}>
                               <Col xs={24} md={12}>
                                 <Form.Item
@@ -587,12 +596,14 @@ const StudentEditPage = () => {
                                 </Form.Item>
                               </Col>
                             </Row>
-                          </Card>
+                          </RibbonCard>
                         </Col>
 
                         <Col xs={24}>
-                          <Card className="rounded-[24px] border border-slate-200 bg-white shadow-sm">
-                            <Title level={4}>Student Status</Title>
+                          <RibbonCard
+                            title="Student Status"
+                            className="rounded-[24px] border border-slate-200 bg-white shadow-sm"
+                          >
                             <Row gutter={[20, 20]}>
                               <Col xs={24} md={8}>
                                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
@@ -639,7 +650,7 @@ const StudentEditPage = () => {
                                 </div>
                               </Col>
                             </Row>
-                          </Card>
+                          </RibbonCard>
                         </Col>
                       </Row>
 

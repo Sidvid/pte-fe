@@ -162,11 +162,7 @@ const StudentTaskView: React.FC = () => {
   return (
     <>
       {taskState?.isDailyTask ? (
-        <DailyTaskPlayer
-          questions={questionsFromTask}
-          // title="Daily Task"
-          // dtsId={localStorage.getItem("current_dts_id")}
-        />
+        <DailyTaskPlayer questions={questionsFromTask} />
       ) : !showExam ? (
         <MockTestIntroPage
           testData={questionsFromTask?.data}

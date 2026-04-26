@@ -48,6 +48,7 @@ export const URLS = {
   testAudioURL: "/api/student/test-audio-url",
   mockTestById: "api/student/mock-tests",
   mockTestReview: "api/student/mock-tests",
+  resumeMockTest: "api/student/",
 };
 type Methods = "POST" | "GET" | "PUT" | "DELETE";
 interface RequestProps {
