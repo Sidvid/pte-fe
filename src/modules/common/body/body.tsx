@@ -36,11 +36,11 @@ function ApplicationBody() {
           title: "Schedule",
           icon: <AiOutlineSchedule />,
         },
-        {
-          value: "mock-tests",
-          title: "Mock & Official Tests",
-          icon: <AiOutlineFileText />,
-        },
+        // {
+        //   value: "mock-tests",
+        //   title: "Mock & Official Tests",
+        //   icon: <AiOutlineFileText />,
+        // },
         // {
         //   value: "daily-tasks",
         //   title: "Daily Tasks",
@@ -50,6 +50,11 @@ function ApplicationBody() {
           value: "videos",
           title: "Learning Videos",
           icon: <AiOutlineVideoCamera />,
+        },
+        {
+          value: "assigned-essay-videos",
+          title: "Assigned Essay Videos",
+          icon: <AiOutlineVideoCameraAdd />,
         },
       ]
     : [
@@ -87,6 +92,11 @@ function ApplicationBody() {
           value: "theory-videos-config",
           title: "Theory Video Config",
           icon: <GrConfigure />,
+        },
+        {
+          value: "upload-essay-videos",
+          title: "Upload Essay Videos",
+          icon: <AiOutlineVideoCameraAdd />,
         },
       ];
 

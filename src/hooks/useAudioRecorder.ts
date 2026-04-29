@@ -1,3 +1,4 @@
+import { message } from "antd";
 import { useState, useRef, useCallback } from "react";
 
 export const useAudioRecorder = ({ onRecordingComplete, maxDuration = 60 }) => {
@@ -56,6 +57,32 @@ export const useAudioRecorder = ({ onRecordingComplete, maxDuration = 60 }) => {
       console.error("Error starting recording:", err);
     }
   }, [maxDuration, onRecordingComplete]);
+
+  // const startRecording = useCallback(async () => {
+  //   // Safety Guard: Check if the API exists before trying to use it
+  //   if (!navigator.mediaDevices?.getUserMedia) {
+  //     console.error("Microphone API not available.");
+  //     message.error(
+  //       "Audio recording is not supported in this browser context (Try enabling Insecure Origins in chrome://flags)",
+  //     );
+  //     return;
+  //   }
+
+  //   try {
+  //     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  //     // ... rest of your original logic stays exactly the same
+  //     const mediaRecorder = new MediaRecorder(stream, {
+  //       mimeType: "audio/webm;codecs=opus",
+  //     });
+  //     // ... (your existing setup code)
+  //     mediaRecorder.start();
+  //     setIsRecording(true);
+  //     // ...
+  //   } catch (err) {
+  //     console.error("Error starting recording:", err);
+  //     message.error("Recording error: " + err.message);
+  //   }
+  // }, [maxDuration, onRecordingComplete]);
 
   const stopRecording = useCallback(() => {
     if (mediaRecorderRef.current && isRecording) {

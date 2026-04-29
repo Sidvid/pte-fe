@@ -1,39 +1,37 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-  Button,
   Card,
-  Progress,
   Space,
   Typography,
-  Alert,
+  Button,
+  Progress,
   Modal,
-  message,
   notification,
 } from "antd";
 import {
   PlayCircleOutlined,
   PauseCircleOutlined,
-  FullscreenOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
-import { GiProgression } from "react-icons/gi";
-import { useNavigate } from "react-router";
 
-const { Text, Title } = Typography;
+const { Title, Text } = Typography;
 
 const VideoPlayer = ({
   videoUrl,
   title = "Video",
-  onComplete,
+  onComplete = null,
   minCompletionPercent = 95,
   disableSeeking = true,
   forceFullscreen = true,
-  isProceedToTaskBtnEnabled,
-  task_id,
-  fromTheoryVideos,
+  isProceedToTaskBtnEnabled = false,
+  task_id = null,
+  fromTheoryVideos = false,
 }) => {
   const videoRef = useRef(null);
   const containerRef = useRef(null);
+  const isActiveRef = useRef(false);
+  const isCompletedRef = useRef(false);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -48,6 +46,10 @@ const VideoPlayer = ({
     ? Math.min((maxWatchedTime / duration) * 100, 100)
     : 0;
 
+  useEffect(() => {
+    isCompletedRef.current = isCompleted;
+  }, [isCompleted]);
+
   const formatTime = (seconds) => {
     if (!seconds || isNaN(seconds)) return "0:00";
     const mins = Math.floor(seconds / 60);
@@ -59,7 +61,6 @@ const VideoPlayer = ({
     try {
       const el = containerRef.current;
       if (!el) return;
-
       if (el.requestFullscreen) {
         await el.requestFullscreen();
       } else if (el.webkitRequestFullscreen) {
@@ -80,7 +81,6 @@ const VideoPlayer = ({
     const video = videoRef.current;
     if (!video) return;
     setDuration(video.duration || 0);
-
     if (forceFullscreen) {
       enterFullscreen();
     }
@@ -103,10 +103,8 @@ const VideoPlayer = ({
   const handleTimeUpdate = () => {
     const video = videoRef.current;
     if (!video) return;
-
     const ct = video.currentTime;
     setCurrentTime(ct);
-
     if (ct > maxWatchedTime) {
       setMaxWatchedTime(ct);
     }
@@ -115,8 +113,6 @@ const VideoPlayer = ({
   const handleSeeking = () => {
     const video = videoRef.current;
     if (!video || !disableSeeking) return;
-
-    // If user tries to jump ahead, snap back
     if (video.currentTime > maxWatchedTime + 1) {
       video.currentTime = maxWatchedTime;
     }
@@ -124,12 +120,13 @@ const VideoPlayer = ({
 
   const handleEnded = () => {
     const percent = duration ? (maxWatchedTime / duration) * 100 : 0;
-
     if (percent >= minCompletionPercent) {
       setIsCompleted(true);
+      isCompletedRef.current = true;
       setIsPlaying(false);
+      isActiveRef.current = false;
       notification.success({
-        title: "You have successfully watched the video. You may proceed.",
+        message: "You have successfully watched the video. You may proceed.",
       });
       onComplete?.({
         completed: true,
@@ -140,8 +137,31 @@ const VideoPlayer = ({
     }
   };
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const onPlay = () => {
+      isActiveRef.current = true;
+      setIsPlaying(true);
+    };
+    const onPause = () => {
+      isActiveRef.current = false;
+      setIsPlaying(false);
+    };
+
+    video.addEventListener("play", onPlay);
+    video.addEventListener("pause", onPause);
+
+    return () => {
+      video.removeEventListener("play", onPlay);
+      video.removeEventListener("pause", onPause);
+    };
+  }, []);
+
   const handleKeyDown = useCallback((e) => {
-    // Browser-level preventions only
+    if (!isActiveRef.current) return;
+
     const blockedKeys = [
       "ArrowRight",
       "ArrowLeft",
@@ -156,35 +176,48 @@ const VideoPlayer = ({
       e.preventDefault();
     }
 
-    // Esc can be listened to but may not fully stop fullscreen exit
     if (e.key === "Escape") {
       e.preventDefault();
     }
-
-    // Windows key / Meta key cannot be truly blocked reliably
   }, []);
 
   const handleFullscreenChange = useCallback(() => {
-    if (forceFullscreen && !isCompleted && !document.fullscreenElement) {
-      const video = videoRef.current;
-      if (video && !video.paused) {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const videoIsPlaying = !video.paused && !video.ended;
+
+    if (!isActiveRef.current && !videoIsPlaying) return;
+    if (isCompletedRef.current) return;
+
+    if (forceFullscreen && !document.fullscreenElement) {
+      if (!video.paused) {
         video.pause();
       }
       setIsPlaying(false);
+      isActiveRef.current = false;
       setFullscreenWarning(true);
     }
-  }, [forceFullscreen, isCompleted]);
+  }, [forceFullscreen]);
 
   const handleVisibilityChange = useCallback(() => {
-    if (document.hidden && !isCompleted) {
-      const video = videoRef.current;
-      if (video && !video.paused) {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const videoIsPlaying = !video.paused && !video.ended;
+
+    if (!isActiveRef.current && !videoIsPlaying) return;
+    if (isCompletedRef.current) return;
+
+    if (document.hidden) {
+      if (!video.paused) {
         video.pause();
       }
       setIsPlaying(false);
+      isActiveRef.current = false;
       setTabWarning(true);
     }
-  }, [isCompleted]);
+  }, []);
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown, true);
@@ -197,11 +230,8 @@ const VideoPlayer = ({
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [handleKeyDown, handleFullscreenChange, handleVisibilityChange]);
-  console.log("hsihasasidhcidcib", isProceedToTaskBtnEnabled);
-  console.log("-------------------------------------", isCompleted);
 
   const handleAssignedVideoTask = () => {
-    console.log("Complete Task clicked for record:", task_id);
     navigate(`/take-task/${task_id}`, {
       state: {
         fromTheoryVideos,
@@ -215,69 +245,7 @@ const VideoPlayer = ({
     <>
       <Card ref={containerRef} style={{ maxWidth: 1000, margin: "0 auto" }}>
         <Space direction="vertical" style={{ width: "100%" }} size="large">
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <Title level={4} style={{ margin: 0 }}>
-              {title}
-            </Title>
-            <Space>
-              <Text strong>
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </Text>
-            </Space>
-          </div>
-
-          {/* {!isCompleted && (
-            <Alert
-              type="warning"
-              showIcon
-              icon={<WarningOutlined />}
-              message="Restrictions Enabled. Do not skip, exit fullscreen, or switch tabs while watching."
-              //   description="Do not skip, exit fullscreen, or switch tabs while watching."
-            />
-          )} */}
-
-          {/* <div
-            style={{
-              background: "#000",
-              borderRadius: 12,
-              //   overflow: "hidden",
-              position: "relative",
-            }}
-          > */}
-          {isProceedToTaskBtnEnabled && (
-            <Button
-              type="primary"
-              onClick={handleAssignedVideoTask}
-              icon={<GiProgression />}
-            >
-              Complete Task
-            </Button>
-          )}
-          <video
-            ref={videoRef}
-            src={videoUrl}
-            onLoadedMetadata={handleLoadedMetadata}
-            onTimeUpdate={handleTimeUpdate}
-            onSeeking={handleSeeking}
-            onEnded={handleEnded}
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-            // onClick={handlePlayPause}
-            controls={true}
-            style={{
-              width: "100%",
-              maxHeight: "75vh",
-              background: "#000",
-            }}
-          />
-          {/* </div> */}
-
-          <Progress
-            percent={Math.round(completionPercent)}
-            status={isCompleted ? "success" : "active"}
-            size="small"
-          />
-
+          {/* Title and Time */}
           <div
             style={{
               display: "flex",
@@ -285,69 +253,139 @@ const VideoPlayer = ({
               alignItems: "center",
             }}
           >
-            <Space>
-              <Button
-                type="primary"
-                icon={
-                  isPlaying ? <PauseCircleOutlined /> : <PlayCircleOutlined />
-                }
-                onClick={handlePlayPause}
-                disabled={isCompleted}
-              >
-                {isPlaying ? "Pause" : "Play"}
-              </Button>
-
-              <Button
-                icon={<FullscreenOutlined />}
-                onClick={enterFullscreen}
-                disabled={isCompleted}
-              >
-                Fullscreen
-              </Button>
-            </Space>
-
-            <Text>
-              Watched: <b>{Math.round(completionPercent)}%</b>
+            <Title level={4} style={{ margin: 0 }}>
+              {title}
+            </Title>
+            <Text strong>
+              {formatTime(currentTime)} / {formatTime(duration)}
             </Text>
           </div>
 
-          {/* {isCompleted && (
-            <Alert
-              type="success"
-              showIcon
-              title="Video Completed"
-              description="You have successfully watched the video. You may proceed."
-            />
-          )} */}
+          {/* Video Element */}
+          <video
+            ref={videoRef}
+            src={videoUrl}
+            style={{
+              width: "100%",
+              maxHeight: "75vh",
+              borderRadius: 8,
+              background: "#000",
+            }}
+            onLoadedMetadata={handleLoadedMetadata}
+            onTimeUpdate={handleTimeUpdate}
+            onSeeking={handleSeeking}
+            onEnded={handleEnded}
+            controlsList="nodownload nofullscreen noremoteplayback"
+            disablePictureInPicture
+          />
+
+          {/* Progress Bar */}
+          <Progress
+            percent={Math.round(completionPercent)}
+            size="small"
+            status={isCompleted ? "success" : "active"}
+            style={{ margin: 0 }}
+          />
+
+          {/* Controls Row */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <Button
+              type="primary"
+              icon={
+                isPlaying ? <PauseCircleOutlined /> : <PlayCircleOutlined />
+              }
+              onClick={handlePlayPause}
+              disabled={isCompleted}
+            >
+              {isPlaying ? "Pause" : "Play"}
+            </Button>
+
+            <Text type="secondary" style={{ fontSize: 13 }}>
+              {isCompleted
+                ? "✅ Video completed!"
+                : `${Math.round(completionPercent)}% watched`}
+            </Text>
+          </div>
+
+          {/* Proceed to Task Button */}
+          {isCompleted && isProceedToTaskBtnEnabled && task_id && (
+            <Button
+              type="primary"
+              onClick={handleAssignedVideoTask}
+              style={{ width: "100%" }}
+            >
+              Proceed to Task
+            </Button>
+          )}
         </Space>
       </Card>
 
+      {/* Fullscreen Warning Modal */}
       <Modal
         open={fullscreenWarning}
-        onCancel={() => setFullscreenWarning(false)}
-        onOk={async () => {
-          setFullscreenWarning(false);
-          await enterFullscreen();
-        }}
-        okText="Re-enter Fullscreen"
-        cancelText="Close"
-        title="Fullscreen Required"
+        closable={false}
+        maskClosable={false}
+        footer={[
+          <Button
+            key="resume"
+            type="primary"
+            onClick={async () => {
+              setFullscreenWarning(false);
+              await enterFullscreen();
+              const video = videoRef.current;
+              if (video) {
+                video.play();
+              }
+            }}
+          >
+            Resume in Fullscreen
+          </Button>,
+        ]}
       >
-        <p>You exited fullscreen. Please continue in fullscreen mode.</p>
+        <div style={{ textAlign: "center", padding: "20px 0" }}>
+          <WarningOutlined style={{ fontSize: 48, color: "#faad14" }} />
+          <Title level={4} style={{ marginTop: 16 }}>
+            Fullscreen Required
+          </Title>
+          <Text>
+            You exited fullscreen. The video has been paused. Please resume in
+            fullscreen to continue watching.
+          </Text>
+        </div>
       </Modal>
 
+      {/* Tab Switch Warning Modal */}
       <Modal
         open={tabWarning}
-        onCancel={() => setTabWarning(false)}
-        onOk={() => setTabWarning(false)}
-        okText="Continue"
-        cancelText="Close"
-        title="Tab Switch Detected"
+        closable={false}
+        maskClosable={false}
+        footer={[
+          <Button
+            key="resume"
+            type="primary"
+            onClick={async () => {
+              setTabWarning(false);
+              await enterFullscreen();
+              const video = videoRef.current;
+              if (video) {
+                video.play();
+              }
+            }}
+          >
+            Resume Watching
+          </Button>,
+        ]}
       >
-        <p>
-          You switched tabs or minimized the window. Please stay on the video
-          screen.
-        </p>
+        <div style={{ textAlign: "center", padding: "20px 0" }}>
+          <WarningOutlined style={{ fontSize: 48, color: "#ff4d4f" }} />
+          <Title level={4} style={{ marginTop: 16 }}>
+            Tab Switch Detected
+          </Title>
+          <Text>
+            You switched tabs. The video has been paused. Please resume
+            watching.
+          </Text>
+        </div>
       </Modal>
     </>
   );

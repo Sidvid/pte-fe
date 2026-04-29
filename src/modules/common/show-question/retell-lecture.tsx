@@ -9,33 +9,30 @@ interface RetellLectureProps {
 
 function RetellLecture({ questions, onDelete }: RetellLectureProps) {
   const getMediaUrl = (mediaPath: string) => {
-    const baseUrl = 'http://localhost:3000';
+    const baseUrl = "http://192.168.1.9:3000/";
     return `${baseUrl}/${mediaPath}`;
   };
 
   const getMediaType = (path: string) => {
-    const ext = path.split('.').pop()?.toLowerCase();
-    if (['mp3', 'wav', 'm4a', 'ogg'].includes(ext || '')) return 'audio';
-    if (['mp4', 'webm', 'mov'].includes(ext || '')) return 'video';
-    return 'unknown';
+    const ext = path.split(".").pop()?.toLowerCase();
+    if (["mp3", "wav", "m4a", "ogg"].includes(ext || "")) return "audio";
+    if (["mp4", "webm", "mov"].includes(ext || "")) return "video";
+    return "unknown";
   };
 
   return (
     <div className="flex flex-col gap-[20px]">
       {questions?.map((item) => {
         const itemData =
-          typeof item.data === "string"
-            ? JSON.parse(item.data)
-            : item.data;
-        
-        const extraData = 
-          typeof item.extra === "string"
-            ? JSON.parse(item.extra)
-            : item.extra;
-        
+          typeof item.data === "string" ? JSON.parse(item.data) : item.data;
+
+        const extraData =
+          typeof item.extra === "string" ? JSON.parse(item.extra) : item.extra;
+
         const mediaPath = itemData.audio || itemData.video || itemData.media;
-        const transcript = extraData?.script || itemData.transcript || itemData.text || "";
-        const mediaType = mediaPath ? getMediaType(mediaPath) : 'unknown';
+        const transcript =
+          extraData?.script || itemData.transcript || itemData.text || "";
+        const mediaType = mediaPath ? getMediaType(mediaPath) : "unknown";
 
         return (
           <div
@@ -53,38 +50,39 @@ function RetellLecture({ questions, onDelete }: RetellLectureProps) {
               />
             )}
             <p className="font-semibold mb-3">{`Question ${item.sNo}`}</p>
-            
+
             {mediaPath ? (
               <div className="mb-3">
                 <p className="text-gray-600 mb-2 flex items-center gap-2">
-                  <PlayCircleOutlined /> Lecture {mediaType === 'video' ? 'Video' : 'Audio'}:
+                  <PlayCircleOutlined /> Lecture{" "}
+                  {mediaType === "video" ? "Video" : "Audio"}:
                 </p>
                 <div className="bg-white p-4 rounded-lg">
-                  {mediaType === 'audio' && (
+                  {mediaType === "audio" && (
                     <audio
                       controls
                       src={getMediaUrl(mediaPath)}
                       className="w-full"
                       onError={(e) => {
-                        console.error('Failed to load audio:', mediaPath);
+                        console.error("Failed to load audio:", mediaPath);
                       }}
                     >
                       Your browser does not support the audio element.
                     </audio>
                   )}
-                  {mediaType === 'video' && (
+                  {mediaType === "video" && (
                     <video
                       controls
                       src={getMediaUrl(mediaPath)}
                       className="w-full max-h-[400px]"
                       onError={(e) => {
-                        console.error('Failed to load video:', mediaPath);
+                        console.error("Failed to load video:", mediaPath);
                       }}
                     >
                       Your browser does not support the video element.
                     </video>
                   )}
-                  {mediaType === 'unknown' && (
+                  {mediaType === "unknown" && (
                     <p className="text-red-500 text-sm">
                       ⚠️ Media file format not recognized: {mediaPath}
                     </p>

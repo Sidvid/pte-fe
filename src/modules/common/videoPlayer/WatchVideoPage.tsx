@@ -15,6 +15,7 @@ const WatchVideoPage = () => {
     task_id,
     fromTheoryVideos,
   } = location.state || {};
+  console.log("locationlocationlocation", location);
 
   const { sendRequest } = useHttp({ type: "auth" });
 

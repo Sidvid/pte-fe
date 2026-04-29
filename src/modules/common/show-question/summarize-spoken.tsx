@@ -9,7 +9,7 @@ interface SummarizeSpokenProps {
 
 function SummarizeSpoken({ questions, onDelete }: SummarizeSpokenProps) {
   const getAudioUrl = (audioPath: string) => {
-    const baseUrl = 'http://localhost:3000';
+    const baseUrl = "http://192.168.1.9:3000/";
     return `${baseUrl}/${audioPath}`;
   };
 
@@ -17,15 +17,11 @@ function SummarizeSpoken({ questions, onDelete }: SummarizeSpokenProps) {
     <div className="flex flex-col gap-[20px]">
       {questions?.map((item) => {
         const itemData =
-          typeof item.data === "string"
-            ? JSON.parse(item.data)
-            : item.data;
-        
-        const extraData = 
-          typeof item.extra === "string"
-            ? JSON.parse(item.extra)
-            : item.extra;
-        
+          typeof item.data === "string" ? JSON.parse(item.data) : item.data;
+
+        const extraData =
+          typeof item.extra === "string" ? JSON.parse(item.extra) : item.extra;
+
         const audioPath = itemData.audio;
         const script = extraData?.script || "";
 
@@ -45,7 +41,7 @@ function SummarizeSpoken({ questions, onDelete }: SummarizeSpokenProps) {
               />
             )}
             <p className="font-semibold mb-3">{`Question ${item.sNo}`}</p>
-            
+
             {audioPath ? (
               <div className="mb-3">
                 <p className="text-gray-600 mb-2 flex items-center gap-2">
@@ -57,7 +53,7 @@ function SummarizeSpoken({ questions, onDelete }: SummarizeSpokenProps) {
                     src={getAudioUrl(audioPath)}
                     className="w-full"
                     onError={(e) => {
-                      console.error('Failed to load audio:', audioPath);
+                      console.error("Failed to load audio:", audioPath);
                     }}
                   >
                     Your browser does not support the audio element.
@@ -87,9 +83,7 @@ function SummarizeSpoken({ questions, onDelete }: SummarizeSpokenProps) {
             )}
 
             {!script && (
-              <p className="text-gray-400 text-sm italic">
-                No script provided
-              </p>
+              <p className="text-gray-400 text-sm italic">No script provided</p>
             )}
           </div>
         );

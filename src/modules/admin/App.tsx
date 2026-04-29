@@ -20,6 +20,8 @@ import StudentCreatePage from "../students/components/StudentCreatePage";
 import TheoryVideos from "./lab-videos/TheoryVideos";
 import TheoryVideoConfigPage from "./lab-videos/TheoryVideoConfigPage";
 import StudentDailyTaskReview from "@/pte-test-players/student-response-components/StudentDailyTaskReview";
+import UploadEssayVideos from "./lab-videos/UploadEssayVideos";
+import WatchVideoPage from "../common/videoPlayer/WatchVideoPage";
 const queryClient = new QueryClient();
 function App() {
   return (
@@ -72,6 +74,11 @@ function App() {
                   path="/theory-videos-config"
                   element={<TheoryVideoConfigPage />}
                 />
+                <Route
+                  path="/upload-essay-videos"
+                  element={<UploadEssayVideos />}
+                />
+                <Route path="/watch-video/:id" element={<WatchVideoPage />} />
               </Route>
               <Route
                 path="/login"

@@ -163,12 +163,12 @@ export const portalConfig = {
   [PortalTypes.ADMIN]: {
     payload: "admin",
     heading: "Welcome to Admin Portal (Riddhima PTE Coaching)",
-    url: "http://localhost:3000",
+    url: "http://192.168.1.9:3000/",
   },
   [PortalTypes.STUDENT]: {
     payload: "student",
     heading: "Welcome to Student Portal (Riddhima PTE Coaching)",
-    url: "http://localhost:3000",
+    url: "http://192.168.1.9:3000/",
   },
 };
 export const STORAGE_KEYS = {

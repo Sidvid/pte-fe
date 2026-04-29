@@ -56,7 +56,7 @@ const StudentCreatePage = () => {
       const registerRes: any = await registerUserCall.mutateAsync({
         username: values.username,
         name: values.name,
-        password: values.password,
+        password: "12345678",
         role: "student",
       });
 
@@ -183,7 +183,7 @@ const StudentCreatePage = () => {
                     />
                   </Form.Item>
 
-                  <Form.Item
+                  {/* <Form.Item
                     name="password"
                     label="Password"
                     rules={[
@@ -195,7 +195,7 @@ const StudentCreatePage = () => {
                       placeholder="Enter password"
                       className="rounded-xl"
                     />
-                  </Form.Item>
+                  </Form.Item> */}
                 </div>
               </RibbonCard>
             </Col>

@@ -9,14 +9,14 @@ interface FibListeningProps {
 
 function FibListening({ questions, onDelete }: FibListeningProps) {
   const getAudioUrl = (audioPath: string) => {
-    const baseUrl = 'http://localhost:3000';
+    const baseUrl = "http://192.168.1.9:3000/";
     return `${baseUrl}/${audioPath}`;
   };
 
   const renderTextWithBlanks = (text: string, answers: string[]) => {
     const parts = text.split(/(\}\{)/g);
     let blankIndex = 0;
-      
+
     return parts.map((part, index) => {
       if (part === "}{") {
         const answer = answers[blankIndex] || "___";
@@ -38,15 +38,11 @@ function FibListening({ questions, onDelete }: FibListeningProps) {
     <div className="flex flex-col gap-[20px]">
       {questions?.map((item) => {
         const itemData =
-          typeof item.data === "string"
-            ? JSON.parse(item.data)
-            : item.data;
-        
-        const extraData = 
-          typeof item.extra === "string"
-            ? JSON.parse(item.extra)
-            : item.extra;
-        
+          typeof item.data === "string" ? JSON.parse(item.data) : item.data;
+
+        const extraData =
+          typeof item.extra === "string" ? JSON.parse(item.extra) : item.extra;
+
         const text = itemData.text || "";
         const audioPath = itemData.audio || "";
         const answers = extraData?.answers || [];
@@ -67,7 +63,7 @@ function FibListening({ questions, onDelete }: FibListeningProps) {
               />
             )}
             <p className="font-semibold mb-3">{`Question ${item.sNo}`}</p>
-            
+
             {audioPath && (
               <div className="mb-4">
                 <p className="text-gray-600 mb-2 flex items-center gap-2">
@@ -79,7 +75,7 @@ function FibListening({ questions, onDelete }: FibListeningProps) {
                     src={getAudioUrl(audioPath)}
                     className="w-full"
                     onError={(e) => {
-                      console.error('Failed to load audio:', audioPath);
+                      console.error("Failed to load audio:", audioPath);
                     }}
                   >
                     Your browser does not support the audio element.

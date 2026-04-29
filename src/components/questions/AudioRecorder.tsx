@@ -74,7 +74,7 @@ const AudioRecorder = ({
 
           {isRecording && (
             <>
-              {!isPaused ? (
+              {/* {!isPaused ? (
                 <Button icon={<PauseOutlined />} onClick={pauseRecording}>
                   Pause
                 </Button>
@@ -82,7 +82,7 @@ const AudioRecorder = ({
                 <Button icon={<AudioOutlined />} onClick={resumeRecording}>
                   Resume
                 </Button>
-              )}
+              )} */}
               <Button
                 type="primary"
                 icon={<StopOutlined />}
@@ -94,14 +94,14 @@ const AudioRecorder = ({
             </>
           )}
 
-          {audioUrl && !isRecording && (
+          {/* {audioUrl && !isRecording && (
             <>
               <audio controls src={audioUrl} style={{ height: "40px" }} />
               <Button icon={<DeleteOutlined />} onClick={clearRecording} danger>
                 Re-record
               </Button>
             </>
-          )}
+          )} */}
         </Space>
       </Space>
 

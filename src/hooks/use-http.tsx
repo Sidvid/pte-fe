@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import { STORAGE_KEYS } from "@/utils/constants/app-constants";
 import apiClient from "@/utils/helpers/interceptor";
 
@@ -29,6 +30,7 @@ export const URLS = {
   updateTheoryVideoMapping: "api/admin/theory-videos/mappings",
   deleteTheoryVideoMapping: "api/admin/theory-videos/mappings",
   resetStudentPassword: "api/auth/reset-student-password",
+  uploadEssayVideos: "api/admin/upload-essay-video",
   // Student routes
   requestAssignments: "api/student/request-assignment",
   theoryVideosCompletionStatus: "api/student/videos/theory/status",
@@ -49,6 +51,7 @@ export const URLS = {
   mockTestById: "api/student/mock-tests",
   mockTestReview: "api/student/mock-tests",
   resumeMockTest: "api/student/",
+  getEssayVideos: "api/student/essay-videos",
 };
 type Methods = "POST" | "GET" | "PUT" | "DELETE";
 interface RequestProps {
@@ -66,10 +69,9 @@ const useHttp = ({ type }: { type: "auth" | "raw" }) => {
     params,
     endURL,
   }: RequestProps) => {
-    const authTokenCookie = await cookieStore.get(STORAGE_KEYS.ACCESS_TOKEN);
-    const authToken = authTokenCookie?.value;
-    // const authToken =
-    //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMxNzRmODFkLWU2YmQtNGU5MS1iOTkyLTcwOTVjYzk2ZDQ3MSIsInVzZXJuYW1lIjoidmlrYXMiLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTc3NDg5NTcwMCwiZXhwIjoxNzc0OTgyMTAwfQ.pLOGSOOKw0eTrXlDIZ3AHBgsGuqJ9LUVRvHdQnvO2oM";
+    // const authTokenCookie = await cookieStore.get(STORAGE_KEYS.ACCESS_TOKEN);
+    // const authToken = authTokenCookie?.value;
+    const authToken = Cookies.get(STORAGE_KEYS.ACCESS_TOKEN);
 
     try {
       const response = await apiClient({

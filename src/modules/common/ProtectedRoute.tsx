@@ -1,33 +1,17 @@
-// src/components/ProtectedRoute.tsx
 import { Navigate, Outlet } from "react-router-dom";
-import { Spin } from "antd";
-import { useAuth } from "@/hooks/useAuth";
 
-interface ProtectedRouteProps {
-  portal: "student" | "admin";
-}
+const ProtectedRoute = () => {
+  // Helper to find a specific cookie by name
+  const getCookie = (name: string) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop()?.split(";").shift();
+  };
 
-const ProtectedRoute = ({ portal }: ProtectedRouteProps) => {
-  const { isAuthenticated, isLoading, userPortal } = useAuth();
+  // Replace "token" with the exact name of your cookie
+  const isAuthenticated = !!getCookie("token");
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Spin size="large" tip="Loading..." />
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/unauthorized" replace />;
-  }
-
-  // Check if user is accessing correct portal
-  if (userPortal !== portal) {
-    return <Navigate to="/unauthorized" replace />;
-  }
-
-  return <Outlet />;
+  return isAuthenticated ? <Outlet /> : <Navigate to="/" replace />;
 };
 
 export default ProtectedRoute;

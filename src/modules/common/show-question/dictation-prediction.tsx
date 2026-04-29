@@ -8,31 +8,33 @@ interface DictationPredictionProps {
   onDelete?: (questionId: string) => void;
 }
 
-function DictationPrediction({ questions, onDelete }: DictationPredictionProps) {
+function DictationPrediction({
+  questions,
+  onDelete,
+}: DictationPredictionProps) {
   const getAudioUrl = (audioPath: string) => {
-    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+    const baseUrl =
+      import.meta.env.VITE_API_BASE_URL || "http://192.168.1.9:3000/";
     return `${baseUrl}/${audioPath}`;
   };
 
   return (
     <div className="flex flex-col gap-[20px]">
       {questions?.map((item) => {
-        const itemData = 
-          typeof item.data === "string"
-            ? JSON.parse(item.data)
-            : item.data;
-        
-        const extraData = 
-          typeof item.extra === "string"
-            ? JSON.parse(item.extra)
-            : item.extra;
-        
-        const audioPath = itemData.audio || extraData?.audio || extraData?.transcript;
-        const script = extraData?.transcript || itemData.script || itemData.text || "";
+        const itemData =
+          typeof item.data === "string" ? JSON.parse(item.data) : item.data;
+
+        const extraData =
+          typeof item.extra === "string" ? JSON.parse(item.extra) : item.extra;
+
+        const audioPath =
+          itemData.audio || extraData?.audio || extraData?.transcript;
+        const script =
+          extraData?.transcript || itemData.script || itemData.text || "";
 
         return (
-          <div 
-            key={item.id} 
+          <div
+            key={item.id}
             className="text-black border border-dashed border-purple-700 bg-purple-50 p-[6px] rounded-2xl f14 relative"
           >
             {onDelete && (
@@ -41,12 +43,12 @@ function DictationPrediction({ questions, onDelete }: DictationPredictionProps) 
                 danger
                 icon={<DeleteOutlined />}
                 onClick={() => onDelete(item.id)}
-                style={{ position: 'absolute', top: 8, right: 8 }}
+                style={{ position: "absolute", top: 8, right: 8 }}
                 title="Delete question"
               />
             )}
             <p>{`Question ${item.sNo}`}</p>
-            
+
             {audioPath ? (
               <div className="mb-3">
                 <p className="text-gray-600 mb-2">Dictation Audio:</p>
@@ -56,7 +58,7 @@ function DictationPrediction({ questions, onDelete }: DictationPredictionProps) 
                     src={getAudioUrl(audioPath)}
                     className="w-full"
                     onError={(e) => {
-                      console.error('Failed to load audio:', audioPath);
+                      console.error("Failed to load audio:", audioPath);
                     }}
                   >
                     Your browser does not support the audio element.

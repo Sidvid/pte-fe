@@ -10,7 +10,7 @@ interface DescribeImageProps {
 
 function DescribeImage({ questions, onDelete }: DescribeImageProps) {
   const getImageUrl = (imagePath: string) => {
-    const baseUrl = "http://localhost:3000";
+    const baseUrl = "http://192.168.1.9:3000/";
     const fullUrl = `${baseUrl}/${imagePath}`;
     return fullUrl;
   };
@@ -20,7 +20,7 @@ function DescribeImage({ questions, onDelete }: DescribeImageProps) {
     imagePath: string,
   ) => {
     const img = e.currentTarget;
-    const baseUrl = "http://localhost:3000";
+    const baseUrl = "http://192.168.1.9:3000/";
 
     console.error("Image failed to load:", img.src);
     console.error("Original path:", imagePath);

@@ -10,8 +10,9 @@ interface WFDPredictionProps {
 
 function WFDPrediction({ questions, onDelete }: WFDPredictionProps) {
   const getAudioUrl = (audioPath: string) => {
-    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-    if (audioPath.startsWith('http')) {
+    const baseUrl =
+      import.meta.env.VITE_API_BASE_URL || "http://192.168.1.9:3000/";
+    if (audioPath.startsWith("http")) {
       return audioPath;
     } else {
       return `${baseUrl}/${audioPath}`;
@@ -21,22 +22,22 @@ function WFDPrediction({ questions, onDelete }: WFDPredictionProps) {
   return (
     <div className="flex flex-col gap-[20px]">
       {questions?.map((item) => {
-        const itemData = 
-          typeof item.data === "string"
-            ? JSON.parse(item.data)
-            : item.data;
-        
-        const extraData = 
-          typeof item.extra === "string"
-            ? JSON.parse(item.extra)
-            : item.extra;
-        
+        const itemData =
+          typeof item.data === "string" ? JSON.parse(item.data) : item.data;
+
+        const extraData =
+          typeof item.extra === "string" ? JSON.parse(item.extra) : item.extra;
+
         const audioPath = itemData.audio || extraData?.audio;
-        const script = extraData?.script || itemData.script || (typeof itemData === 'string' ? itemData : '') || "";
+        const script =
+          extraData?.script ||
+          itemData.script ||
+          (typeof itemData === "string" ? itemData : "") ||
+          "";
 
         return (
-          <div 
-            key={item.id} 
+          <div
+            key={item.id}
             className="text-black border border-dashed border-blue-700 bg-blue-50 p-[6px] rounded-2xl f14 relative"
           >
             {onDelete && (
@@ -45,12 +46,12 @@ function WFDPrediction({ questions, onDelete }: WFDPredictionProps) {
                 danger
                 icon={<DeleteOutlined />}
                 onClick={() => onDelete(item.id)}
-                style={{ position: 'absolute', top: 8, right: 8 }}
+                style={{ position: "absolute", top: 8, right: 8 }}
                 title="Delete question"
               />
             )}
             <p>{`Question ${item.sNo}`}</p>
-            
+
             {audioPath ? (
               <div className="mb-3">
                 <p className="text-gray-600 mb-2">Dictation Audio:</p>
@@ -60,7 +61,7 @@ function WFDPrediction({ questions, onDelete }: WFDPredictionProps) {
                     src={getAudioUrl(audioPath)}
                     className="w-full"
                     onError={(e) => {
-                      console.error('Failed to load audio:', audioPath);
+                      console.error("Failed to load audio:", audioPath);
                     }}
                   >
                     Your browser does not support the audio element.

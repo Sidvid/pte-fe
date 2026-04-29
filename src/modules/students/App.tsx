@@ -16,6 +16,7 @@ import StudentDailyTaskReview from "@/pte-test-players/student-response-componen
 import WatchVideoPage from "../common/videoPlayer/WatchVideoPage";
 import ProtectedRoute from "../common/ProtectedRoute";
 import NotFound from "../common/NotFound";
+import AssignedEssayVideos from "./components/AssignedEssayVideos";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,10 @@ function App() {
                 <Route path="/schedule" element={<StudentSchedule />} />
                 <Route path="/mock-tests" element={<StudentMockTests />} />
                 <Route path="/videos" element={<StudentVideos />} />
+                <Route
+                  path="/assigned-essay-videos"
+                  element={<AssignedEssayVideos />}
+                />
                 <Route
                   path="/daily-task-review/:dts_id"
                   element={<StudentDailyTaskReview />}

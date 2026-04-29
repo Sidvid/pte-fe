@@ -1,5 +1,6 @@
 import { DottedGlowBackground } from "@/components/ui/dotted-glow-background";
 import useHttp from "@/hooks/use-http";
+import Cookies from "js-cookie";
 import { portalConfig, STORAGE_KEYS } from "@/utils/constants/app-constants";
 import { PortalTypes } from "@/utils/model/common-enums";
 import { SuccessResponse } from "@/utils/model/model";
@@ -141,11 +142,13 @@ function Login({ portal }: LoginProps) {
     onSuccess: (data) => {
       const { response } = data;
       if (response.isSuccess) {
-        cookieStore.set(STORAGE_KEYS.ACCESS_TOKEN, response.data.token);
+        // cookieStore.set(STORAGE_KEYS.ACCESS_TOKEN, response.data.token);
+        Cookies.set(STORAGE_KEYS.ACCESS_TOKEN, response.data.token);
         navigate("/dashboard");
       }
     },
     onError: (err: any) => {
+      console.log("err?.message");
       message.error(err?.message || "Invalid credentials");
     },
   });

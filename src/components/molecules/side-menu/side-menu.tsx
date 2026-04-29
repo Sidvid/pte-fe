@@ -1,5 +1,6 @@
 import { useState } from "react";
 import * as React from "react";
+import Cookies from "js-cookie";
 import Logo from "@assets/logo/Logo.jpg";
 import { FaPowerOff, FaEdit } from "react-icons/fa";
 import useHttp from "@/hooks/use-http";
@@ -71,8 +72,10 @@ function SideMenu({
   const handleLogout = async () => {
     try {
       // Remove token cookie
-      await cookieStore.delete("access_token");
-      await cookieStore.delete("ACCESS_TOKEN");
+      // await cookieStore.delete("access_token");
+      // await cookieStore.delete("ACCESS_TOKEN");
+      await Cookies.remove("access_token");
+      await Cookies.remove("ACCESS_TOKEN");
       await localStorage.clear(); // Clear localStorage as well, if you store any user data there
       // if your app uses a specific constant-based cookie key,
       // keep the exact one here too
