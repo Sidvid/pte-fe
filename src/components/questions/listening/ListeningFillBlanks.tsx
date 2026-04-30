@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Input, Space, Alert, Card, Typography } from "antd";
-import QuestionLayout from "../QuestionLayout";
+import React, { useState, useEffect } from "react";
+import { Space, Card, Input, Alert, Typography } from "antd";
 import AudioPlayer from "../AudioPlayer";
-import { useQuestionTimer } from "../../../hooks/useQuestionTimer";
-
+import QuestionLayout from "../QuestionLayout";
+import { useQuestionTimer } from "@/hooks/useQuestionTimer";
 const { Text } = Typography;
 
 const ListeningFillBlanks = ({
@@ -14,32 +13,30 @@ const ListeningFillBlanks = ({
   timeLimit = 120,
   isOnlyViewQuestions,
 }) => {
-  const [phase, setPhase] = useState("listen"); // listen | write
   const [answers, setAnswers] = useState([]);
-  const text = question.data?.text || "";
-  const blanksCount = (text.match(/_____/g) || []).length;
 
+  // PTE format usually has text with {{}} placeholders
+  const text = question.data?.text || "";
+
+  // Split text by {{}}
+  const parts = text.split("{{}}");
+  const blanksCount = parts.length - 1;
+
+  // Start timer immediately in PTE
   const timer = useQuestionTimer(timeLimit, () => {
     onResponse?.({ inputs: answers });
   });
 
-  const parts = text.split("_____");
-
   useEffect(() => {
-    if (phase === "write") {
-      timer.start();
-    }
-  }, [phase]);
+    timer.start();
+  }, []);
 
+  // Initialize answers array based on count
   useEffect(() => {
     if (blanksCount > 0 && answers.length === 0) {
       setAnswers(Array(blanksCount).fill(""));
     }
   }, [blanksCount]);
-
-  const handleAudioComplete = () => {
-    setPhase("write");
-  };
 
   const handleChange = (index, value) => {
     const updated = [...answers];
@@ -56,29 +53,22 @@ const ListeningFillBlanks = ({
       type="fib_l"
       questionNumber={questionNumber}
       totalQuestions={totalQuestions}
-      timeRemaining={phase === "write" ? timer.formatTime() : null}
+      timeRemaining={timer.formatTime()}
       isOnlyViewQuestions={isOnlyViewQuestions}
       instructions="You will hear a recording. Type the missing words in each blank."
     >
       <Space direction="vertical" style={{ width: "100%" }} size="large">
-        <AudioPlayer
-          src={question.data?.audio}
-          autoPlay={true}
-          maxPlays={1}
-          onPlayComplete={handleAudioComplete}
+        <AudioPlayer src={question.data?.audio} autoPlay={true} maxPlays={1} />
+
+        <Alert
+          message="Tip"
+          description="You can type in the blanks while listening to the audio."
+          type="info"
+          showIcon
         />
 
-        {phase === "listen" && (
-          <Alert
-            message="Listen Carefully"
-            description="After the audio finishes, fill in the blanks."
-            type="info"
-            showIcon
-          />
-        )}
-
         <Card style={{ background: "#fafafa" }}>
-          <div style={{ fontSize: "16px", lineHeight: "2.6" }}>
+          <div style={{ fontSize: "16px", lineHeight: "3" }}>
             {parts.map((part, index) => (
               <React.Fragment key={index}>
                 <span>{part}</span>
@@ -86,12 +76,15 @@ const ListeningFillBlanks = ({
                   <Input
                     value={answers[index] || ""}
                     onChange={(e) => handleChange(index, e.target.value)}
-                    disabled={phase !== "write"}
-                    placeholder={`Blank ${index + 1}`}
+                    placeholder={`Word ${index + 1}`}
+                    // Inputs are ALWAYS enabled in PTE
+                    disabled={isOnlyViewQuestions}
                     style={{
-                      width: 140,
+                      width: 150,
                       margin: "0 8px",
-                      display: "inline-block",
+                      border: "none",
+                      borderBottom: "1px solid #d9d9d9",
+                      borderRadius: 0,
                     }}
                   />
                 )}
@@ -99,12 +92,6 @@ const ListeningFillBlanks = ({
             ))}
           </div>
         </Card>
-
-        {phase === "write" && (
-          <Text type="secondary">
-            Fill all blanks based on what you heard in the recording.
-          </Text>
-        )}
       </Space>
     </QuestionLayout>
   );

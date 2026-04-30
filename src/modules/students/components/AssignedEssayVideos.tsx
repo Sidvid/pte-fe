@@ -26,9 +26,24 @@ const AssignedEssayVideos = () => {
 
   return (
     <div className="p-6 min-h-screen">
-      <Title level={2}>Essay Lecture Series</Title>
-      <Text type="secondary">Watch your assigned essay lectures here.</Text>
-
+      <Card
+        className="mb-6 overflow-hidden rounded-[30px] border-none shadow-[0_18px_50px_rgba(15,23,42,0.08)]"
+        styles={{ body: { padding: 0 } }}
+      >
+        <div className="bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 px-6 py-8 text-white md:px-8">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-white/90">
+                {/* <SettingOutlined /> */}
+                Watch your assigned essay lectures here.
+              </div>
+              <Title level={2} style={{ color: "#fff", margin: 0 }}>
+                Essay Lecture Series
+              </Title>
+            </div>
+          </div>
+        </div>
+      </Card>
       {loading ? (
         <Skeleton active />
       ) : !videos.length ? (

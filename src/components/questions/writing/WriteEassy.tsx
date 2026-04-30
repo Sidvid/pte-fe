@@ -15,6 +15,7 @@ const WriteEssay = ({
   isOnlyViewQuestions,
 }) => {
   const [text, setText] = useState("");
+  console.log("Full Question Object:", question);
 
   const timer = useQuestionTimer(timeLimit, () => {
     onResponse?.({ text });
@@ -52,9 +53,9 @@ const WriteEssay = ({
       isOnlyViewQuestions={isOnlyViewQuestions}
       instructions="You will have 20 minutes to plan, write and revise an essay about the topic below."
     >
-      <Space direction="vertical" style={{ width: "100%" }} size="large">
+      <Space orientation="vertical" style={{ width: "100%" }} size="large">
         <Alert
-          message="Essay Guidelines"
+          title="Essay Guidelines"
           description="Write between 200 and 300 words. Focus on content, structure, grammar, and vocabulary."
           type="info"
           showIcon
@@ -62,7 +63,7 @@ const WriteEssay = ({
 
         <Card style={{ background: "#f6ffed", border: "1px solid #b7eb8f" }}>
           <Paragraph style={{ fontSize: "16px", margin: 0 }}>
-            {question.data?.prompt || question.data?.text}
+            {question.data?.question || question.data?.prompt}
           </Paragraph>
         </Card>
 

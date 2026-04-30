@@ -37,7 +37,6 @@ const UploadEssayVideos = () => {
   const navigate = useNavigate();
 
   const fetchVideos = async () => {
-    setLoading(true);
     try {
       const res = await sendRequest({ url: "getEssayVideos", method: "GET" });
       console.log("Fetched videos:", res);
@@ -64,6 +63,7 @@ const UploadEssayVideos = () => {
       formData.append("video", file);
 
       try {
+        setLoading(true);
         await sendRequest({
           url: "uploadEssayVideos",
           method: "POST",
@@ -76,6 +76,8 @@ const UploadEssayVideos = () => {
       } catch (err) {
         message.error(`${file.name} upload failed.`);
         onError?.(err);
+      } finally {
+        setLoading(false);
       }
     },
   };
@@ -138,6 +140,7 @@ const UploadEssayVideos = () => {
         </Card>
 
         {/* Upload Section (Top) */}
+
         <RibbonCard title="Upload New Lecture" className="mb-6 shadow-sm">
           <Dragger {...uploadProps} className="!p-8">
             <p className="ant-upload-drag-icon">
